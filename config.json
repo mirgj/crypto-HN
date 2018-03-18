@@ -1,0 +1,6 @@
+{
+  "port": 8080,
+  "sessionSecret": "mysessionsecret",
+  "connectionString": "mongodb://localhost:27017/",
+  "dbName": "crypto-hn"
+}

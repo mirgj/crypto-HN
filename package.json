@@ -1,0 +1,51 @@
+{
+  "name": "crypto-hn",
+  "version": "0.0.1",
+  "description": "crypto-hn",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-core/register tests --recursive",
+    "start": "./node_modules/.bin/babel-node --presets es2015 src/app.js"
+  },
+  "author": "mirgj <mirgj@outlook.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "compression": "^1.7.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "express-validation": "^1.0.2",
+    "helmet": "^3.11.0",
+    "http-status": "^1.0.1",
+    "joi": "^13.1.2",
+    "moment": "^2.20.1",
+    "mongodb": "^3.0.2",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-http": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.0-rc.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "chai": "^4.1.2",
+    "mocha": "^5.0.1",
+    "rimraf": "^2.6.2",
+    "supertest": "^3.0.0",
+    "supertest-as-promised": "^4.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mirgj/crypto-HN.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mirgj/crypto-HN/issues"
+  },
+  "homepage": "https://github.com/mirgj/crypto-HN#readme"
+}
