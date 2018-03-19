@@ -18,7 +18,11 @@ const close = async() => {
     await state.db.close();
 
     state.db = null;
+
+    return true;
   }
+
+  return false;
 };
 
 export {
