@@ -15,6 +15,7 @@ import apiRoutes from './routes/api/index';
 import viewRoutes from './routes/view/index';
 import config from '../config';
 import { connect, initDefaultDb } from './db/connector';
+import { logger, expressLogger } from './helpers/logger';
 
 const app = express();
 
@@ -27,7 +28,7 @@ const app = express();
     app.locals.moment = moment;
     app.set('view engine', 'pug');
     app.set('views', path.join(__dirname, '/views'));
-    app.use(morgan('dev'));
+    app.use(morgan('combined', { stream: expressLogger.stream }));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(cookieParser());
@@ -65,8 +66,9 @@ const app = express();
       });
     }
   } catch (err) {
-    console.error(err);
+    logger.error(`Unexpected exception: ${err}`);
   }
 })(app);
+
 
 export default app;

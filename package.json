@@ -28,7 +28,9 @@
     "passport": "^0.4.0",
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
-    "pug": "^2.0.0-rc.4"
+    "pug": "^2.0.0-rc.4",
+    "winston": "^3.0.0-rc3",
+    "winston-daily-rotate-file": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

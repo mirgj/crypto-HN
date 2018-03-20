@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+import { logger } from '../helpers/logger';
 import * as errors from '../constants/errors';
 
 const state = {
@@ -9,6 +10,7 @@ const state = {
 const connect = async(url) => {
   if (state.instance) return state.instance;
   state.instance = await MongoClient.connect(url);
+  logger.log('verbose', 'Connected to the database');
 };
 
 const get = (dbName) => {
@@ -86,7 +88,7 @@ const initDefaultDb = async(dbName) => {
             bsonType: 'int',
             description: 'post score',
           },
-          time: {
+          creation_time: {
             bsonType: 'timestamp',
             description: 'timestamp of the post',
           },
@@ -99,12 +101,14 @@ const initDefaultDb = async(dbName) => {
     },
   });
 
+  logger.log('verbose', 'database initialization done!');
 };
 
 const close = async() => {
   if (state.instance) {
     await state.instance.close();
     state.instance = null;
+    logger.log('verbose', 'db connection closed');
 
     return true;
   }
