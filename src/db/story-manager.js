@@ -4,10 +4,10 @@ import config from '../../config';
 
 const postCollection = getDb(config.defaultDbName).collection('post');
 
-const getPostById = async(postId) => {
+const getStoryById = async(postId) => {
   return await postCollection.findOne({ _id: ObjectID(postId) });
 };
 
 export {
-  getPostById,
+  getStoryById,
 };
