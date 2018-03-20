@@ -14,13 +14,14 @@ import moment from 'moment';
 import apiRoutes from './routes/api/index';
 import viewRoutes from './routes/view/index';
 import config from '../config';
-import { connect } from './db/connector';
+import { connect, initDefaultDb } from './db/connector';
 
 const app = express();
 
 (async(app) => {
   try {
     await connect(config.connectionString);
+    await initDefaultDb(config.defaultDbName);
 
     app.server = http.createServer(app);
     app.locals.moment = moment;
@@ -46,8 +47,7 @@ const app = express();
     app.use((err, req, res, next) => {
       if (err instanceof SyntaxError) {
         // todo: send API Error
-      }
-      else if (err) {
+      } else if (err) {
         next(err);
       }
 
@@ -64,8 +64,7 @@ const app = express();
         console.log(`Application started on port ${app.server.address().port}`);
       });
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
   }
 })(app);
