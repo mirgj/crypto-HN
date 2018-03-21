@@ -68,7 +68,7 @@ const initDefaultDb = async(dbName) => {
     validator: {
       $jsonSchema: {
         bsonType: 'object',
-        required: [ 'user_id', 'title' ],
+        required: [ 'user_id', 'title', 'creation_time' ],
         properties: {
           user_id: {
             bsonType: 'objectId',
@@ -80,19 +80,19 @@ const initDefaultDb = async(dbName) => {
           },
           text: {
             bsonType: 'string',
-            description: 'text of the post',
+            description: 'text of the story',
           },
           url: {
             bsonType: 'string',
-            description: 'url of the post',
+            description: 'url of the story',
           },
           score: {
             bsonType: 'int',
-            description: 'post score',
+            description: 'story score',
           },
-          creation_time: {
-            bsonType: 'timestamp',
-            description: 'timestamp of the post',
+          created_on: {
+            bsonType: 'date',
+            description: 'date of the story',
           },
           comments: {
             bsonType: 'array',

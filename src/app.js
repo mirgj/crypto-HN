@@ -51,7 +51,7 @@ const app = express();
 
     if (!module.parent) {
       app.server.listen(config.port, () => {
-        console.log(`Application started on port ${app.server.address().port}`);
+        logger.log('verbose', `Application started on port ${app.server.address().port}`);
       });
     }
   } catch (err) {
