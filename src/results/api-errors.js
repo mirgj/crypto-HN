@@ -6,8 +6,7 @@ class ApiError {
     this.result = {
       description: message,
       statusCode: statusCode,
-      status: Errors.INTERNAL_ERROR,
-      code: ErrorsCode.API_ERROR,
+      status: ErrorsCode.API_ERROR,
     };
   }
 }

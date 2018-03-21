@@ -7,7 +7,7 @@ export const Errors = {
 };
 
 export const ErrorsCode = {
-  API_ERROR: 'APIError',
+  API_ERROR: 'API Error',
   UNAUTHORIZED: 'Unauthorized',
   NOT_FOUND: 'Not Found',
   BAD_REQUEST: 'Bad Request',
