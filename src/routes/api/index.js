@@ -1,11 +1,33 @@
 import { Router } from 'express';
+import { ApiError, UnauthorizedError, NotFoundError, BadRequest } from '../results/api-errors';
+import { Errors, HttpStatus } from '../constants/index';
+import { logger } from '../helpers/logger';
+import validation from 'express-validation';
 import storiesRoutes from './stories';
 
 const router = Router();
 
 router.use('/stories', storiesRoutes);
 router.use('/', (req, res, next) =>
-  res.status(200).send('ok')
+  res.status(HttpStatus.NOT_FOUND).send(new ApiError(Errors.API_NOT_FOUND, HttpStatus.NOT_FOUND))
 );
+router.use((err, req, res, next) => {
+  logger.error(err);
+
+  if (err instanceof validation.ValidationError) {
+    const messages = err.errors.map(error => error.messages.join('. ')).join(' and ');
+    return res.status(HttpStatus.BAD_REQUEST).send(new BadRequest(messages, err.errors, HttpStatus.BAD_REQUEST));
+  }
+  if (err instanceof SyntaxError)
+    return res.status(HttpStatus.BAD_REQUEST).send(new BadRequest(Errors.BAD_REQUEST_ERROR, null, HttpStatus.BAD_REQUEST));
+  if (err instanceof UnauthorizedError)
+    return res.status(HttpStatus.UNAUTHORIZED).send(err);
+  if (err instanceof NotFoundError)
+    return res.status(HttpStatus.NOT_FOUND).send(err);
+  if (err instanceof ApiError)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
+
+  return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(new ApiError(Errors.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR));
+});
 
 export default router;
