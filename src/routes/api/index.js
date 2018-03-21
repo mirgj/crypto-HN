@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import { ApiError, UnauthorizedError, NotFoundError, BadRequest } from '../results/api-errors';
-import { Errors, HttpStatus } from '../constants/index';
-import { logger } from '../helpers/logger';
+import { ApiError, UnauthorizedError, NotFoundError, BadRequest } from '../../results/api-errors';
+import { Errors, HttpStatus } from '../../constants/index';
+import { logger } from '../../helpers/logger';
 import validation from 'express-validation';
 import storiesRoutes from './stories';
 
 const router = Router();
 
 router.use('/stories', storiesRoutes);
-router.use('/', (req, res, next) =>
-  res.status(HttpStatus.NOT_FOUND).send(new ApiError(Errors.API_NOT_FOUND, HttpStatus.NOT_FOUND))
+router.use('/', (req, res, next) => 
+  res.status(HttpStatus.NOT_FOUND).send(new NotFoundError(Errors.API_NOT_FOUND, HttpStatus.NOT_FOUND))
 );
 router.use((err, req, res, next) => {
   logger.error(err);

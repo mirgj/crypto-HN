@@ -156,6 +156,7 @@ const close = async() => {
 };
 
 export {
+  state,
   connect,
   get,
   initDefaultDb,
