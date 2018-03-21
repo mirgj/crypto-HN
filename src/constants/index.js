@@ -7,9 +7,11 @@ export const Errors = {
   CREATE_STORY_ERROR: 'Error creating the story, check if all the required fields are provided',
   USERNAME_NOT_FOUND: 'User not found. Check your username',
   USER_NOT_FOUND: 'User not found',
+  USER_WRONG_PASSWORD: 'The password is invalid',
   CREATE_USER_ERROR: 'Error creating the user',
   CREATE_USER_USERNAME_ERROR: 'Error creating the user. Username may be already used.',
   UPDATE_USER_ERROR: 'Error updating the user, try again',
+  UPDATE_OTHER_USER_ERROR: 'You can\'t update another user\'s info',
 };
 
 export const Infos = {

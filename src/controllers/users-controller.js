@@ -20,10 +20,10 @@ const get = async(userId) => {
   return new ApiResult(user);
 };
 
-const create = async(user) => {
+const create = async(username, password) => {
   try {
-    user.password = await hashHelper.generateHash(user.password);
-    const nuser = await manager.create(user.username, user.password);
+    password = await hashHelper.generateHash(password);
+    const nuser = await manager.create(username, password);
 
     if (!nuser.result.ok || nuser.insertedCount === 0) throw new ApiError(Errors.CREATE_USER_ERROR);
 
