@@ -8,7 +8,7 @@ import storiesRoutes from './stories';
 const router = Router();
 
 router.use('/stories', storiesRoutes);
-router.use('/', (req, res, next) => 
+router.use('/', (req, res, next) =>
   res.status(HttpStatus.NOT_FOUND).send(new NotFoundError(Errors.API_NOT_FOUND, HttpStatus.NOT_FOUND))
 );
 router.use((err, req, res, next) => {
