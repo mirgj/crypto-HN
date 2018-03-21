@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
-
-const salt = 15;
+import config from '../../config';
 
 const compareHash = (inputPassword, dbPassword) => {
   return new Promise((resolve, reject) => {
@@ -14,7 +13,7 @@ const compareHash = (inputPassword, dbPassword) => {
 
 const generateHash = (plainPassword) => {
   return new Promise((resolve, reject) => {
-    bcrypt.hash(plainPassword, salt, function(err, hash) {
+    bcrypt.hash(plainPassword, config.hashSalt, function(err, hash) {
       if (err) return reject(err);
 
       return resolve(hash);
