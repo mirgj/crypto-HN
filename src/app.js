@@ -9,7 +9,6 @@ import compress from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
 import passport from 'passport';
-import flash from 'connect-flash';
 import moment from 'moment';
 import apiRoutes from './routes/api/index';
 import viewRoutes from './routes/view/index';
@@ -44,16 +43,6 @@ const app = express();
         httpOnly: true,
       },
     }));
-    app.use(flash());
-    app.use((err, req, res, next) => {
-      if (err instanceof SyntaxError) {
-        // todo: send API Error
-      } else if (err) {
-        next(err);
-      }
-
-      flash(req, res, next);
-    });
     app.use(passport.initialize());
     app.use(passport.session());
 

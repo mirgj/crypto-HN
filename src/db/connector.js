@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { logger } from '../helpers/logger';
-import * as errors from '../constants/errors';
+import { Errors, Collections } from '../constants/index';
 
 const state = {
   instance: null,
@@ -14,17 +14,17 @@ const connect = async(url) => {
 };
 
 const get = (dbName) => {
-  if (!state.instance) throw new Error(errors.DB_ERROR);
+  if (!state.instance) throw new Error(Errors.DB_ERROR);
   if (!state.defaultDbInstance) state.defaultDbInstance = state.instance.db(dbName);
 
   return state.defaultDbInstance;
 };
 
 const initDefaultDb = async(dbName) => {
-  if (!state.instance) throw new Error(errors.DB_ERROR);
+  if (!state.instance) throw new Error(Errors.DB_ERROR);
   const dbo = get(dbName);
 
-  await dbo.createCollection('users', {
+  await dbo.createCollection(Collections.Users, {
     validator: {
       $jsonSchema: {
         bsonType: 'object',
@@ -62,9 +62,9 @@ const initDefaultDb = async(dbName) => {
       },
     },
   });
-  await dbo.createIndex("users", { username: 1}, { unique: true });
+  await dbo.createIndex(Collections.Users, { username: 1}, { unique: true });
 
-  await dbo.createCollection('stories', {
+  await dbo.createCollection(Collections.Stories, {
     validator: {
       $jsonSchema: {
         bsonType: 'object',
@@ -102,9 +102,9 @@ const initDefaultDb = async(dbName) => {
       },
     },
   });
-  await dbo.createIndex("stories", { user_id: 1});
+  await dbo.createIndex(Collections.Stories, { user_id: 1});
 
-  await dbo.createCollection('comments', {
+  await dbo.createCollection(Collections.Comments, {
     validator: {
       $jsonSchema: {
         bsonType: 'object',
@@ -138,7 +138,7 @@ const initDefaultDb = async(dbName) => {
       },
     },
   });
-  await dbo.createIndex("comments", { user_id: 1});
+  await dbo.createIndex(Collections.Comments, { user_id: 1});
 
   logger.log('verbose', 'database initialization done!');
 };
