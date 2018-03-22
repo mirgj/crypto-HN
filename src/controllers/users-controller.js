@@ -1,7 +1,7 @@
 import { MongoError } from 'mongodb';
 import { logger } from '../helpers/logger';
 import { ApiResult, InsertResult, OkResult } from '../results/api-data';
-import { ApiError, NotFoundError } from '../results/api-errors';
+import { ApiError, NotFoundError, UnauthorizedError } from '../results/api-errors';
 import { Errors, Infos } from '../constants/index';
 import * as manager from '../db/users-manager';
 import * as hashHelper from '../helpers/hasher';
@@ -46,9 +46,19 @@ const update = async(userId, email, about) => {
   return new OkResult(Infos.UPDATE_USER_INFO);
 };
 
+const encloseToken = (token) => {
+  if (!token) return new UnauthorizedError(Errors.USER_WRONG_PASSWORD);
+
+  return new ApiResult({
+    auth: true,
+    token: token,
+  });
+};
+
 export {
   getByUsername,
   get,
   create,
   update,
+  encloseToken,
 };

@@ -20,6 +20,15 @@ class UnauthorizedError extends ApiError {
   }
 }
 
+class ForbiddenError extends ApiError {
+  constructor(message) {
+    super(message);
+
+    this.result.status = ErrorsCode.FORBIDDEN;
+    this.result.statusCode = HttpStatus.FORBIDDEN;
+  }
+}
+
 class NotFoundError extends ApiError {
   constructor(message) {
     super(message);
@@ -29,7 +38,7 @@ class NotFoundError extends ApiError {
   }
 }
 
-class BadRequest extends ApiError {
+class BadRequestError extends ApiError {
   constructor(message, details) {
     super(message);
 
@@ -43,5 +52,6 @@ export {
   ApiError,
   UnauthorizedError,
   NotFoundError,
-  BadRequest,
+  BadRequestError,
+  ForbiddenError,
 };

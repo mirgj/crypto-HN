@@ -55,7 +55,7 @@ const app = express();
       });
     }
   } catch (err) {
-    logger.error(`Unexpected exception: ${err}`);
+    logger.error(`Unexpected exception: ${JSON.stringify(err)}`);
   }
 })(app);
 

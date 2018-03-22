@@ -1,5 +1,4 @@
-import { UnauthorizedError } from '../results/api-errors';
-import { HttpStatus } from '../constants/index';
+import { ForbiddenError } from '../results/api-errors';
 
 const asyncMiddleware = fn =>
   (req, res, next) => {
@@ -14,7 +13,7 @@ const asyncMiddleware = fn =>
 const sameUserMiddleware = err => {
   return (req, res, next) => {
     if (req.user._id !== req.params.userId)
-      throw new UnauthorizedError(err, HttpStatus.UNAUTHORIZED);
+      throw new ForbiddenError(err);
     return next();
   };
 };

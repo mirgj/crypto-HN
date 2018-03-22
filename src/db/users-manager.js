@@ -5,11 +5,11 @@ import { Collections } from '../constants/index';
 const userCollection = () => dbState.defaultDbInstance.collection(Collections.Users);
 
 const findLogin = async(username) => {
-  return await userCollection().findOne({ username: username });
+  return await userCollection().findOne({ username: username }, { fields: { password: 0 } });
 };
 
 const findOne = async(userId) => {
-  return await userCollection().findOne({ _id: ObjectID(userId) });
+  return await userCollection().findOne({ _id: ObjectID(userId) }, { fields: { password: 0 } });
 };
 
 const create = async(username, hashedPassword) => {
