@@ -9,10 +9,10 @@ import * as usersController from '../../controllers/users-controller';
 const router = Router();
 
 router
-  .post('/', validation(apiValidators.createUser), asyncMiddleware(async(req, res, next) =>
+  .post('/', validation(apiValidators.createUserOrLogin), asyncMiddleware(async(req, res, next) =>
     res.json(await usersController.create(req.body.username, req.body.password))
   ))
-  .post('/login', jwtAuthStrategy, asyncMiddleware(async(req, res, next) =>
+  .post('/login', validation(apiValidators.createUserOrLogin), jwtAuthStrategy, asyncMiddleware(async(req, res, next) =>
     res.json(usersController.encloseToken(req.token))
   ))
   .get('/me', jwtAuthRequired, asyncMiddleware(async(req, res, next) =>
@@ -20,7 +20,7 @@ router
   ))
   .get('/:userId', jwtAuthRequired, validation(apiValidators.getUser), asyncMiddleware(async(req, res, next) => {
     let user = await usersController.get(req.params.userId);
-    if (req.user._id.toString() !== user.result._id.toString()) delete user.result.email;
+    if (req.user._id.toString() !== user.result.data._id.toString()) delete user.result.email;
 
     return res.json(user);
   }))

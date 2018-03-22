@@ -4,8 +4,8 @@ import { Collections } from '../constants/index';
 
 const userCollection = () => dbState.defaultDbInstance.collection(Collections.Users);
 
-const findLogin = async(username) => {
-  return await userCollection().findOne({ username: username }, { fields: { password: 0 } });
+const findOneByUsername = async(username) => {
+  return await userCollection().findOne({ username: username });
 };
 
 const findOne = async(userId) => {
@@ -28,14 +28,14 @@ const update = async(userId, email, about) => {
   if (email) obj.email = email;
   if (about) obj.about = about;
 
-  return await this.users.updateOne(
+  return await userCollection().updateOne(
     { _id: ObjectID(userId) },
     { $set: obj }
   );
 };
 
 export {
-  findLogin,
+  findOneByUsername,
   findOne,
   create,
   update,

@@ -11,7 +11,7 @@ import * as hashHelper from './hasher';
 
 const commonStrategy = async(username, password, next) => {
   try {
-    const r = await usersController.getByUsername(username);
+    const r = await usersController.getLogin(username);
     if (!r.result || !r.result.success) return next(null, false, {message: Errors.USER_NOT_FOUND});
 
     const loggedIn = await hashHelper.compareHash(password, r.result.data.password);

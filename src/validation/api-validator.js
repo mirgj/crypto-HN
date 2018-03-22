@@ -26,7 +26,7 @@ export default {
       userId: idMatch,
     },
   },
-  createUser: {
+  createUserOrLogin: {
     body: {
       username: usernameMatch,
       password: passwordMatch,

@@ -6,8 +6,8 @@ import { Errors, Infos } from '../constants/index';
 import * as manager from '../db/users-manager';
 import * as hashHelper from '../helpers/hasher';
 
-const getByUsername = async(username) => {
-  const user = await manager.findLogin(username);
+const getLogin = async(username) => {
+  const user = await manager.findOneByUsername(username);
   if (!user) throw new NotFoundError(Errors.USERNAME_NOT_FOUND);
 
   return new ApiResult(user);
@@ -56,7 +56,7 @@ const encloseToken = (token) => {
 };
 
 export {
-  getByUsername,
+  getLogin,
   get,
   create,
   update,

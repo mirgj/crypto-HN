@@ -26,10 +26,10 @@ router.use((err, req, res, next) => {
     return res.status(HttpStatus.UNAUTHORIZED).send(err);
   if (err instanceof NotFoundError)
     return res.status(HttpStatus.NOT_FOUND).send(err);
-  if (err instanceof ApiError)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
   if (err instanceof ForbiddenError)
     return res.status(HttpStatus.FORBIDDEN).send(err);
+  if (err instanceof ApiError)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
 
 
   return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(new ApiError(Errors.INTERNAL_ERROR));
