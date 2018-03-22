@@ -1,7 +1,14 @@
 {
-  "port": 8080,
-  "sessionSecret": "mysessionsecret",
-  "connectionString": "mongodb://localhost:27017/",
-  "defaultDbName": "crypto-hn",
-  "hashSalt": 15
+  "database": {
+    "connectionString": "mongodb://localhost:27017/",
+    "defaultDbName": "crypto-hn"
+  },
+  "application": {
+    "hostname": "0.0.0.0",
+    "port": 8080
+  },
+  "keys": {
+    "sessionSecret": "mysessionsecret",
+    "hashSalt": 15 
+  }
 }

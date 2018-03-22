@@ -20,8 +20,8 @@ const app = express();
 
 (async(app) => {
   try {
-    await connect(config.connectionString);
-    await initDefaultDb(config.defaultDbName);
+    await connect(config.database.connectionString);
+    await initDefaultDb(config.database.defaultDbName);
 
     app.server = http.createServer(app);
     app.locals.moment = moment;
@@ -35,7 +35,7 @@ const app = express();
     app.use(helmet());
     app.use(cors());
     app.use(session({
-      secret: config.sessionSecret,
+      secret: config.keys.sessionSecret,
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -50,8 +50,8 @@ const app = express();
     app.use('/', viewRoutes);
 
     if (!module.parent) {
-      app.server.listen(config.port, () => {
-        logger.log('verbose', `Application started on port ${app.server.address().port}`);
+      app.server.listen(config.application.port, config.application.hostname, () => {
+        logger.log('verbose', `Application started on port ${app.server.address().address}:${app.server.address().port}`);
       });
     }
   } catch (err) {
