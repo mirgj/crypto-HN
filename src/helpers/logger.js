@@ -14,6 +14,7 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console({
+      name: 'console-logs',
       format: winston.format.simple(),
       colorize: true,
       prettyPrint: true,
@@ -38,6 +39,7 @@ const expressLogger = winston.createLogger({
   level: 'info',
   transports: [
     new winston.transports.Console({
+      name: 'console-logs',
       json: false,
       colorize: true,
       handleExceptions: true,

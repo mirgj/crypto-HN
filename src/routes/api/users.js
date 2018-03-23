@@ -18,12 +18,9 @@ router
   .get('/me', jwtAuthRequired, asyncMiddleware(async(req, res, next) =>
     res.json(await usersController.get(req.user._id))
   ))
-  .get('/:userId', jwtAuthRequired, validation(apiValidators.getUser), asyncMiddleware(async(req, res, next) => {
-    let user = await usersController.get(req.params.userId);
-    if (req.user._id.toString() !== user.result.data._id.toString()) delete user.result.email;
-
-    return res.json(user);
-  }))
+  .get('/:userId', jwtAuthRequired, validation(apiValidators.getUser), asyncMiddleware(async(req, res, next) =>
+    res.json(await usersController.get(req.params.userId))
+  ))
   .patch('/:userId',
     jwtAuthRequired,
     validation(apiValidators.updateUser),
