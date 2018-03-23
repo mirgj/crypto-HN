@@ -147,6 +147,7 @@ const close = async() => {
   if (state.instance) {
     await state.instance.close();
     state.instance = null;
+    state.defaultDbInstance = null;
     logger.log('verbose', 'db connection closed');
 
     return true;
