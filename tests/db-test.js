@@ -138,36 +138,48 @@ describe('## DB', () => {
     });
 
     it('it should check the indexes for ' + Collections.Stories, async() => {
-      const collection = db.state.defaultDbInstance.collection(Collections.Stories);
-      const indexes = await collection.indexInformation();
+      try {
+        const collection = db.state.defaultDbInstance.collection(Collections.Stories);
+        const indexes = await collection.indexInformation();
 
-      expect(indexes).to.include.all.keys('_id_', 'user_id_1');
-      expect(indexes._id_).to.be.an('array').that.have.lengthOf(1);
-      expect(indexes._id_[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['_id', 1]);
-      expect(indexes.user_id_1).to.be.an('array').that.have.lengthOf(1);
-      expect(indexes.user_id_1[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['user_id', 1]);
+        expect(indexes).to.include.all.keys('_id_', 'user_id_1');
+        expect(indexes._id_).to.be.an('array').that.have.lengthOf(1);
+        expect(indexes._id_[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['_id', 1]);
+        expect(indexes.user_id_1).to.be.an('array').that.have.lengthOf(1);
+        expect(indexes.user_id_1[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['user_id', 1]);
+      } catch (err) {
+        throw err;
+      }
     });
 
     it('it should check the indexes for ' + Collections.Comments, async() => {
-      const collection = db.state.defaultDbInstance.collection(Collections.Comments);
-      const indexes = await collection.indexInformation();
+      try {
+        const collection = db.state.defaultDbInstance.collection(Collections.Comments);
+        const indexes = await collection.indexInformation();
 
-      expect(indexes).to.include.all.keys('_id_', 'user_id_1');
-      expect(indexes._id_).to.be.an('array').that.have.lengthOf(1);
-      expect(indexes._id_[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['_id', 1]);
-      expect(indexes.user_id_1).to.be.an('array').that.have.lengthOf(1);
-      expect(indexes.user_id_1[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['user_id', 1]);
+        expect(indexes).to.include.all.keys('_id_', 'user_id_1');
+        expect(indexes._id_).to.be.an('array').that.have.lengthOf(1);
+        expect(indexes._id_[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['_id', 1]);
+        expect(indexes.user_id_1).to.be.an('array').that.have.lengthOf(1);
+        expect(indexes.user_id_1[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['user_id', 1]);
+      } catch (err) {
+        throw err;
+      }
     });
 
     it('it should check the indexes for ' + Collections.Users, async() => {
-      const collection = db.state.defaultDbInstance.collection(Collections.Users);
-      const indexes = await collection.indexInformation();
+      try {
+        const collection = db.state.defaultDbInstance.collection(Collections.Users);
+        const indexes = await collection.indexInformation();
 
-      expect(indexes).to.include.all.keys('_id_', 'username_1');
-      expect(indexes._id_).to.be.an('array').that.have.lengthOf(1);
-      expect(indexes._id_[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['_id', 1]);
-      expect(indexes.username_1).to.be.an('array').that.have.lengthOf(1);
-      expect(indexes.username_1[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['username', 1]);
+        expect(indexes).to.include.all.keys('_id_', 'username_1');
+        expect(indexes._id_).to.be.an('array').that.have.lengthOf(1);
+        expect(indexes._id_[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['_id', 1]);
+        expect(indexes.username_1).to.be.an('array').that.have.lengthOf(1);
+        expect(indexes.username_1[0]).to.be.an('array').that.have.lengthOf(2).that.include.members(['username', 1]);
+      } catch (err) {
+        throw err;
+      }
     });
 
 
