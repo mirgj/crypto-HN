@@ -13,6 +13,7 @@
     "hashSalt": 15
   },
   "session": {
-    "jwtDuration": 3600
+    "jwtDuration": 3600,
+    "staticMaxAge": 31557600000
   }
 }
