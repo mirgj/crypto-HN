@@ -34,10 +34,12 @@ describe('## DB', () => {
     it('it should fail to connect', async() => {
       try {
         await db.connect('wrong connection string');
+        throw new Error('should fail');
       } catch (err) {
         expect(err).to.not.be.null;
         expect(err.message).to.not.be.null;
         expect(err.message).to.be.a('string');
+        expect(err.message).to.not.be.equal('should fail');
       }
     });
 
@@ -57,6 +59,7 @@ describe('## DB', () => {
     it('it should fail to init the database if not connected', async() => {
       try {
         await db.initDefaultDb(config.database.defaultDbName);
+        throw new Error('should fail');
       } catch (err) {
         expect(err).to.not.be.null;
         expect(err.message).to.not.be.null;
