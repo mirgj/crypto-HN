@@ -40,9 +40,9 @@ describe('## User manager unit tests', () => {
       collectionSpy.restore();
       findOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
-      sinon.assert.calledWith(collectionSpy, Collections.Users);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
       sinon.assert.calledOnce(findOneSpy);
-      sinon.assert.calledWith(findOneSpy, { username: userNameTest });
+      sinon.assert.calledWithExactly(findOneSpy, { username: userNameTest });
 
       expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
       expect(result).to.be.not.null;
@@ -66,9 +66,9 @@ describe('## User manager unit tests', () => {
         collectionSpy.restore();
         findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
-        sinon.assert.calledWith(collectionSpy, Collections.Users);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
         sinon.assert.calledOnce(findOneSpy);
-        sinon.assert.calledWith(findOneSpy, { username: userNameTest });
+        sinon.assert.calledWithExactly(findOneSpy, { username: userNameTest });
 
         expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
       }
@@ -89,9 +89,9 @@ describe('## User manager unit tests', () => {
       collectionSpy.restore();
       findOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
-      sinon.assert.calledWith(collectionSpy, Collections.Users);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
       sinon.assert.calledOnce(findOneSpy);
-      sinon.assert.calledWith(findOneSpy, { _id: ObjectID(userIdTest) }, { fields: { password: 0 } });
+      sinon.assert.calledWithExactly(findOneSpy, { _id: ObjectID(userIdTest) }, { fields: { password: 0 } });
 
       expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
       expect(result).to.be.not.null;
@@ -117,7 +117,7 @@ describe('## User manager unit tests', () => {
         collectionSpy.restore();
         findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
-        sinon.assert.calledWith(collectionSpy, Collections.Users);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
         sinon.assert.notCalled(findOneSpy);
 
         expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
@@ -140,9 +140,9 @@ describe('## User manager unit tests', () => {
         collectionSpy.restore();
         findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
-        sinon.assert.calledWith(collectionSpy, Collections.Users);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
         sinon.assert.calledOnce(findOneSpy);
-        sinon.assert.calledWith(findOneSpy, { _id: ObjectID(userIdTest) }, { fields: { password: 0 } });
+        sinon.assert.calledWithExactly(findOneSpy, { _id: ObjectID(userIdTest) }, { fields: { password: 0 } });
 
         expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
       }
@@ -151,11 +151,207 @@ describe('## User manager unit tests', () => {
   });
 
   describe('# create', () => {
-    
+
+    it('it should create the user correctly', async() => {
+      const usernameTest = 'username';
+      const passwordTest = 'password';
+      const returnValue = { acknowledged: true };
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.resolve(returnValue));
+
+      const result = await usersManager.create(usernameTest, passwordTest);
+
+      collectionSpy.restore();
+      insertOneSpy.restore();
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+      sinon.assert.calledOnce(insertOneSpy);
+      sinon.assert.calledWithExactly(insertOneSpy, {
+        username: usernameTest,
+        password: passwordTest, karma: 1,
+        created_on: sinon.match.date,
+      });
+
+      expect(collectionSpy.calledBefore(insertOneSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnValue);
+    });
+
+    it('it should fail to create the user', async() => {
+      const usernameTest = 'username';
+      const passwordTest = 'password';
+      const returnValue = new Error('err');
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.reject(returnValue));
+
+      try {
+        await usersManager.create(usernameTest, passwordTest);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err).to.be.equal(returnValue);
+      } finally {
+        collectionSpy.restore();
+        insertOneSpy.restore();
+
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+        sinon.assert.calledOnce(insertOneSpy);
+        sinon.assert.calledWithExactly(insertOneSpy, {
+          username: usernameTest,
+          password: passwordTest, karma: 1,
+          created_on: sinon.match.date,
+        });
+
+        expect(collectionSpy.calledBefore(insertOneSpy)).to.be.true;
+      }
+    });
+
   });
 
   describe('# update', () => {
-    
+
+    it('it should update the user correctly', async() => {
+      const userIdTest = '507f1f77bcf86cd799439011';
+      const email = 'test@test.com';
+      const about = 'this is a test';
+      const returnValue = { acknowledged: true };
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
+
+      const result = await usersManager.update(userIdTest, email, about);
+
+      collectionSpy.restore();
+      updateOneSpy.restore();
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+      sinon.assert.calledOnce(updateOneSpy);
+      sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
+        $set: {
+          email: email,
+          about: about,
+          updated_on: sinon.match.date,
+        },
+      });
+
+      expect(collectionSpy.calledBefore(updateOneSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnValue);
+    });
+
+    it('it should update only the user email', async() => {
+      const userIdTest = '507f1f77bcf86cd799439011';
+      const email = 'test@test.com';
+      const returnValue = { acknowledged: true };
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
+
+      const result = await usersManager.update(userIdTest, email);
+
+      collectionSpy.restore();
+      updateOneSpy.restore();
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+      sinon.assert.calledOnce(updateOneSpy);
+      sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
+        $set: {
+          email: email,
+          updated_on: sinon.match.date,
+        },
+      });
+
+      expect(collectionSpy.calledBefore(updateOneSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnValue);
+    });
+
+    it('it should update only the user about', async() => {
+      const userIdTest = '507f1f77bcf86cd799439011';
+      const about = 'this is a about field';
+      const returnValue = { acknowledged: true };
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
+
+      const result = await usersManager.update(userIdTest, null, about);
+
+      collectionSpy.restore();
+      updateOneSpy.restore();
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+      sinon.assert.calledOnce(updateOneSpy);
+      sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
+        $set: {
+          about: about,
+          updated_on: sinon.match.date,
+        },
+      });
+
+      expect(collectionSpy.calledBefore(updateOneSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnValue);
+    });
+
+    it('it should fail to update the user with a wrong ObjectID', async() => {
+      const userIdTest = 'wrong ObjectID';
+      const email = 'test@test.com';
+      const about = 'this is a test';
+      const returnValue = { acknowledged: true };
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
+
+      try {
+        await usersManager.update(userIdTest, email, about);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err.message).to.not.be.null;
+        expect(err.message).to.be.a('string');
+        expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
+      } finally {
+        collectionSpy.restore();
+        updateOneSpy.restore();
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+        sinon.assert.notCalled(updateOneSpy);
+      }
+    });
+
+    it('it should fail to update the user', async() => {
+      const userIdTest = '507f1f77bcf86cd799439011';
+      const email = 'test@test.com';
+      const about = 'this is a test';
+      const returnValue = new Error('error');
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.reject(returnValue));
+
+      try {
+        await usersManager.update(userIdTest, email, about);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err).to.be.equal(returnValue);
+      } finally {
+        collectionSpy.restore();
+        updateOneSpy.restore();
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+        sinon.assert.calledOnce(updateOneSpy);
+        sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
+          $set: {
+            email: email,
+            about: about,
+            updated_on: sinon.match.date,
+          },
+        });
+
+        expect(collectionSpy.calledBefore(updateOneSpy)).to.be.true;
+      }
+    });
+
   });
 
 });
