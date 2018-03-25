@@ -19,7 +19,7 @@ const dbStateMock = {
   },
 };
 
-describe('## User manager unit tests', () => {
+describe('## Users manager unit tests', () => {
 
   before(() => {
     logger.transports[0].level = 'error';
@@ -168,7 +168,8 @@ describe('## User manager unit tests', () => {
       sinon.assert.calledOnce(insertOneSpy);
       sinon.assert.calledWithExactly(insertOneSpy, {
         username: usernameTest,
-        password: passwordTest, karma: 1,
+        password: passwordTest,
+        karma: 1,
         created_on: sinon.match.date,
       });
 
@@ -200,7 +201,8 @@ describe('## User manager unit tests', () => {
         sinon.assert.calledOnce(insertOneSpy);
         sinon.assert.calledWithExactly(insertOneSpy, {
           username: usernameTest,
-          password: passwordTest, karma: 1,
+          password: passwordTest,
+          karma: 1,
           created_on: sinon.match.date,
         });
 
