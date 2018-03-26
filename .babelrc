@@ -2,7 +2,7 @@
   "presets": ["es2015"],
   "env": {
     "test": {
-      "plugins": ["babel-plugin-rewire"]
+      "plugins": ["babel-plugin-rewire", "istanbul"]
     }
   }
 }
