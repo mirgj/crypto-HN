@@ -1,10 +1,10 @@
 import { ObjectID } from 'mongodb';
 import { expect } from 'chai';
-import { logger } from '../src/helpers/logger';
-import { Collections } from '../src/constants/index';
-import { __Rewire__ } from '../src/db/stories-manager';
+import { logger } from '../../src/helpers/logger';
+import { Collections } from '../../src/constants/index';
+import { __Rewire__ } from '../../src/db/stories-manager';
 import sinon from 'sinon';
-import * as storiesManager from '../src/db/stories-manager';
+import * as storiesManager from '../../src/db/stories-manager';
 
 const dbMock = {
   findOne: (find, project) => { },

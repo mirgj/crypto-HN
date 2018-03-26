@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { logger } from '../src/helpers/logger';
-import { Collections, Errors } from '../src/constants/index';
-import config from '../config';
-import * as db from '../src/db/connector';
+import { logger } from '../../src/helpers/logger';
+import { Collections, Errors } from '../../src/constants/index';
+import config from '../../config';
+import * as db from '../../src/db/connector';
 
 describe('## DB', () => {
 
