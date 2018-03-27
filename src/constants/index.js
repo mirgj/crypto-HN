@@ -16,6 +16,10 @@ export const Errors = {
   AUTH_TOKEN_ERROR: 'Failed to authenticate the token',
 };
 
+export const Warnings = {
+  NO_STORIES_WARNING: 'No stories found',
+};
+
 export const Infos = {
   CREATE_STORY_INFO: 'Story has been created',
   CREATE_USER_INFO: 'User has been created',

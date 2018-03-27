@@ -68,7 +68,7 @@ const initDefaultDb = async(dbName) => {
     validator: {
       $jsonSchema: {
         bsonType: 'object',
-        required: [ 'user_id', 'title', 'creation_time' ],
+        required: [ 'user_id', 'title', 'created_on' ],
         properties: {
           user_id: {
             bsonType: 'objectId',
@@ -94,10 +94,6 @@ const initDefaultDb = async(dbName) => {
             bsonType: 'date',
             description: 'date of the story',
           },
-          comments: {
-            bsonType: 'array',
-            description: 'comment array',
-          },
         },
       },
     },
@@ -108,11 +104,15 @@ const initDefaultDb = async(dbName) => {
     validator: {
       $jsonSchema: {
         bsonType: 'object',
-        required: [ 'user_id', 'text' ],
+        required: [ 'user_id', 'story_id', 'text' ],
         properties: {
           user_id: {
             bsonType: 'objectId',
             description: 'user_id must be a ObjectId and is required',
+          },
+          story_id: {
+            bsonType: 'objectId',
+            description: 'story_id must be a ObjectId and is required',
           },
           text: {
             bsonType: 'string',

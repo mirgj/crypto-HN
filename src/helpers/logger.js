@@ -1,4 +1,5 @@
 import winston from 'winston';
+import config from '../../config';
 
 const customFormat = winston.format.printf(info => {
   return `${info.timestamp} ${info.level}: ${info.message}`;
@@ -22,13 +23,13 @@ const logger = winston.createLogger({
     }),
     new winston.transports.File({
       name: 'error-logs',
-      filename: './logs/error.log',
+      filename: config.logs.errorFilename,
       level: 'error',
       handleExceptions: true,
     }),
     new winston.transports.File({
       name: 'combined-logs',
-      filename: './logs/combined.log',
+      filename: config.logs.combinedFilename,
       handleExceptions: true,
     }),
   ],
@@ -46,7 +47,7 @@ const expressLogger = winston.createLogger({
     }),
     new winston.transports.File({
       name: 'express-logs',
-      filename: './logs/express-access.log',
+      filename: config.logs.expressFilename,
       handleExceptions: true,
     }),
   ],

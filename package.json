@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore .",
-    "test": "cross-env NODE_ENV=test ./node_modules/.bin/nyc ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-core/register tests --recursive",
+    "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-core/register tests --recursive",
+    "test:cov": "./node_modules/.bin/nyc npm test",
     "start": "./node_modules/.bin/babel-node --presets es2015 src/app.js"
   },
   "author": "mirgj <mirgj@outlook.com>",

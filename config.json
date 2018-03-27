@@ -15,5 +15,19 @@
   "session": {
     "jwtDuration": 3600,
     "staticMaxAge": 31557600000
+  },
+  "defaultValues": {
+    "take": 30,
+    "minTake": 1,
+    "minUserLength": 3,
+    "maxUserLength": 30,
+    "minPassLength": 5,
+    "maxTextLength": 400,
+    "maxTitleLength": 400
+  },
+  "logs": {
+    "errorFilename": "./logs/error.log",
+    "combinedFilename": "./logs/combined.log",
+    "expressFilename": "./logs/express-access.log"
   }
 }

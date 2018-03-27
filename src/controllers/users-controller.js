@@ -34,6 +34,8 @@ const create = async(username, password) => {
 
       throw new ApiError(Errors.CREATE_USER_USERNAME_ERROR);
     }
+
+    throw err;
   }
 };
 
