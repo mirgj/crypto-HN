@@ -14,7 +14,7 @@
   },
   "session": {
     "jwtDuration": 3600,
-    "staticMaxAge": 31557600000
+    "staticMaxAge": 31556952000
   },
   "defaultValues": {
     "take": 30,
@@ -23,7 +23,8 @@
     "maxUserLength": 30,
     "minPassLength": 5,
     "maxTextLength": 400,
-    "maxTitleLength": 400
+    "maxTitleLength": 400,
+    "scoreIncrementMill": 180000
   },
   "logs": {
     "errorFilename": "./logs/error.log",
