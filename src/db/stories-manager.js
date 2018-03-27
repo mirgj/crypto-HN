@@ -1,7 +1,7 @@
 import { ObjectID } from 'mongodb';
 import { state as dbState } from './connector';
 import { Collections } from '../constants/index';
-import config from '../../config'
+import config from '../../config';
 
 const storyCollection = () => dbState.defaultDbInstance.collection(Collections.Stories);
 
@@ -37,7 +37,7 @@ const getAll = async(skip, take) => {
         url: 1,
         score: 1,
         created_on: 1,
-        timestamp_score: { $add: [ "$created_on", { $multiply : ["$score", config.defaultValues.scoreIncrementMill ] } ] },
+        timestamp_score: { $add: [ '$created_on', { $multiply: ['$score', config.defaultValues.scoreIncrementMill ] } ] },
         comments: {
           $map: {
             input: '$comments_partial',
@@ -55,6 +55,12 @@ const getAll = async(skip, take) => {
       },
     },
     { $unwind: '$page_info' },
+    {
+      $project: {
+        stories_count: '$page_info.total_count',
+        stories: 1,
+      },
+    },
   ]).toArray();
 
   if (!result || result.length === 0) return null;
