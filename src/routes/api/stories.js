@@ -13,9 +13,9 @@ router
   ))
   .post('/', jwtAuthRequired, validation(apiValidators.createStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.create(req.user._id, {
-      title: req.title,
-      text: req.text,
-      url: req.url,
+      title: req.body.title,
+      text: req.body.text,
+      url: req.body.url,
     }))
   ))
   .get('/:storyId', jwtAuthRequired, validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
