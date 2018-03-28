@@ -18,7 +18,7 @@ router
       url: req.body.url,
     }))
   ))
-  .get('/:storyId', jwtAuthRequired, validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
+  .get('/:storyId', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.getOneById(req.params.storyId))
   ));
 

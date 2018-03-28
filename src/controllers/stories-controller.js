@@ -13,10 +13,10 @@ const getOneById = async(storyId) => {
 };
 
 const getStories = async(skip, take) => {
-  const result = await manager.getStories(skip, take);
+  const result = await manager.getAll(skip, take);
   if (!result) return new WarningResult(Warnings.NO_STORIES_WARNING);
 
-  return new ApiError(result);
+  return new ApiResult(result);
 };
 
 const create = async(userId, story) => {

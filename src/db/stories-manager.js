@@ -6,7 +6,48 @@ import config from '../../config';
 const storyCollection = () => dbState.defaultDbInstance.collection(Collections.Stories);
 
 const findOne = async(storyId) => {
-  return await storyCollection().findOne({ _id: ObjectID(storyId) });
+  const result = await storyCollection().aggregate([
+    { $match: { _id: ObjectID(storyId) } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user_id',
+        foreignField: '_id',
+        as: 'user',
+      },
+    },
+    {
+      $lookup: {
+        from: 'comments',
+        localField: '_id',
+        foreignField: 'story_id',
+        as: 'comments_temp',
+      },
+    },
+    { $unwind: '$user' },
+    {
+      $project: {
+        'user._id': 1,
+        'user.username': 1,
+        title: 1,
+        text: 1,
+        url: 1,
+        score: 1,
+        created_on: 1,
+        comments: {
+          $map: {
+            input: '$comments_temp',
+            as: 'comment',
+            in: '$$comment._id',
+          },
+        },
+      },
+    },
+  ]).toArray();
+
+  if (!result || result.length === 0) return null;
+
+  return result[0];
 };
 
 const getAll = async(skip, take) => {
@@ -24,7 +65,7 @@ const getAll = async(skip, take) => {
         from: 'comments',
         localField: '_id',
         foreignField: 'story_id',
-        as: 'comments_partial',
+        as: 'comments',
       },
     },
     { $unwind: '$user' },
@@ -38,13 +79,7 @@ const getAll = async(skip, take) => {
         score: 1,
         created_on: 1,
         timestamp_score: { $add: [ '$created_on', { $multiply: ['$score', config.defaultValues.scoreIncrementMill ] } ] },
-        comments: {
-          $map: {
-            input: '$comments_partial',
-            as: 'comment',
-            in: '$$comment._id',
-          },
-        },
+        comment_count: { $size: '$comments' },
       },
     },
     { $sort: { timestamp_score: -1 } },
