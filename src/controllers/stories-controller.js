@@ -4,6 +4,7 @@ import { ApiResult, WarningResult, InsertResult } from '../results/api-data';
 import { ApiError, NotFoundError } from '../results/api-errors';
 import { Errors, Warnings, Infos } from '../constants/index';
 import * as manager from '../db/stories-manager';
+import * as commentManager from '../db/comments-manager';
 
 const getOneById = async(storyId) => {
   const story = await manager.findOne(storyId);
@@ -17,6 +18,13 @@ const getStories = async(skip, take) => {
   if (!result) return new WarningResult(Warnings.NO_STORIES_WARNING);
 
   return new ApiResult(result);
+};
+
+const getComments = async(storyId) => {
+  const comments = await commentManager.getAllByStory(storyId);
+  if (!comments) return new WarningResult(Warnings.NO_COMMENTS_WARNING, []);
+
+  return new ApiResult(comments);
 };
 
 const create = async(userId, story) => {
@@ -36,8 +44,20 @@ const create = async(userId, story) => {
   }
 };
 
+const createComment = async(userId, storyId, text) => {
+  const story = await manager.findOne(storyId);
+  if (!story) throw new NotFoundError(Errors.STORY_NOT_FOUND);
+
+  const ncomment = await commentManager.create(userId, storyId, text);
+  if (!ncomment.result.ok || ncomment.insertedCount === 0) throw new ApiError(Errors.CREATE_COMMENT_ERROR);
+
+  return new InsertResult(Infos.CREATE_COMMENT_INFO, ncomment.insertedId);
+};
+
 export {
   getOneById,
   getStories,
+  getComments,
   create,
+  createComment,
 };

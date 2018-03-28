@@ -26,8 +26,8 @@ class OkResult extends ApiResult {
 }
 
 class WarningResult extends ApiResult {
-  constructor(message) {
-    super({});
+  constructor(message, data) {
+    super(data || {});
     this.result.success = false;
     this.result.warning = {
       message: message,

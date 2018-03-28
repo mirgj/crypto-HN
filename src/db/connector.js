@@ -86,9 +86,9 @@ const initDefaultDb = async(dbName) => {
             bsonType: 'string',
             description: 'url of the story',
           },
-          score: {
+          karma: {
             bsonType: 'int',
-            description: 'story score',
+            description: 'story karma',
           },
           created_on: {
             bsonType: 'date',
@@ -121,6 +121,10 @@ const initDefaultDb = async(dbName) => {
           karma: {
             bsonType: 'int',
             description: 'karma gained',
+          },
+          deleted: {
+            bsonType: 'bool',
+            description: 'flag for deleted comments',
           },
           created_on: {
             bsonType: 'date',

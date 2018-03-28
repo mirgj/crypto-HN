@@ -20,6 +20,12 @@ router
   ))
   .get('/:storyId', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.getOneById(req.params.storyId))
+  ))
+  .get('/:storyId/comments', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.getComments(req.params.storyId))
+  ))
+  .post('/:storyId/comments', jwtAuthRequired, validation(apiValidators.createComment), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.createComment(req.user._id, req.params.storyId, req.body.text))
   ));
 
 export default router;

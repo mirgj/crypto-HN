@@ -32,7 +32,7 @@ const findOne = async(storyId) => {
         title: 1,
         text: 1,
         url: 1,
-        score: 1,
+        karma: 1,
         created_on: 1,
         comments: {
           $map: {
@@ -76,13 +76,13 @@ const getAll = async(skip, take) => {
         title: 1,
         text: 1,
         url: 1,
-        score: 1,
+        karma: 1,
         created_on: 1,
-        timestamp_score: { $add: [ '$created_on', { $multiply: ['$score', config.defaultValues.scoreIncrementMill ] } ] },
+        timestamp_karma: { $add: [ '$created_on', { $multiply: ['$karma', config.defaultValues.karmaIncrementMill ] } ] },
         comment_count: { $size: '$comments' },
       },
     },
-    { $sort: { timestamp_score: -1 } },
+    { $sort: { timestamp_karma: -1 } },
     {
       $facet: {
         page_info: [ { $count: 'total_count' } ],
@@ -100,7 +100,7 @@ const getAll = async(skip, take) => {
 
   if (!result || result.length === 0) return null;
 
-  return result[0];
+  return result;
 };
 
 const create = async(userId, title, text, url) => {
@@ -109,13 +109,13 @@ const create = async(userId, title, text, url) => {
     title: title,
     text: text,
     url: url,
-    score: 1,
+    karma: 1,
     created_on: new Date(),
   });
 };
 
 export {
   findOne,
-  create,
   getAll,
+  create,
 };

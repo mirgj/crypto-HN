@@ -50,4 +50,12 @@ export default {
       password: passwordMatch,
     },
   },
+  createComment: {
+    params: {
+      storyId: idMatch,
+    },
+    body: {
+      text: textMatch,
+    },
+  },
 };

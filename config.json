@@ -17,14 +17,15 @@
     "staticMaxAge": 31556952000
   },
   "defaultValues": {
-    "take": 30,
-    "minTake": 1,
-    "minUserLength": 3,
-    "maxUserLength": 30,
+    "take": 32,
+    "minTake": 2,
+    "minUserLength": 4,
+    "maxUserLength": 16,
     "minPassLength": 5,
     "maxTextLength": 400,
-    "maxTitleLength": 400,
-    "scoreIncrementMill": 180000
+    "maxTitleLength": 100,
+    "maxCommentLength": 4096,
+    "karmaIncrementMill": 180000
   },
   "logs": {
     "errorFilename": "./logs/error.log",

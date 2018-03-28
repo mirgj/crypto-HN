@@ -14,16 +14,19 @@ export const Errors = {
   UPDATE_OTHER_USER_ERROR: 'You can\'t update another user\'s info',
   AUTH_TOKEN_REQUIRED_ERROR: 'Authenticarion token not provided',
   AUTH_TOKEN_ERROR: 'Failed to authenticate the token',
+  CREATE_COMMENT_ERROR: 'Error creating the comment',
 };
 
 export const Warnings = {
   NO_STORIES_WARNING: 'No stories found',
+  NO_COMMENTS_WARNING: 'No comments found for this story',
 };
 
 export const Infos = {
   CREATE_STORY_INFO: 'Story has been created',
   CREATE_USER_INFO: 'User has been created',
   UPDATE_USER_INFO: 'User has been updated',
+  CREATE_COMMENT_INFO: 'Comment has been created',
 };
 
 export const ErrorsCode = {
