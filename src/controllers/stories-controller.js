@@ -54,10 +54,20 @@ const createComment = async(userId, storyId, text) => {
   return new InsertResult(Infos.CREATE_COMMENT_INFO, ncomment.insertedId);
 };
 
+const vote = async(userId, storyId, direction) => {
+
+};
+
+const unvote = async(userId, storyId) => {
+
+};
+
 export {
   getOneById,
   getStories,
   getComments,
   create,
   createComment,
+  vote,
+  unvote,
 };
