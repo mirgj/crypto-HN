@@ -43,11 +43,12 @@ const findOne = async(storyId) => {
         },
       },
     },
-  ]).toArray();
+  ]);
+  const arr = result.toArray();
 
-  if (!result || result.length === 0) return null;
+  if (!arr || arr.length === 0) return null;
 
-  return result[0];
+  return arr[0];
 };
 
 const getAll = async(skip, take) => {

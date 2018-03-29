@@ -8,6 +8,7 @@ import * as storiesManager from '../../src/db/stories-manager';
 
 const dbMock = {
   findOne: (find, project) => { },
+  aggregate: (pipeline) => { },
   insertOne: (data) => { },
   updateOne: (find, set) => { },
 };
@@ -18,6 +19,13 @@ const dbStateMock = {
     },
   },
 };
+const aggregateReturnMock = (result) => {
+  return {
+    toArray: () => {
+      return result;
+    },
+  };
+};
 
 describe('## Stories manager unit tests', () => {
 
@@ -27,34 +35,52 @@ describe('## Stories manager unit tests', () => {
     __Rewire__('dbState', dbStateMock);
   });
 
+  let collectionSpy;
+
+  beforeEach(() => {
+    collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+  });
+
+  afterEach(() => {
+    collectionSpy.restore();
+  });
+
   describe('# findOne', () => {
+    let aggregateSpy;
+
+    beforeEach(() => {
+      aggregateSpy = sinon.stub(dbMock, 'aggregate');
+    });
+
+    afterEach(() => {
+      aggregateSpy.restore();
+    });
 
     it('it should call findOne correctly', async() => {
       const storyIdTest = '507f1f77bcf86cd799439011';
       const returnStory = { url: 'http://google.it' };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
-      const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.resolve(returnStory));
+      aggregateSpy.returns(Promise.resolve(aggregateReturnMock([returnStory])));
 
       const result = await storiesManager.findOne(storyIdTest);
 
-      collectionSpy.restore();
-      findOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
-      sinon.assert.calledOnce(findOneSpy);
-      sinon.assert.calledWithExactly(findOneSpy, { _id: ObjectID(storyIdTest) });
+      sinon.assert.calledOnce(aggregateSpy);
+      sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+      const args = aggregateSpy.getCall(0).args[0];
 
-      expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
+      expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
       expect(result).to.be.not.null;
       expect(result).to.be.an('object');
       expect(result).to.be.equal(returnStory);
+      expect(args[0]).to.be.an('object');
+      expect(args[0]).to.deep.equal({ $match: { _id: ObjectID(storyIdTest) } });
     });
 
     it('it should fail to call findOne with a wrong ObjectID', async() => {
       const storyIdTest = 'wrong ObjectID';
       const returnStory = { url: 'http://google.it' };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
-      const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.resolve(returnStory));
+      aggregateSpy.returns(Promise.resolve(aggregateReturnMock([returnStory])));
 
       try {
         await storiesManager.findOne(storyIdTest);
@@ -65,21 +91,18 @@ describe('## Stories manager unit tests', () => {
         expect(err.message).to.be.a('string');
         expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
       } finally {
-        collectionSpy.restore();
-        findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
-        sinon.assert.notCalled(findOneSpy);
+        sinon.assert.notCalled(aggregateSpy);
 
-        expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
+        expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
       }
     });
 
     it('it should fail to call findOne', async() => {
       const storyIdTest = '507f1f77bcf86cd799439011';
       const error = new Error('error');
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
-      const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.reject(error));
+      aggregateSpy.returns(Promise.reject(error));
 
       try {
         await storiesManager.findOne(storyIdTest);
@@ -88,14 +111,15 @@ describe('## Stories manager unit tests', () => {
         expect(err).to.not.be.null;
         expect(err).to.be.equal(error);
       } finally {
-        collectionSpy.restore();
-        findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
-        sinon.assert.calledOnce(findOneSpy);
-        sinon.assert.calledWithExactly(findOneSpy, { _id: ObjectID(storyIdTest) });
+        sinon.assert.calledOnce(aggregateSpy);
+        sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+        const args = aggregateSpy.getCall(0).args[0];
 
-        expect(collectionSpy.calledBefore(findOneSpy)).to.be.true;
+        expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
+        expect(args[0]).to.be.an('object');
+        expect(args[0]).to.deep.equal({ $match: { _id: ObjectID(storyIdTest) } });
       }
     });
 
@@ -109,12 +133,11 @@ describe('## Stories manager unit tests', () => {
       const text = 'content text';
       const url = 'http://google.com';
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.resolve(returnValue));
 
       const result = await storiesManager.create(userId, title, text, url);
 
-      collectionSpy.restore();
+      // collectionSpy.restore();
       insertOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
@@ -124,7 +147,7 @@ describe('## Stories manager unit tests', () => {
         title: title,
         text: text,
         url: url,
-        score: 1,
+        karma: 1,
         created_on: sinon.match.date,
       });
 
@@ -140,7 +163,6 @@ describe('## Stories manager unit tests', () => {
       const text = 'content text';
       const url = 'http://google.com';
       const returnValue = new Error('err');
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.reject(returnValue));
 
       try {
@@ -150,7 +172,6 @@ describe('## Stories manager unit tests', () => {
         expect(err).to.not.be.null;
         expect(err).to.be.equal(returnValue);
       } finally {
-        collectionSpy.restore();
         insertOneSpy.restore();
 
         sinon.assert.calledOnce(collectionSpy);
@@ -161,7 +182,7 @@ describe('## Stories manager unit tests', () => {
           title: title,
           text: text,
           url: url,
-          score: 1,
+          karma: 1,
           created_on: sinon.match.date,
         });
 
