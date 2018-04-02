@@ -27,7 +27,7 @@ const app = express();
     app.locals.moment = moment;
     app.set('view engine', 'pug');
     app.set('views', path.join(__dirname, '/views'));
-    app.use('/static', express.static(path.join(__dirname, '../public'), { maxAge: config.session.staticMaxAge }));
+    app.use('/static', express.static(path.join(__dirname, '/public'), { maxAge: config.session.staticMaxAge }));
     app.use(morgan('combined', { stream: expressLogger.stream }));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
