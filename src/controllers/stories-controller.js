@@ -61,9 +61,9 @@ const vote = async(userId, storyId, direction) => {
 
   if (vote) return new WarningResult(Warnings.ALREADY_VOTED_WARNING);
 
-  const result = await manager.incrementVote(storyId, voteIncrement);
+  const story = await manager.incrementVote(storyId, voteIncrement);
 
-  if (!result.acknowledged || result.modifiedCount === 0) throw new ApiError(Errors.VOTE_ERROR);
+  if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
 
   await voteManager.create(userId, storyId, direction);
   return new OkResult(Infos.CREATE_VOTE_OK);
@@ -71,12 +71,12 @@ const vote = async(userId, storyId, direction) => {
 
 const unvote = async(userId, storyId) => {
   const vote = await voteManager.findOneByUserIdObjectId(userId, storyId);
-  if (!vote) return new NotFoundError(Errors.NOT_VOTE_FOUND_ERROR);
+  if (!vote) throw new NotFoundError(Errors.NOT_VOTE_FOUND_ERROR);
 
   const voteIncrementRestore = vote.vote_direction === Commons.Up ? -1 : 1;
-  const result = await manager.incrementVote(storyId, voteIncrementRestore);
-
-  if (!result.acknowledged || result.modifiedCount === 0) throw new ApiError(Errors.UNVOTE_ERROR);
+  const story = await manager.incrementVote(storyId, voteIncrementRestore);
+  
+  if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
 
   await voteManager.deleteOne(userId, storyId);
   return new OkResult(Infos.CREATE_VOTE_OK);
