@@ -1,0 +1,10 @@
+mixin loginRegisterForm(action)
+  form(action='/' + action, method='post')
+    div.form-group
+      label.form-label(for= action + '-username') Username
+      input.form-input(type='text', id= action + '-username', placeholder='Type your username')
+    div.form-group
+      label.form-label(for= action + '-password') Password
+      input.form-input(type='password', id= action + '-password', placeholder='Type your password')
+    div.form-group
+      button.btn(type='submit') #{action}

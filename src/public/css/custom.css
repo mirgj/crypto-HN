@@ -1,0 +1,6 @@
+.container { width: 85%; }
+.container .logo img { vertical-align: middle; }
+.container .navbar,
+.container .spacer {
+  margin-top: 0.5rem;
+}

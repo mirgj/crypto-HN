@@ -1,0 +1,13 @@
+extends ./common/layout.pug
+include ./common/mixins.pug
+
+block content
+  div.columns.spacer
+    div.column.col-sm-6
+      h4 Login
+      +loginRegisterForm('login')
+    div.divider-vert.hide-sm(data-content="OR")
+    div.divider.text-center.show-sm(data-content="OR")
+    div.column.col-sm-6
+      h4 Register
+      +loginRegisterForm('register')

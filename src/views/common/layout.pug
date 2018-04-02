@@ -4,10 +4,24 @@ html(lang='en')
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet', href='/static/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/static/css/spectre.min.css')
+    link(rel='stylesheet', href='/static/css/spectre-icons.min.css')
+    link(rel='stylesheet', href='/static/css/custom.css')
     link(rel='icon', type='image/png', href='/static/images/favicon.png')
 
     title Crypto HN
   body
     div.container
+      header.navbar.bg-secondary
+        section.navbar-section
+          a(class='btn btn-link' href='#') new
+          a(class='btn btn-link' href='#') comments
+          a(class='btn btn-link' href='#') show
+          a(class='btn btn-link' href='#') ask
+        section.navbar-center
+          a(href='/' class='logo')
+            img(src='/static/images/favicon.png')
+        section.navbar-section
+          a(class='btn btn-link' href='#') Submit
+          a(class='btn btn-link' href='/login') Login
       block content
