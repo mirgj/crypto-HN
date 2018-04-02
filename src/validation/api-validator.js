@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import config from '../../config';
+import { Commons } from '../constants/index';
 
 const idMatch = Joi.string().regex(/^[0-9a-fA-F]{24}$/).required();
 const usernameMatch = Joi.string().alphanum().min(config.defaultValues.minUserLength).max(config.defaultValues.maxUserLength).required();
@@ -10,7 +11,7 @@ const emailMatch = Joi.string().email().required();
 const urlMatch = Joi.string().uri().trim().required().allow('');
 const skipMatch = Joi.number().default(0).min(0);
 const takeMatch = Joi.number().default(config.defaultValues.take).min(config.defaultValues.minTake);
-const voteDirectionMatch = Joi.any().valid(['up', 'down']);
+const voteDirectionMatch = Joi.any().valid([Commons.Up, Commons.Down]);
 
 export default {
   getStory: {

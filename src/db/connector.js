@@ -144,6 +144,35 @@ const initDefaultDb = async(dbName) => {
   });
   await dbo.createIndex(Collections.Comments, { user_id: 1});
 
+  await dbo.createCollection(Collections.VoteLog, {
+    validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        required: [ 'user_id', 'object_id', 'vote_direction' ],
+        properties: {
+          user_id: {
+            bsonType: 'objectId',
+            description: 'user_id must be a ObjectId and is required',
+          },
+          object_id: {
+            bsonType: 'objectId',
+            description: 'object_id must be a ObjectId and is required',
+          },
+          vote_direction: {
+            bsonType: 'string',
+            description: 'direction of the vote',
+          },
+          created_on: {
+            bsonType: 'date',
+            description: 'Creation date',
+          },
+        },
+      },
+    },
+  });
+  await dbo.createIndex(Collections.VoteLog, { user_id: 1});
+  await dbo.createIndex(Collections.VoteLog, { object_id: 1});
+
   logger.log('verbose', 'database initialization done!');
 };
 

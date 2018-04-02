@@ -115,8 +115,16 @@ const create = async(userId, title, text, url) => {
   });
 };
 
+const incrementVote = async(storyId, voteDiff) => {
+  return await storyCollection().updateOne(
+    { _id: ObjectID(storyId) },
+    { $inc: { karma: voteDiff } },
+  );
+};
+
 export {
   findOne,
   getAll,
   create,
+  incrementVote,
 };
