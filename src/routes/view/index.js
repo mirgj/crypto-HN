@@ -1,33 +1,35 @@
 import { Router } from 'express';
-import { passport } from '../../helpers/authenticator';
-import { isAuthenticatedMiddleware } from '../../helpers/middlewares';
+import { logger } from '../../helpers/logger';
+import { NotFoundError } from '../../results/api-errors';
+import validation from 'express-validation';
+import usersRoutes from './users';
 
 const router = Router();
-const auth = passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true });
 
+router.use(usersRoutes);
 router
   .get('/', (req, res, next) => {
     res.render('index', {
       title: 'Top News',
       user: req.user,
     });
-  })
-  .get('/login', (req, res, next) => {
-    res.render('login', {
-      errors: req.flash('error'),
-      info: req.flash('signupInfo'),
-    });
-  })
-  .get('/logout', (req, res) => {
-    req.logout();
-    res.redirect('/');
-  })
-  .post('/login', auth)
-  .post('/register', (req, res, next) =>
-    res.render('login')
-  )
-  .get('/profile', isAuthenticatedMiddleware('/login'), (req, res, next) =>
-    res.render('profile')
-  );
+  });
+
+router.use((err, req, res, next) => {
+  logger.error(`UI Error: ${err}`);
+
+  if (err instanceof validation.ValidationError) {
+    const messages = err.errors.map(error => error.messages.join('. '));
+    req.flash('error', messages);
+    const ref = req.header('Referer');
+
+    return res.redirect(ref || req.path);
+  }
+  if (err instanceof NotFoundError) {
+    return res.redirect('/404');
+  }
+
+  return res.redirect('/500');
+});
 
 export default router;
