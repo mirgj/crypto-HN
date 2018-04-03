@@ -14,8 +14,8 @@ router
   })
   .get('/login', (req, res, next) => {
     res.render('login', {
-      signInUpError: req.flash('error'),
-      signupInfo: req.flash('signupInfo'),
+      errors: req.flash('error'),
+      info: req.flash('signupInfo'),
     });
   })
   .get('/logout', (req, res) => {

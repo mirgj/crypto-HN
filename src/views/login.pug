@@ -2,8 +2,8 @@ extends ./common/layout.pug
 include ./common/mixins.pug
 
 block content
-  +errorBlock(signInUpError)
-  +successBlock(signupInfo)
+  +errorBlock(errors)
+  +successBlock(info)
   div.columns.spacer
     div.column.col-sm-6.col-xs-12
       h4 Login
