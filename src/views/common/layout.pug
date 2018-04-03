@@ -9,19 +9,23 @@ html(lang='en')
     link(rel='stylesheet', href='/static/css/custom.css')
     link(rel='icon', type='image/png', href='/static/images/favicon.png')
 
-    title Crypto HN
+    title #{title} | Crypto News
   body
     div.container
       header.navbar.bg-secondary
         section.navbar-section
-          a(class='btn btn-link' href='#') new
-          a(class='btn btn-link' href='#') comments
-          a(class='btn btn-link' href='#') show
-          a(class='btn btn-link' href='#') ask
+          a(class='btn btn-link' href='/') new
+          a(class='btn btn-link' href='/comments') comments
+          a(class='btn btn-link' href='/show') show
+          a(class='btn btn-link' href='/ask') ask
         section.navbar-center
           a(href='/' class='logo')
             img(src='/static/images/favicon.png')
         section.navbar-section
-          a(class='btn btn-link' href='#') Submit
-          a(class='btn btn-link' href='/login') Login
+          a(class='btn btn-link' href='/submit') Submit
+          if !user
+            a(class='btn btn-link' href='/login') Login
+          else
+            a(class='btn btn-link' href='/profile') #{user.username} (#{user.karma})
+            a(class='btn btn-link' href='/logout') Logout
       block content

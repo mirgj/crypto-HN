@@ -10,6 +10,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import passport from 'passport';
 import moment from 'moment';
+import flash from 'connect-flash';
 import apiRoutes from './routes/api/index';
 import viewRoutes from './routes/view/index';
 import config from '../config';
@@ -44,6 +45,7 @@ const app = express();
         httpOnly: true,
       },
     }));
+    app.use(flash());
     app.use(passport.initialize());
     app.use(passport.session());
 

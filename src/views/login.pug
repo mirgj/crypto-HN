@@ -2,12 +2,14 @@ extends ./common/layout.pug
 include ./common/mixins.pug
 
 block content
+  +errorBlock(signInUpError)
+  +successBlock(signupInfo)
   div.columns.spacer
-    div.column.col-sm-6
+    div.column.col-sm-6.col-xs-12
       h4 Login
       +loginRegisterForm('login')
     div.divider-vert.hide-sm(data-content="OR")
-    div.divider.text-center.show-sm(data-content="OR")
-    div.column.col-sm-6
+    div.divider.text-center.show-sm.col-sm-12(data-content="OR")
+    div.column.col-sm-6.col-xs-12
       h4 Register
       +loginRegisterForm('register')

@@ -75,7 +75,7 @@ const unvote = async(userId, storyId) => {
 
   const voteIncrementRestore = vote.vote_direction === Commons.Up ? -1 : 1;
   const story = await manager.incrementVote(storyId, voteIncrementRestore);
-  
+
   if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
 
   await voteManager.deleteOne(userId, storyId);
