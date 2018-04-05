@@ -1,0 +1,47 @@
+extends ./common/layout.pug
+include ./common/mixins.pug
+
+block content
+  +errorBlock(errors)
+  +successBlock(info)
+  div.columns.spacer
+    if profileUser
+      div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+        p.no-margin
+          strong Username:
+      div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+        p.no-margin #{profileUser.username}
+      div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+        p.no-margin
+          strong Created:
+      div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+        p.no-margin #{moment(profileUser.created_on).fromNow()}
+      div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+        p.no-margin
+          strong karma:
+      div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+        p.no-margin #{profileUser.karma}
+      if !isMe
+        div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+          p.no-margin
+            strong About:
+        div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+          p.no-margin #{profileUser.about}
+  if isMe
+    div.columns
+      div.column.col-12
+        form.form-horizontal(action='/user/' + user.username, method='post')
+          div.form-group
+            div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+              label.form-label(for='email') Email
+            div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+              input.form-input(type='email', name='email', id='email', placeholder='Type your email', value= user.email)
+          div.form-group
+            div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+              label.form-label(for='about') About
+            div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+              textarea.form-input(name='about', id='about', placeholder='Write something about you')=user.about
+          div.form-group
+            div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+            div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+              button.btn(type='submit') Update

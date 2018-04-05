@@ -1,4 +1,4 @@
-.container { width: 85%; }
 .container .logo img { vertical-align: middle; }
 .container .navbar, .container .spacer { margin-top: 0.5rem; }
 .toast p { margin: 0; }
+p.no-margin { margin: 0; }

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { passport } from '../../helpers/authenticator';
-import { isAuthenticatedMiddleware } from '../../helpers/middlewares';
-import { ApiError } from '../../results/api-errors';
+import { isAuthenticatedMiddleware, notAuthenticatedMiddleware, asyncMiddleware } from '../../helpers/middlewares';
+import { ApiError, NotFoundError } from '../../results/api-errors';
 import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
 import * as usersController from '../../controllers/users-controller';
@@ -10,7 +10,7 @@ const router = Router();
 const auth = passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true });
 
 router
-  .get('/login', (req, res, next) => {
+  .get('/login', notAuthenticatedMiddleware('/'), (req, res, next) => {
     res.render('login', {
       title: 'Login or Register',
       errors: req.flash('error'),
@@ -22,7 +22,7 @@ router
     res.redirect('/');
   })
   .post('/login', validation(viewValidators.createUserOrLogin), auth)
-  .post('/register', validation(viewValidators.createUserOrLogin), async(req, res, next) => {
+  .post('/register', validation(viewValidators.createUserOrLogin), asyncMiddleware(async(req, res, next) => {
     try {
       var user = await usersController.create(req.body.username, req.body.password);
 
@@ -39,9 +39,50 @@ router
 
       return next();
     }
-  })
-  .get('/profile', isAuthenticatedMiddleware('/login'), (req, res, next) =>
-    res.render('profile')
-  );
+  }))
+  .get('/user/:username', asyncMiddleware(async(req, res, next) => {
+    let user = null;
+
+    try {
+      const res = await usersController.getLogin(req.params.username);
+      user = !res.error && res.result.success ? res.result.data : null;
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        req.flash('error', [err.result.description]);
+      }
+    }
+
+    res.render('profile', {
+      title: 'Your profile',
+      user: req.user,
+      profileUser: user,
+      isMe: user && req.user && req.user.username === user.username,
+      errors: req.flash('error'),
+      info: req.flash('info'),
+    });
+  }))
+  .post('/user/:username',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.updateUser),
+    asyncMiddleware(async(req, res, next) => {
+      if (req.user.username !== req.params.username) {
+        req.flash('error', ['Operation not allowed']);
+
+        return res.redirect(req.url);
+      }
+
+      try {
+        const res = await usersController.update(req.user._id, req.body.email, req.body.about);
+        const message = !res.error && res.result.success ? res.result.data.description : null;
+
+        req.flash('info', message);
+      } catch (err) {
+        if (err instanceof NotFoundError || err instanceof ApiError) {
+          req.flash('error', [err.result.description]);
+        }
+      }
+
+      res.redirect(req.url);
+    }));
 
 export default router;

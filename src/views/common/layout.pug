@@ -26,6 +26,6 @@ html(lang='en')
           if !user
             a(class='btn btn-link' href='/login') Login
           else
-            a(class='btn btn-link' href='/profile') #{user.username} (#{user.karma})
+            a(class='btn btn-link' href='/user/' + user.username) #{user.username} (#{user.karma})
             a(class='btn btn-link' href='/logout') Logout
       block content

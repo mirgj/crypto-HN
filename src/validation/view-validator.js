@@ -7,4 +7,13 @@ export default {
       password: r.passwordMatch,
     },
   },
+  updateUser: {
+    body: {
+      about: r.textMatch,
+      email: r.emailMatch,
+    },
+    username: {
+      userId: r.usernameMatch,
+    },
+  },
 };
