@@ -4,4 +4,8 @@ include ../common/mixins.pug
 block content
   div.columns.spacer
     div.column.col-12
-      +notificationBlock(['404: Seems like you lost yourself'], 'warning')
+      div.empty
+        div.empty-icon
+          i.icon.icon-location.icon-4x
+        p.empty-title 
+          h5 Ouch... seems like you lost yourself
