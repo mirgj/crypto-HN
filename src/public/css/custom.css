@@ -1,4 +1,6 @@
 .container .logo img { vertical-align: middle; }
 .container .navbar, .container .spacer { margin-top: 0.5rem; }
+.container .navbar a { font-size: .8rem; line-height: 1rem; padding: .35rem .4rem; border: .05rem solid transparent;  }
+.container .navbar a.active { color: #9ea6b7; text-decoration: none; }
 .toast p { margin: 0; }
 p.no-margin { margin: 0; }

@@ -13,6 +13,7 @@ router
   .get('/login', notAuthenticatedMiddleware('/'), (req, res, next) => {
     res.render('login', {
       title: 'Login or Register',
+      currentElement: 'login',
       errors: req.flash('error'),
       info: req.flash('info'),
     });
@@ -51,12 +52,14 @@ router
         req.flash('error', [err.result.description]);
       }
     }
+    const isMe = user && req.user && req.user.username === user.username;
 
     res.render('profile', {
       title: 'Your profile',
       user: req.user,
       profileUser: user,
-      isMe: user && req.user && req.user.username === user.username,
+      isMe: isMe,
+      currentElement: isMe ? 'profile' : '',
       errors: req.flash('error'),
       info: req.flash('info'),
     });

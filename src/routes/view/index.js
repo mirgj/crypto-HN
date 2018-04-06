@@ -13,6 +13,22 @@ router
       title: 'Top News',
       user: req.user,
     });
+  })
+  .get('/404', (req, res) =>
+    res.render('errors/404', {
+      user: req.user,
+      title: 'Page not found'
+    }) 
+  )
+  .get('/500', (req, res) =>
+    res.render('errors/500', {
+      user: req.user,
+      title: 'Internal error'
+    }) 
+  )
+  .get('/*', (req, res) => {
+    if(!res.headersSent)
+      res.redirect('/404')
   });
 
 router.use((err, req, res, next) => {

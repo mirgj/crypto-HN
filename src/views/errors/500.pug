@@ -1,0 +1,7 @@
+extends ../common/layout.pug
+include ../common/mixins.pug
+
+block content
+  div.columns.spacer
+    div.column.col-12
+      +notificationBlock(['Our code-monkey might have made some mistakes'], 'error')

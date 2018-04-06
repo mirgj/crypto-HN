@@ -14,18 +14,23 @@ html(lang='en')
     div.container
       header.navbar.bg-secondary
         section.navbar-section
-          a(class='btn btn-link' href='/') new
-          a(class='btn btn-link' href='/comments') comments
-          a(class='btn btn-link' href='/show') show
-          a(class='btn btn-link' href='/ask') ask
+          a(class=currentElement == "new" ? "active" : "", href='/new') new
+          span.text-primary.text-primary='|'
+          a(class=currentElement == "comments" ? "active" : "", href='/comments') comments
+          span.text-primary='|'
+          a(class=currentElement == "show" ? "active" : "", href='/show') show
+          span.text-primary='|'
+          a(class=currentElement == "ask" ? "active" : "", href='/ask') ask
         section.navbar-center
           a(href='/' class='logo')
             img(src='/static/images/favicon.png')
         section.navbar-section
-          a(class='btn btn-link' href='/submit') Submit
+          a(class=currentElement == "submit" ? "active" : "", href='/submit') Submit
+          span.text-primary='|'
           if !user
-            a(class='btn btn-link' href='/login') Login
+            a(class=currentElement == "login" ? "active" : "", href='/login') Login
           else
-            a(class='btn btn-link' href='/user/' + user.username) #{user.username} (#{user.karma})
-            a(class='btn btn-link' href='/logout') Logout
+            a(class=currentElement == "profile" ? "active" : "", href='/user/' + user.username) #{user.username} (#{user.karma})
+            span.text-primary='|'
+            a(href='/logout') Logout
       block content
