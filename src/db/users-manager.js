@@ -24,9 +24,9 @@ const create = async(username, hashedPassword) => {
 const update = async(userId, email, about) => {
   var obj = {
     updated_on: new Date(),
+    email: email,
+    about: about,
   };
-  if (email) obj.email = email;
-  if (about) obj.about = about;
 
   return await userCollection().updateOne(
     { _id: ObjectID(userId) },

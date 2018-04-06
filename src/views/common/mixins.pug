@@ -9,13 +9,8 @@ mixin loginRegisterForm(action)
     div.form-group
       button.btn(type='submit') #{action}
 
-mixin errorBlock(errors)
-  if errors && errors.length > 0
-    div.toast.toast-error
-      each err in errors
-        p=err
-
-mixin successBlock(success)
-  if success && success.length > 0
-    div.toast.toast-success
-      p=success
+mixin notificationBlock(elements, type)
+  if elements && elements.length > 0
+    div(class='toast toast-' + type)
+      each val in elements
+        p=val

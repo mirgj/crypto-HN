@@ -10,7 +10,7 @@ export default {
   updateUser: {
     body: {
       about: r.textMatch,
-      email: r.emailMatch,
+      email: r.emailMatch.allow(''),
     },
     username: {
       userId: r.usernameMatch,

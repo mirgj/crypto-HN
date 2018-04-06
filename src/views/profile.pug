@@ -2,8 +2,8 @@ extends ./common/layout.pug
 include ./common/mixins.pug
 
 block content
-  +errorBlock(errors)
-  +successBlock(info)
+  +notificationBlock(errors, 'error')
+  +notificationBlock(info, 'success')
   div.columns.spacer
     if profileUser
       div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
