@@ -12,8 +12,8 @@ export default {
       about: r.textMatch,
       email: r.emailMatch.allow(''),
     },
-    username: {
-      userId: r.usernameMatch,
+    params: {
+      username: r.usernameMatch,
     },
   },
 };
