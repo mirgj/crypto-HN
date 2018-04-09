@@ -45,8 +45,8 @@ router
     let user = null;
 
     try {
-      const res = await usersController.getLogin(req.params.username);
-      user = !res.error && res.result.success ? res.result.data : null;
+      const cres = await usersController.getLogin(req.params.username);
+      user = !cres.error && cres.result.success ? cres.result.data : null;
     } catch (err) {
       if (err instanceof NotFoundError) {
         req.flash('error', [err.result.description]);
@@ -75,8 +75,8 @@ router
       }
 
       try {
-        const res = await usersController.update(req.user._id, req.body.email, req.body.about);
-        const message = !res.error && res.result.success ? res.result.data.description : null;
+        const cres = await usersController.update(req.user._id, req.body.email, req.body.about);
+        const message = !cres.error && cres.result.success ? cres.result.data.description : null;
 
         req.flash('info', message);
       } catch (err) {

@@ -1,0 +1,28 @@
+extends ./common/layout.pug
+include ./common/mixins.pug
+
+block content
+  +notificationBlock(errors, 'error')
+  div.columns
+    div.column.col-12
+      form.form-horizontal(action='/submit/', method='post')
+        div.form-group
+          div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+            label.form-label(for='title') Title
+          div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+            input.form-input(type='text', name='title', id='title', placeholder='Type the message title')
+        div.form-group
+          div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+            label.form-label(for='url') URL
+          div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+            input.form-input(type='url', name='url', id='url', placeholder='Type the URL (leave it blank to open a discussion with a text)')
+        div.divider.text-center.col-12(data-content="OR")
+        div.form-group
+          div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+            label.form-label(for='text') Text
+          div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+            textarea.form-input(name='text', id='text', placeholder='This text will appear at the top of the thread')
+        div.form-group
+          div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+          div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+              button.btn(type='submit') Submit

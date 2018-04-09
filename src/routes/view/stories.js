@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { asyncMiddleware } from '../../helpers/middlewares';
+import { asyncMiddleware, isAuthenticatedMiddleware } from '../../helpers/middlewares';
+import { Errors } from '../../constants/index';
 import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
@@ -26,6 +27,33 @@ router
       next_page: currentPage + 1,
       page_size: config.defaultValues.take,
     });
-  }));
+  }))
+  .get('/submit', isAuthenticatedMiddleware('/login'), (req, res, next) => {
+    res.render('submit', {
+      title: 'Submit a story',
+      user: req.user,
+      currentElement: 'submit',
+      errors: req.flash('error'),
+    });
+  })
+  .post('/submit',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.createStory),
+    asyncMiddleware(async(req, res, next) => {
+      if (!req.body.text && !req.body.url) {
+        req.flash('error', ['Either text or URL are required']);
+        return res.redirect('/submit');
+      }
+
+      const cres = await storiesController.create(req.user._id, req.body);
+      if (cres.error || (cres.result && !cres.result.success)) {
+        req.flash('error', [Errors.CREATE_STORY_ERROR]);
+
+        return res.redirect('/submit');
+      }
+
+      res.redirect('/new');
+    }))
+;
 
 export default router;
