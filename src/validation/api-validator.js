@@ -1,58 +1,71 @@
-import * as r from './rules';
+import Joi from 'joi';
+import config from '../../config';
+import { Commons } from '../constants/index';
+
+const idMatch = Joi.string().regex(/^[0-9a-fA-F]{24}$/).required();
+const usernameMatch = Joi.string().alphanum().min(config.defaultValues.minUserLength).max(config.defaultValues.maxUserLength).required();
+const passwordMatch = Joi.string().required().min(config.defaultValues.minPassLength);
+const textMatch = Joi.string().required().allow('').max(config.defaultValues.maxTextLength);
+const titleMatch = Joi.string().required().max(config.defaultValues.maxTitleLength);
+const emailMatch = Joi.string().email().required();
+const urlMatch = Joi.string().uri().trim().required().allow('');
+const skipMatch = Joi.number().default(0).min(0);
+const takeMatch = Joi.number().default(config.defaultValues.take).min(config.defaultValues.minTake);
+const voteDirectionMatch = Joi.any().valid([Commons.Up, Commons.Down]);
 
 export default {
   getStory: {
     params: {
-      storyId: r.idMatch,
+      storyId: idMatch,
     },
   },
   getStories: {
     query: {
-      skip: r.skipMatch,
-      take: r.takeMatch,
+      skip: skipMatch,
+      take: takeMatch,
     },
   },
   createStory: {
     body: {
-      title: r.titleMatch,
-      text: r.textMatch,
-      url: r.urlMatch,
+      title: titleMatch,
+      text: textMatch,
+      url: urlMatch,
     },
   },
   getUser: {
     params: {
-      userId: r.idMatch,
+      userId: idMatch,
     },
   },
   updateUser: {
     body: {
-      about: r.textMatch,
-      email: r.emailMatch,
+      about: textMatch,
+      email: emailMatch,
     },
     params: {
-      userId: r.idMatch,
+      userId: idMatch,
     },
   },
   createUserOrLogin: {
     body: {
-      username: r.usernameMatch,
-      password: r.passwordMatch,
+      username: usernameMatch,
+      password: passwordMatch,
     },
   },
   createComment: {
     params: {
-      storyId: r.idMatch,
+      storyId: idMatch,
     },
     body: {
-      text: r.textMatch,
+      text: textMatch,
     },
   },
   vote: {
     params: {
-      storyId: r.idMatch,
+      storyId: idMatch,
     },
     body: {
-      direction: r.voteDirectionMatch,
+      direction: voteDirectionMatch,
     },
   },
 };
