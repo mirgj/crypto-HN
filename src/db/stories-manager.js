@@ -2,6 +2,7 @@ import { ObjectID } from 'mongodb';
 import { state as dbState } from './connector';
 import { Collections } from '../constants/index';
 import config from '../../config';
+import * as helper from '../helpers/common';
 
 const storyCollection = () => dbState.defaultDbInstance.collection(Collections.Stories);
 
@@ -32,6 +33,7 @@ const findOne = async(storyId) => {
         title: 1,
         text: 1,
         url: 1,
+        base_url: 1,
         karma: 1,
         created_on: 1,
         comments: {
@@ -77,6 +79,7 @@ const getAll = async(skip, take) => {
         title: 1,
         text: 1,
         url: 1,
+        base_url: 1,
         karma: 1,
         created_on: 1,
         timestamp_karma: { $add: [ '$created_on', { $multiply: ['$karma', config.defaultValues.karmaIncrementMill ] } ] },
@@ -101,7 +104,7 @@ const getAll = async(skip, take) => {
 
   if (!result || result.length === 0) return null;
 
-  return result;
+  return result[0];
 };
 
 const create = async(userId, title, text, url) => {
@@ -110,6 +113,7 @@ const create = async(userId, title, text, url) => {
     title: title,
     text: text,
     url: url,
+    base_url: helper.toBaseURL(url),
     karma: 1,
     created_on: new Date(),
   });

@@ -14,3 +14,30 @@ mixin notificationBlock(elements, type)
     div(class='toast toast-' + type)
       each val in elements
         p=val
+
+mixin storyRender(n, current_page, page_size, story)
+  -var inc = n + ((current_page - 1) * page_size);
+  p.text
+    span.inc #{inc}.
+    span.link
+      if story.url
+        a(href=story.url, target='_blank')=story.title
+      else
+        a(href='/stories/' + story._id)=story.title
+    if story.base_url
+      small.base 
+        a.text-gray(href='/stories/from/' + story.base_url)=story.base_url
+  p.meta
+    small.points #{story.karma} points
+    small.author by 
+      a(href='/user/' + story.user.username)=story.user.username
+    small.date
+      a(href='/stories/' + story._id)=moment(story.created_on).fromNow()
+    small.sep='|'
+    small.comments
+      a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}
+
+mixin pager(baseUrl, nextPage)
+  div.columns.spacer
+    div.column.col-12
+      a(href=baseUrl + '?page=' + nextPage)='Load more'

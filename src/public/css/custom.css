@@ -4,3 +4,8 @@
 .container .navbar a.active { color: #9ea6b7; text-decoration: none; }
 .toast p { margin: 0; }
 p.no-margin { margin: 0; }
+.stories p.text { margin: 0; }
+.stories p.text .inc { display: inline-block; min-width: 1.25rem; }
+.stories p.text .inc, .stories p.text .link { margin-right: 0.50rem; }
+.stories p.meta { margin-left: 1.75rem; margin-bottom: 0.25rem; margin-top: -0.325rem; }
+.stories p.meta .points, .stories p.meta .author, .stories p.meta .date, .stories p.meta .comments, .stories p.meta .sep { margin-right: 0.25rem; }

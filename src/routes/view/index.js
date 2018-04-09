@@ -3,17 +3,13 @@ import { logger } from '../../helpers/logger';
 import { NotFoundError } from '../../results/api-errors';
 import validation from 'express-validation';
 import usersRoutes from './users';
+import storiesRoutes from './stories';
 
 const router = Router();
 
 router.use(usersRoutes);
+router.use(storiesRoutes);
 router
-  .get('/', (req, res, next) => {
-    res.render('index', {
-      title: 'Top News',
-      user: req.user,
-    });
-  })
   .get('/404', (req, res) =>
     res.render('errors/404', {
       user: req.user,
