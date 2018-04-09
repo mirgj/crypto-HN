@@ -243,14 +243,14 @@ describe('## Users manager unit tests', () => {
       expect(result).to.be.equal(returnValue);
     });
 
-    it('it should update only the user email', async() => {
+    it('it should update the user email and clean the about field', async() => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const email = 'test@test.com';
       const returnValue = { acknowledged: true };
       const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
 
-      const result = await usersManager.update(userIdTest, email);
+      const result = await usersManager.update(userIdTest, email, null);
 
       collectionSpy.restore();
       updateOneSpy.restore();
@@ -260,6 +260,7 @@ describe('## Users manager unit tests', () => {
       sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
         $set: {
           email: email,
+          about: null,
           updated_on: sinon.match.date,
         },
       });
@@ -270,7 +271,7 @@ describe('## Users manager unit tests', () => {
       expect(result).to.be.equal(returnValue);
     });
 
-    it('it should update only the user about', async() => {
+    it('it should update the user about and clean the email', async() => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const about = 'this is a about field';
       const returnValue = { acknowledged: true };
@@ -286,6 +287,7 @@ describe('## Users manager unit tests', () => {
       sinon.assert.calledOnce(updateOneSpy);
       sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
         $set: {
+          email: null,
           about: about,
           updated_on: sinon.match.date,
         },

@@ -26,6 +26,9 @@ const aggregateReturnMock = (result) => {
     },
   };
 };
+const helperMock = {
+  toBaseURL: (value) => { },
+};
 
 describe('## Stories manager unit tests', () => {
 
@@ -33,6 +36,7 @@ describe('## Stories manager unit tests', () => {
     logger.transports[0].level = 'error';
 
     __Rewire__('dbState', dbStateMock);
+    __Rewire__('helper', helperMock);
   });
 
   let collectionSpy;
@@ -132,13 +136,17 @@ describe('## Stories manager unit tests', () => {
       const title = 'title';
       const text = 'content text';
       const url = 'http://google.com';
+      const base_url = 'google.it';
       const returnValue = { acknowledged: true };
+      const baseUrlSpy = sinon.stub(helperMock, 'toBaseURL').returns(base_url);
       const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.resolve(returnValue));
 
       const result = await storiesManager.create(userId, title, text, url);
 
-      // collectionSpy.restore();
       insertOneSpy.restore();
+      baseUrlSpy.restore();
+      sinon.assert.calledOnce(baseUrlSpy);
+      sinon.assert.calledWithExactly(baseUrlSpy, url);
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
       sinon.assert.calledOnce(insertOneSpy);
@@ -147,6 +155,7 @@ describe('## Stories manager unit tests', () => {
         title: title,
         text: text,
         url: url,
+        base_url: base_url,
         karma: 1,
         created_on: sinon.match.date,
       });
@@ -162,7 +171,9 @@ describe('## Stories manager unit tests', () => {
       const title = 'title';
       const text = 'content text';
       const url = 'http://google.com';
+      const base_url = 'google.it';
       const returnValue = new Error('err');
+      const baseUrlSpy = sinon.stub(helperMock, 'toBaseURL').returns(base_url);
       const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.reject(returnValue));
 
       try {
@@ -174,6 +185,8 @@ describe('## Stories manager unit tests', () => {
       } finally {
         insertOneSpy.restore();
 
+        sinon.assert.calledOnce(baseUrlSpy);
+        sinon.assert.calledWithExactly(baseUrlSpy, url);
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
         sinon.assert.calledOnce(insertOneSpy);
@@ -182,6 +195,7 @@ describe('## Stories manager unit tests', () => {
           title: title,
           text: text,
           url: url,
+          base_url: base_url,
           karma: 1,
           created_on: sinon.match.date,
         });
