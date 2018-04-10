@@ -28,47 +28,57 @@ const commonRoute = (req, res, next, stories, title, currentElement) => {
 };
 
 router
-  .get('/', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+  .get('/', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take);
 
     commonRoute(req, res, next, stories, 'Top News');
   }))
-  .get('/show', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+  .get('/show', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take, true);
 
     commonRoute(req, res, next, stories, 'Show', 'show');
   }))
-  .get('/ask', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+  .get('/ask', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take, null, true);
 
     commonRoute(req, res, next, stories, 'Ask', 'ask');
   }))
-  .get('/new', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+  .get('/new', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take);
 
     commonRoute(req, res, next, stories, 'New news', 'new');
   }))
-  .get('/shownew', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+  .get('/shownew', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, true);
 
     commonRoute(req, res, next, stories, 'New show', 'show');
   }))
-  .get('/asknew', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+  .get('/asknew', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, null, true);
 
     commonRoute(req, res, next, stories, 'New ask', 'ask');
+  }))
+  .get('/stories/:storyId', validation(viewValidators.getStory), asyncMiddleware(async(req, res, next) => {
+    const cres = await storiesController.getOneById(req.params.storyId);
+    const story = !cres.error && cres.result.success ? cres.result.data : null;
+
+    res.render('single', {
+      title: story.title,
+      story: story,
+      user: req.user,
+    });
   }))
   .get('/submit', isAuthenticatedMiddleware('/login'), (req, res, next) => {
     res.render('submit', {

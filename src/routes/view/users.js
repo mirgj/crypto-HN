@@ -42,16 +42,8 @@ router
     }
   }))
   .get('/user/:username', asyncMiddleware(async(req, res, next) => {
-    let user = null;
-
-    try {
-      const cres = await usersController.getLogin(req.params.username);
-      user = !cres.error && cres.result.success ? cres.result.data : null;
-    } catch (err) {
-      if (err instanceof NotFoundError) {
-        req.flash('error', [err.result.description]);
-      }
-    }
+    const cres = await usersController.getLogin(req.params.username);
+    const user = !cres.error && cres.result.success ? cres.result.data : null;
     const isMe = user && req.user && req.user.username === user.username;
 
     res.render('profile', {

@@ -15,10 +15,11 @@ mixin notificationBlock(elements, type)
       each val in elements
         p=val
 
-mixin storyRender(n, current_page, page_size, story)
+mixin storyRender(story, n, current_page, page_size)
   -var inc = n + ((current_page - 1) * page_size);
   p.text
-    span.inc #{inc}.
+    if n
+      span.inc #{inc}.
     span.link
       if story.url
         a(href=story.url, target='_blank')=story.title

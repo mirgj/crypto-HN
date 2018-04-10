@@ -7,7 +7,7 @@ import * as helper from '../helpers/common';
 const storyCollection = () => dbState.defaultDbInstance.collection(Collections.Stories);
 
 const findOne = async(storyId) => {
-  const result = await storyCollection().aggregate([
+  const aggregation = [
     { $match: { _id: ObjectID(storyId) } },
     {
       $lookup: {
@@ -43,14 +43,15 @@ const findOne = async(storyId) => {
             in: '$$comment._id',
           },
         },
+        comment_count: { $size: '$comments_temp' },
       },
     },
-  ]);
-  const arr = result.toArray();
+  ];
+  const result = await storyCollection().aggregate(aggregation).toArray();
 
-  if (!arr || arr.length === 0) return null;
+  if (!result || result.length === 0) return null;
 
-  return arr[0];
+  return result[0];
 };
 
 const getAllChrono = async(skip, take, show, ask) => {

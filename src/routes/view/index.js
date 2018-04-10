@@ -31,7 +31,7 @@ router
   });
 
 router.use((err, req, res, next) => {
-  logger.error(`UI Error: ${err}`);
+  logger.error(`UI Error: ${JSON.stringify(err)}`);
 
   if (err instanceof validation.ValidationError) {
     const messages = err.errors.map(error => error.messages.join('. '));

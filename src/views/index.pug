@@ -8,6 +8,6 @@ block content
       if stories
         each story in stories
           -n++;
-          +storyRender(n, current_page, page_size, story)
+          +storyRender(story, n, current_page, page_size)
   if has_next
     +pager('/', next_page)
