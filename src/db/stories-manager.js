@@ -159,8 +159,8 @@ const getAll = async(skip, take, show, ask) => {
     },
   ];
 
-  if (show) aggregation.splice(0, 0, { $match: { title: { $regex: `/^${config.defaultValues.showStartWith}/`} } });
-  if (ask) aggregation.splice(0, 0, { $match: { title: { $regex: `/^${config.defaultValues.askStartWith}/`} } });
+  if (show) aggregation.splice(0, 0, { $match: { title: { $regex: `^${config.defaultValues.showStartWith}`, $options: 'i' } } });
+  if (ask) aggregation.splice(0, 0, { $match: { title: { $regex: `^${config.defaultValues.askStartWith}`, $options: 'i' } } });
   const result = await storyCollection().aggregate(aggregation).toArray();
 
   if (!result || result.length === 0) return null;
