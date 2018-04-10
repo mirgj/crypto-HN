@@ -5,8 +5,9 @@ block content
   div.columns.spacer
     div.column.col-12.stories
       -var n = 0;
-      each story in stories
-        -n++;
-        +storyRender(n, current_page, page_size, story)
+      if stories
+        each story in stories
+          -n++;
+          +storyRender(n, current_page, page_size, story)
   if has_next
     +pager('/', next_page)

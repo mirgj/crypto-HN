@@ -14,23 +14,23 @@ html(lang='en')
     div.container
       header.navbar.bg-secondary
         section.navbar-section
-          a(class=currentElement == "new" ? "active" : "", href='/new') new
+          a(class=current_element == "new" ? "active" : "", href='/new') new
           span.text-primary.text-primary='|'
-          a(class=currentElement == "comments" ? "active" : "", href='/comments') comments
+          a(class=current_element == "comments" ? "active" : "", href='/comments') comments
           span.text-primary='|'
-          a(class=currentElement == "show" ? "active" : "", href='/show') show
+          a(class=current_element == "show" ? "active" : "", href='/show') show
           span.text-primary='|'
-          a(class=currentElement == "ask" ? "active" : "", href='/ask') ask
+          a(class=current_element == "ask" ? "active" : "", href='/ask') ask
         section.navbar-center
           a(href='/' class='logo')
             img(src='/static/images/favicon.png')
         section.navbar-section
-          a(class=currentElement == "submit" ? "active" : "", href='/submit') Submit
+          a(class=current_element == "submit" ? "active" : "", href='/submit') Submit
           span.text-primary='|'
           if !user
-            a(class=currentElement == "login" ? "active" : "", href='/login') Login
+            a(class=current_element == "login" ? "active" : "", href='/login') Login
           else
-            a(class=currentElement == "profile" ? "active" : "", href='/user/' + user.username) #{user.username} (#{user.karma})
+            a(class=current_element == "profile" ? "active" : "", href='/user/' + user.username) #{user.username} (#{user.karma})
             span.text-primary='|'
             a(href='/logout') Logout
       block content

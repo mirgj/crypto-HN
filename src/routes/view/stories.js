@@ -7,32 +7,74 @@ import config from '../../../config.json';
 import * as storiesController from '../../controllers/stories-controller';
 
 const router = Router();
+const commonRoute = (req, res, next, stories, title, currentElement) => {
+  const currentPage = req.query.page;
+  const skip = (currentPage - 1) * config.defaultValues.take;
+  const data = !stories.error && stories.result.success ? stories.result.data.stories : null;
+  const totalCount = !stories.error && stories.result.success ? stories.result.data.stories_count : 0;
+  const hasNext = data ? totalCount > skip + data.length : false;
+
+  res.render('index', {
+    title: title,
+    user: req.user,
+    stories: data,
+    total_count: totalCount,
+    has_next: hasNext,
+    current_page: currentPage,
+    next_page: currentPage + 1,
+    page_size: config.defaultValues.take,
+    current_element: currentElement,
+  });
+};
 
 router
   .get('/', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take);
-    const data = !stories.error && stories.result.success ? stories.result.data.stories : null;
-    const totalCount = !stories.error && stories.result.success ? stories.result.data.stories_count : 0;
-    const hasNext = data ? totalCount > skip + data.length : false;
 
-    res.render('index', {
-      title: 'Top News',
-      user: req.user,
-      stories: data,
-      total_count: totalCount,
-      has_next: hasNext,
-      current_page: currentPage,
-      next_page: currentPage + 1,
-      page_size: config.defaultValues.take,
-    });
+    commonRoute(req, res, next, stories, 'Top News');
+  }))
+  .get('/show', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+    const currentPage = req.query.page;
+    const skip = (currentPage - 1) * config.defaultValues.take;
+    const stories = await storiesController.getStories(skip, config.defaultValues.take, true);
+
+    commonRoute(req, res, next, stories, 'Show', 'show');
+  }))
+  .get('/ask', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+    const currentPage = req.query.page;
+    const skip = (currentPage - 1) * config.defaultValues.take;
+    const stories = await storiesController.getStories(skip, config.defaultValues.take, null, true);
+
+    commonRoute(req, res, next, stories, 'Ask', 'ask');
+  }))
+  .get('/new', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+    const currentPage = req.query.page;
+    const skip = (currentPage - 1) * config.defaultValues.take;
+    const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take);
+
+    commonRoute(req, res, next, stories, 'New news', 'new');
+  }))
+  .get('/shownew', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+    const currentPage = req.query.page;
+    const skip = (currentPage - 1) * config.defaultValues.take;
+    const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, true);
+
+    commonRoute(req, res, next, stories, 'New show', 'show');
+  }))
+  .get('/asknew', validation(viewValidators.getTopNews), asyncMiddleware(async(req, res, next) => {
+    const currentPage = req.query.page;
+    const skip = (currentPage - 1) * config.defaultValues.take;
+    const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, null, true);
+
+    commonRoute(req, res, next, stories, 'New ask', 'ask');
   }))
   .get('/submit', isAuthenticatedMiddleware('/login'), (req, res, next) => {
     res.render('submit', {
       title: 'Submit a story',
       user: req.user,
-      currentElement: 'submit',
+      current_element: 'submit',
       errors: req.flash('error'),
     });
   })

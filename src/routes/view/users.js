@@ -13,7 +13,7 @@ router
   .get('/login', notAuthenticatedMiddleware('/'), (req, res, next) => {
     res.render('login', {
       title: 'Login or Register',
-      currentElement: 'login',
+      current_element: 'login',
       errors: req.flash('error'),
       info: req.flash('info'),
     });
@@ -59,7 +59,7 @@ router
       user: req.user,
       profileUser: user,
       isMe: isMe,
-      currentElement: isMe ? 'profile' : '',
+      current_element: isMe ? 'profile' : '',
       errors: req.flash('error'),
       info: req.flash('info'),
     });
