@@ -25,7 +25,9 @@
     "maxTextLength": 400,
     "maxTitleLength": 100,
     "maxCommentLength": 4096,
-    "karmaIncrementMill": 180000
+    "karmaIncrementMill": 180000,
+    "showStartWith": "Show CN:",
+    "askStartWith": "Ask CN:"
   },
   "logs": {
     "errorFilename": "./logs/error.log",

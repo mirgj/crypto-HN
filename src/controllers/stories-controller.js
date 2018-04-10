@@ -14,8 +14,15 @@ const getOneById = async(storyId) => {
   return new ApiResult(story);
 };
 
-const getStories = async(skip, take) => {
-  const result = await manager.getAll(skip, take);
+const getStories = async(skip, take, show, ask) => {
+  const result = await manager.getAll(skip, take, show, ask);
+  if (!result) return new WarningResult(Warnings.NO_STORIES_WARNING);
+
+  return new ApiResult(result);
+};
+
+const getStoriesChrono = async(skip, take, show, ask) => {
+  const result = await manager.getAllChrono(skip, take, show, ask);
   if (!result) return new WarningResult(Warnings.NO_STORIES_WARNING);
 
   return new ApiResult(result);
@@ -85,6 +92,7 @@ const unvote = async(userId, storyId) => {
 export {
   getOneById,
   getStories,
+  getStoriesChrono,
   getComments,
   create,
   createComment,

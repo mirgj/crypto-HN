@@ -11,6 +11,21 @@ router
   .get('/', validation(apiValidators.getStories), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.getStories(req.query.skip, req.query.take))
   ))
+  .get('/show', validation(apiValidators.getStories), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.getStories(req.query.skip, req.query.take, true))
+  ))
+  .get('/ask', validation(apiValidators.getStories), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.getStories(req.query.skip, req.query.take, null, true))
+  ))
+  .get('/new', validation(apiValidators.getStories), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.getStoriesChrono(req.query.skip, req.query.take))
+  ))
+  .get('/shownew', validation(apiValidators.getStories), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.getStoriesChrono(req.query.skip, req.query.take, true))
+  ))
+  .get('/asknew', validation(apiValidators.getStories), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.getStoriesChrono(req.query.skip, req.query.take, null, true))
+  ))
   .post('/', jwtAuthRequired, validation(apiValidators.createStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.create(req.user._id, {
       title: req.body.title,

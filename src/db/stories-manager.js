@@ -53,8 +53,65 @@ const findOne = async(storyId) => {
   return arr[0];
 };
 
-const getAll = async(skip, take) => {
-  const result = await storyCollection().aggregate([
+const getAllChrono = async(skip, take, show, ask) => {
+  const aggregation = [
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user_id',
+        foreignField: '_id',
+        as: 'user',
+      },
+    },
+    {
+      $lookup: {
+        from: 'comments',
+        localField: '_id',
+        foreignField: 'story_id',
+        as: 'comments',
+      },
+    },
+    { $unwind: '$user' },
+    {
+      $project: {
+        'user._id': 1,
+        'user.username': 1,
+        title: 1,
+        text: 1,
+        url: 1,
+        base_url: 1,
+        karma: 1,
+        created_on: 1,
+        comment_count: { $size: '$comments' },
+      },
+    },
+    { $sort: { created_on: -1 } },
+    {
+      $facet: {
+        page_info: [ { $count: 'total_count' } ],
+        stories: [ { $skip: skip }, { $limit: take } ],
+      },
+    },
+    { $unwind: '$page_info' },
+    {
+      $project: {
+        stories_count: '$page_info.total_count',
+        stories: 1,
+      },
+    },
+  ];
+
+  if (show) aggregation.splice(0, 0, { $match: { title: { $regex: `/^${config.defaultValues.showStartWith}/`} } });
+  if (ask) aggregation.splice(0, 0, { $match: { title: { $regex: `/^${config.defaultValues.askStartWith}/`} } });
+  const result = await storyCollection().aggregate(aggregation).toArray();
+
+  if (!result || result.length === 0) return null;
+
+  return result[0];
+};
+
+const getAll = async(skip, take, show, ask) => {
+  const aggregation = [
     {
       $lookup: {
         from: 'users',
@@ -100,7 +157,11 @@ const getAll = async(skip, take) => {
         stories: 1,
       },
     },
-  ]).toArray();
+  ];
+
+  if (show) aggregation.splice(0, 0, { $match: { title: { $regex: `/^${config.defaultValues.showStartWith}/`} } });
+  if (ask) aggregation.splice(0, 0, { $match: { title: { $regex: `/^${config.defaultValues.askStartWith}/`} } });
+  const result = await storyCollection().aggregate(aggregation).toArray();
 
   if (!result || result.length === 0) return null;
 
@@ -129,6 +190,7 @@ const incrementVote = async(storyId, voteDiff) => {
 export {
   findOne,
   getAll,
+  getAllChrono,
   create,
   incrementVote,
 };
