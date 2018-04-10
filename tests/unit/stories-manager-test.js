@@ -19,12 +19,8 @@ const dbStateMock = {
     },
   },
 };
-const aggregateReturnMock = (result) => {
-  return {
-    toArray: () => {
-      return result;
-    },
-  };
+const aggregateReturnMock = {
+  toArray: () => { },
 };
 const helperMock = {
   toBaseURL: (value) => { },
@@ -63,14 +59,18 @@ describe('## Stories manager unit tests', () => {
     it('it should call findOne correctly', async() => {
       const storyIdTest = '507f1f77bcf86cd799439011';
       const returnStory = { url: 'http://google.it' };
-      aggregateSpy.returns(Promise.resolve(aggregateReturnMock([returnStory])));
+      const toArraSpy = sinon.stub(aggregateReturnMock, 'toArray');
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraSpy.returns(Promise.resolve([returnStory]));
 
       const result = await storiesManager.findOne(storyIdTest);
 
+      toArraSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
       sinon.assert.calledOnce(aggregateSpy);
       sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+      sinon.assert.calledOnce(toArraSpy);
       const args = aggregateSpy.getCall(0).args[0];
 
       expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
@@ -84,7 +84,9 @@ describe('## Stories manager unit tests', () => {
     it('it should fail to call findOne with a wrong ObjectID', async() => {
       const storyIdTest = 'wrong ObjectID';
       const returnStory = { url: 'http://google.it' };
-      aggregateSpy.returns(Promise.resolve(aggregateReturnMock([returnStory])));
+      const toArraSpy = sinon.stub(aggregateReturnMock, 'toArray');
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraSpy.returns(Promise.resolve([returnStory]));
 
       try {
         await storiesManager.findOne(storyIdTest);
@@ -95,18 +97,19 @@ describe('## Stories manager unit tests', () => {
         expect(err.message).to.be.a('string');
         expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
       } finally {
-        sinon.assert.calledOnce(collectionSpy);
-        sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
+        toArraSpy.restore();
+        sinon.assert.notCalled(collectionSpy);
         sinon.assert.notCalled(aggregateSpy);
-
-        expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
+        sinon.assert.notCalled(toArraSpy);
       }
     });
 
-    it('it should fail to call findOne', async() => {
+    it('it should fail to call findOne rejected promise', async() => {
       const storyIdTest = '507f1f77bcf86cd799439011';
       const error = new Error('error');
-      aggregateSpy.returns(Promise.reject(error));
+      const toArraSpy = sinon.stub(aggregateReturnMock, 'toArray');
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraSpy.returns(Promise.reject(error));
 
       try {
         await storiesManager.findOne(storyIdTest);
@@ -119,6 +122,7 @@ describe('## Stories manager unit tests', () => {
         sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
         sinon.assert.calledOnce(aggregateSpy);
         sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+        sinon.assert.calledOnce(toArraSpy);
         const args = aggregateSpy.getCall(0).args[0];
 
         expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
