@@ -143,6 +143,7 @@ const initDefaultDb = async(dbName) => {
     },
   });
   await dbo.createIndex(Collections.Comments, { user_id: 1});
+  await dbo.createIndex(Collections.Comments, { parent: 1});
 
   await dbo.createCollection(Collections.VoteLog, {
     validator: {
