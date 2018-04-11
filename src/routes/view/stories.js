@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { asyncMiddleware, isAuthenticatedMiddleware } from '../../helpers/middlewares';
 import { Errors } from '../../constants/index';
+import { Commons } from '../../constants/index';
 import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
@@ -80,6 +81,30 @@ router
       user: req.user,
     });
   }))
+  .get('/stories/:storyId/vote',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getStory),
+    asyncMiddleware(async(req, res, next) => {
+      storiesController.vote(req.user._id, req.params.storyId, Commons.Up);
+
+      res.redirect('/stories/' + req.params.storyId);
+    }))
+  .get('/stories/:storyId/unvote',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getStory),
+    asyncMiddleware(async(req, res, next) => {
+      storiesController.unvote(req.user._id, req.params.storyId);
+
+      res.redirect('/stories/' + req.params.storyId);
+    }))
+  .get('/stories/:storyId/downvote',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getStory),
+    asyncMiddleware(async(req, res, next) => {
+      storiesController.vote(req.user._id, req.params.storyId, Commons.Down);
+
+      res.redirect('/stories/' + req.params.storyId);
+    }))
   .get('/submit', isAuthenticatedMiddleware('/login'), (req, res, next) => {
     res.render('submit', {
       title: 'Submit a story',
