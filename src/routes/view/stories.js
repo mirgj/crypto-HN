@@ -80,12 +80,14 @@ router
     const cres = await storiesController.getOneById(req.params.storyId);
     const story = !cres.error && cres.result.success ? cres.result.data : null;
     const userVoteMapping = req.user ? await voltesController.getUserVoteMapping(req.user._id, [story]) : [];
+    const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
 
     res.render('single', {
       title: story.title,
       story: story,
       user: req.user,
       user_vote_mapping: userVoteMapping,
+      can_downvote: canDownvote,
     });
   }))
   .get('/stories/:storyId/vote',

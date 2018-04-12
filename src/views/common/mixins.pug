@@ -15,15 +15,16 @@ mixin notificationBlock(elements, type)
       each val in elements
         p=val
 
-mixin storyRender(story, n, current_page, page_size)
+mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_size)
   -var inc = n + ((current_page - 1) * page_size);
   p.text
     if n
       span.inc #{inc}.
     span.voter
-      a.up(href='/stories/' + story._id + '/vote', title='Vote up')!='&#9650;'
-      if can_downvote
-        a.down(href='/stories/' + story._id + '/downvote', title='Vote down')!='&#9660;'
+      if !user_vote_mapping[story._id]
+        a.up(href='/stories/' + story._id + '/vote', title='Vote up')!='&#9650;'
+        if can_downvote
+          a.down(href='/stories/' + story._id + '/downvote', title='Vote down')!='&#9660;'
     span.link
       if story.url
         a(href=story.url, target='_blank')=story.title
@@ -38,9 +39,10 @@ mixin storyRender(story, n, current_page, page_size)
       a(href='/user/' + story.user.username)=story.user.username
     small.date
       a(href='/stories/' + story._id)=moment(story.created_on).fromNow()
-    small.sep='|'
-    small.unvote
-      a(href='/stories/' + story._id + '/unvote', title='Unvote')!='unvote'
+    if user_vote_mapping[story._id]
+      small.sep='|'
+      small.unvote
+        a(href='/stories/' + story._id + '/unvote', title='Unvote')!='unvote'
     small.sep='|'
     small.comments
       a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}

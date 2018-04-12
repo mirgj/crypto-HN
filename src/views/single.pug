@@ -4,4 +4,4 @@ include ./common/mixins.pug
 block content
   div.columns.spacer
     div.column.col-12.stories
-      +storyRender(story)
+      +storyRender(story, user_vote_mapping, can_downvote)

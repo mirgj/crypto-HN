@@ -32,7 +32,7 @@ const getUserVoteMapping = async(userId, stories) => {
   let result = [];
 
   data.forEach((el) => {
-    result[el._id] = el;
+    result[el.object_id] = el;
   });
 
   return result;
