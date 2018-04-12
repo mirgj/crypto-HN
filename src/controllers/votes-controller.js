@@ -5,6 +5,39 @@ import config from '../../config';
 import * as manager from '../db/vote-log-manager';
 import * as storiesManager from '../db/stories-manager';
 
+const calculateMinAndMaxIds = (stories) => {
+  const defaultValue = stories.length > 0 ? stories[0]._id : null;
+  let maxId = defaultValue;
+  let minId = defaultValue;
+
+  stories.forEach((el) => {
+    if (el._id.getTimestamp() < minId.getTimestamp())
+      minId = el._id;
+
+    if (el._id.getTimestamp() > maxId.getTimestamp())
+      maxId = el._id;
+  });
+
+  return {
+    min: minId,
+    max: maxId,
+  };
+};
+
+const getUserVoteMapping = async(userId, stories) => {
+  const ids = calculateMinAndMaxIds(stories);
+  if (!ids.min || !ids.max) return [];
+
+  const data = await manager.findByUserAndIdsRange(userId, ids.min, ids.max);
+  let result = [];
+
+  data.forEach((el) => {
+    result[el._id] = el;
+  });
+
+  return result;
+};
+
 const voteStory = async(userId, userKarma, storyId, direction) => {
   const vote = await manager.findOneByUserIdObjectId(userId, storyId, Collections.Stories);
   const isUp = direction === Commons.Up;
@@ -39,4 +72,5 @@ const unvoteStory = async(userId, storyId) => {
 export {
   voteStory,
   unvoteStory,
+  getUserVoteMapping,
 };
