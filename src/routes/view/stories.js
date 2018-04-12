@@ -85,25 +85,25 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getStory),
     asyncMiddleware(async(req, res, next) => {
-      storiesController.vote(req.user._id, req.params.storyId, Commons.Up);
+      await storiesController.vote(req.user._id, req.params.storyId, Commons.Up);
 
-      res.redirect('/stories/' + req.params.storyId);
+      res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
     }))
   .get('/stories/:storyId/unvote',
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getStory),
     asyncMiddleware(async(req, res, next) => {
-      storiesController.unvote(req.user._id, req.params.storyId);
+      await storiesController.unvote(req.user._id, req.params.storyId);
 
-      res.redirect('/stories/' + req.params.storyId);
+      res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
     }))
   .get('/stories/:storyId/downvote',
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getStory),
     asyncMiddleware(async(req, res, next) => {
-      storiesController.vote(req.user._id, req.params.storyId, Commons.Down);
+      await storiesController.vote(req.user._id, req.params.storyId, Commons.Down);
 
-      res.redirect('/stories/' + req.params.storyId);
+      res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
     }))
   .get('/submit', isAuthenticatedMiddleware('/login'), (req, res, next) => {
     res.render('submit', {
