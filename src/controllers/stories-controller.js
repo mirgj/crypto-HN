@@ -3,6 +3,7 @@ import { logger } from '../helpers/logger';
 import { ApiResult, WarningResult, InsertResult, OkResult } from '../results/api-data';
 import { ApiError, NotFoundError } from '../results/api-errors';
 import { Errors, Warnings, Infos, Commons } from '../constants/index';
+import config from '../../config';
 import * as manager from '../db/stories-manager';
 import * as commentManager from '../db/comments-manager';
 import * as voteManager from '../db/vote-log-manager';
@@ -62,11 +63,15 @@ const createComment = async(userId, storyId, text) => {
   return new InsertResult(Infos.CREATE_COMMENT_INFO, ncomment.insertedId);
 };
 
-const vote = async(userId, storyId, direction) => {
+const vote = async(userId, userKarma, storyId, direction) => {
   const vote = await voteManager.findOneByUserIdObjectId(userId, storyId);
-  const voteIncrement = direction === Commons.Up ? 1 : -1;
+  const isUp = direction === Commons.Up;
+  const voteIncrement = isUp ? 1 : -1;
 
-  if (vote) return new WarningResult(Warnings.ALREADY_VOTED_WARNING);
+  if (vote)
+    return new WarningResult(Warnings.ALREADY_VOTED_WARNING);
+  if (userKarma < config.defaultValues.minKarmaForDownvote && !isUp)
+    return new WarningResult(Warnings.NOT_ENOUGH_KARMA.split('{0}').join(config.defaultValues.minKarmaForDownvote));
 
   const story = await manager.incrementVote(storyId, voteIncrement);
 

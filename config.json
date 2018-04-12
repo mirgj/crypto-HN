@@ -26,6 +26,7 @@
     "maxTitleLength": 100,
     "maxCommentLength": 4096,
     "karmaIncrementMill": 180000,
+    "minKarmaForDownvote": 200,
     "showStartWith": "Show CN:",
     "askStartWith": "Ask CN:"
   },

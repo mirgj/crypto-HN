@@ -43,7 +43,7 @@ router
     res.json(await storiesController.createComment(req.user._id, req.params.storyId, req.body.text))
   ))
   .put('/:storyId/vote', jwtAuthRequired, validation(apiValidators.vote), asyncMiddleware(async(req, res, next) =>
-    res.json(await storiesController.vote(req.user._id, req.params.storyId, req.body.direction))
+    res.json(await storiesController.vote(req.user._id, req.user.karma, req.params.storyId, req.body.direction))
   ))
   .delete('/:storyId/vote', jwtAuthRequired, validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.unvote(req.user._id, req.params.storyId))

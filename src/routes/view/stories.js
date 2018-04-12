@@ -14,6 +14,7 @@ const commonRoute = (req, res, next, stories, title, currentElement) => {
   const data = !stories.error && stories.result.success ? stories.result.data.stories : null;
   const totalCount = !stories.error && stories.result.success ? stories.result.data.stories_count : 0;
   const hasNext = data ? totalCount > skip + data.length : false;
+  const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
 
   res.render('index', {
     title: title,
@@ -25,6 +26,7 @@ const commonRoute = (req, res, next, stories, title, currentElement) => {
     next_page: currentPage + 1,
     page_size: config.defaultValues.take,
     current_element: currentElement,
+    can_downvote: canDownvote,
   });
 };
 
@@ -85,7 +87,7 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getStory),
     asyncMiddleware(async(req, res, next) => {
-      await storiesController.vote(req.user._id, req.params.storyId, Commons.Up);
+      await storiesController.vote(req.user._id, req.user.karma, req.params.storyId, Commons.Up);
 
       res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
     }))
@@ -101,7 +103,7 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getStory),
     asyncMiddleware(async(req, res, next) => {
-      await storiesController.vote(req.user._id, req.params.storyId, Commons.Down);
+      await storiesController.vote(req.user._id, req.user.karma, req.params.storyId, Commons.Down);
 
       res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
     }))
