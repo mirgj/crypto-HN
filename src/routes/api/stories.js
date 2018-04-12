@@ -4,6 +4,8 @@ import { jwtAuthRequired } from '../../helpers/authenticator';
 import validation from 'express-validation';
 import apiValidators from '../../validation/api-validator';
 import * as storiesController from '../../controllers/stories-controller';
+import * as commentsController from '../../controllers/comments-controller';
+import * as votesController from '../../controllers/votes-controller';
 
 const router = Router();
 
@@ -40,13 +42,13 @@ router
     res.json(await storiesController.getComments(req.params.storyId))
   ))
   .post('/:storyId/comments', jwtAuthRequired, validation(apiValidators.createComment), asyncMiddleware(async(req, res, next) =>
-    res.json(await storiesController.createComment(req.user._id, req.params.storyId, req.body.text))
+    res.json(await commentsController.createForStory(req.user._id, req.params.storyId, req.body.text))
   ))
   .put('/:storyId/vote', jwtAuthRequired, validation(apiValidators.vote), asyncMiddleware(async(req, res, next) =>
-    res.json(await storiesController.vote(req.user._id, req.user.karma, req.params.storyId, req.body.direction))
+    res.json(await votesController.voteStory(req.user._id, req.user.karma, req.params.storyId, req.body.direction))
   ))
   .delete('/:storyId/vote', jwtAuthRequired, validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
-    res.json(await storiesController.unvote(req.user._id, req.params.storyId))
+    res.json(await votesController.unvoteStory(req.user._id, req.params.storyId))
   ))
 ;
 

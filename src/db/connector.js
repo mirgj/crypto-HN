@@ -149,7 +149,7 @@ const initDefaultDb = async(dbName) => {
     validator: {
       $jsonSchema: {
         bsonType: 'object',
-        required: [ 'user_id', 'object_id', 'vote_direction' ],
+        required: [ 'user_id', 'object_id', 'object_type', 'vote_direction' ],
         properties: {
           user_id: {
             bsonType: 'objectId',
@@ -158,6 +158,10 @@ const initDefaultDb = async(dbName) => {
           object_id: {
             bsonType: 'objectId',
             description: 'object_id must be a ObjectId and is required',
+          },
+          object_type: {
+            bsonType: 'string',
+            description: 'collection that the ID refers to of the vote',
           },
           vote_direction: {
             bsonType: 'string',

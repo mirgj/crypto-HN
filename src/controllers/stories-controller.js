@@ -1,12 +1,10 @@
 import { MongoError } from 'mongodb';
 import { logger } from '../helpers/logger';
-import { ApiResult, WarningResult, InsertResult, OkResult } from '../results/api-data';
+import { ApiResult, WarningResult, InsertResult } from '../results/api-data';
 import { ApiError, NotFoundError } from '../results/api-errors';
-import { Errors, Warnings, Infos, Commons } from '../constants/index';
-import config from '../../config';
+import { Errors, Warnings, Infos } from '../constants/index';
 import * as manager from '../db/stories-manager';
 import * as commentManager from '../db/comments-manager';
-import * as voteManager from '../db/vote-log-manager';
 
 const getOneById = async(storyId) => {
   const story = await manager.findOne(storyId);
@@ -53,54 +51,10 @@ const create = async(userId, story) => {
   }
 };
 
-const createComment = async(userId, storyId, text) => {
-  const story = await manager.findOne(storyId);
-  if (!story) throw new NotFoundError(Errors.STORY_NOT_FOUND);
-
-  const ncomment = await commentManager.create(userId, storyId, text);
-  if (!ncomment.result.ok || ncomment.insertedCount === 0) throw new ApiError(Errors.CREATE_COMMENT_ERROR);
-
-  return new InsertResult(Infos.CREATE_COMMENT_INFO, ncomment.insertedId);
-};
-
-const vote = async(userId, userKarma, storyId, direction) => {
-  const vote = await voteManager.findOneByUserIdObjectId(userId, storyId);
-  const isUp = direction === Commons.Up;
-  const voteIncrement = isUp ? 1 : -1;
-
-  if (vote)
-    return new WarningResult(Warnings.ALREADY_VOTED_WARNING);
-  if (userKarma < config.defaultValues.minKarmaForDownvote && !isUp)
-    return new WarningResult(Warnings.NOT_ENOUGH_KARMA.split('{0}').join(config.defaultValues.minKarmaForDownvote));
-
-  const story = await manager.incrementVote(storyId, voteIncrement);
-
-  if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
-
-  await voteManager.create(userId, storyId, direction);
-  return new OkResult(Infos.CREATE_VOTE_OK);
-};
-
-const unvote = async(userId, storyId) => {
-  const vote = await voteManager.findOneByUserIdObjectId(userId, storyId);
-  if (!vote) throw new NotFoundError(Errors.NOT_VOTE_FOUND_ERROR);
-
-  const voteIncrementRestore = vote.vote_direction === Commons.Up ? -1 : 1;
-  const story = await manager.incrementVote(storyId, voteIncrementRestore);
-
-  if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
-
-  await voteManager.deleteOne(userId, storyId);
-  return new OkResult(Infos.CREATE_VOTE_OK);
-};
-
 export {
   getOneById,
   getStories,
   getStoriesChrono,
   getComments,
   create,
-  createComment,
-  vote,
-  unvote,
 };

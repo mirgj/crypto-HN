@@ -45,7 +45,15 @@ const create = async(userId, storyId, text) => {
   });
 };
 
+const incrementVote = async(storyId, voteDiff) => {
+  return await commentCollection().updateOne(
+    { _id: ObjectID(storyId) },
+    { $inc: { karma: voteDiff } },
+  );
+};
+
 export {
   getAllByStory,
   create,
+  incrementVote,
 };

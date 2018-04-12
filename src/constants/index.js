@@ -33,6 +33,7 @@ export const Infos = {
   UPDATE_USER_INFO: 'User has been updated',
   CREATE_COMMENT_INFO: 'Comment has been created',
   CREATE_VOTE_OK: 'The vote has been registered correctly',
+  CREATE_UNVOTE_OK: 'The vote has been unregistered correctly',
 };
 
 export const ErrorsCode = {

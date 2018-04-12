@@ -6,6 +6,7 @@ import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
 import * as storiesController from '../../controllers/stories-controller';
+import * as voltesController from '../../controllers/votes-controller';
 
 const router = Router();
 const commonRoute = (req, res, next, stories, title, currentElement) => {
@@ -87,15 +88,7 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getStory),
     asyncMiddleware(async(req, res, next) => {
-      await storiesController.vote(req.user._id, req.user.karma, req.params.storyId, Commons.Up);
-
-      res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
-    }))
-  .get('/stories/:storyId/unvote',
-    isAuthenticatedMiddleware('/login'),
-    validation(viewValidators.getStory),
-    asyncMiddleware(async(req, res, next) => {
-      await storiesController.unvote(req.user._id, req.params.storyId);
+      await voltesController.voteStory(req.user._id, req.user.karma, req.params.storyId, Commons.Up);
 
       res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
     }))
@@ -103,7 +96,15 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getStory),
     asyncMiddleware(async(req, res, next) => {
-      await storiesController.vote(req.user._id, req.user.karma, req.params.storyId, Commons.Down);
+      await voltesController.voteStory(req.user._id, req.user.karma, req.params.storyId, Commons.Down);
+
+      res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
+    }))
+  .get('/stories/:storyId/unvote',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getStory),
+    asyncMiddleware(async(req, res, next) => {
+      await voltesController.unvoteStory(req.user._id, req.params.storyId);
 
       res.redirect(req.header('Referer') || '/stories/' + req.params.storyId);
     }))
