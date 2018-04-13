@@ -1,8 +1,16 @@
-import { InsertResult } from '../results/api-data';
+import { ApiResult, InsertResult, WarningResult } from '../results/api-data';
 import { ApiError, NotFoundError } from '../results/api-errors';
-import { Errors, Infos } from '../constants/index';
+import { Errors, Infos, Warnings } from '../constants/index';
 import * as manager from '../db/comments-manager';
 import * as storyManager from '../db/stories-manager';
+
+
+const getAllComments = async(skip, take) => {
+  const result = await manager.getAllChrono(skip, take);
+  if (!result) return new WarningResult(Warnings.NO_COMMENTS_WARNING_ALL);
+
+  return new ApiResult(result);
+};
 
 const createForStory = async(userId, storyId, text) => {
   const story = await storyManager.findOne(storyId);
@@ -15,5 +23,6 @@ const createForStory = async(userId, storyId, text) => {
 };
 
 export {
+  getAllComments,
   createForStory,
 };

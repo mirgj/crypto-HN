@@ -16,7 +16,7 @@ const commonRoute = async(req, res, next, stories, title, currentElement) => {
   const totalCount = !stories.error && stories.result.success ? stories.result.data.stories_count : 0;
   const hasNext = data ? totalCount > skip + data.length : false;
   const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
-  const userVoteMapping = req.user ? await voltesController.getUserVoteMapping(req.user._id, data) : [];
+  const userVoteMapping = req.user ? await voltesController.getUserStoriesVoteMapping(req.user._id, data) : [];
 
   res.render('index', {
     title: title,

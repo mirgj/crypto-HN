@@ -5,12 +5,12 @@ import config from '../../config';
 import * as manager from '../db/vote-log-manager';
 import * as storiesManager from '../db/stories-manager';
 
-const calculateMinAndMaxIds = (stories) => {
-  const defaultValue = stories.length > 0 ? stories[0]._id : null;
+const calculateMinAndMaxIds = (data) => {
+  const defaultValue = data.length > 0 ? data[0]._id : null;
   let maxId = defaultValue;
   let minId = defaultValue;
 
-  stories.forEach((el) => {
+  data.forEach((el) => {
     if (el._id.getTimestamp() < minId.getTimestamp())
       minId = el._id;
 
@@ -24,18 +24,26 @@ const calculateMinAndMaxIds = (stories) => {
   };
 };
 
-const getUserVoteMapping = async(userId, stories) => {
-  const ids = calculateMinAndMaxIds(stories);
+const getUserVoteMapping = async(userId, data, objectType) => {
+  const ids = calculateMinAndMaxIds(data);
   if (!ids.min || !ids.max) return [];
 
-  const data = await manager.findByUserAndIdsRange(userId, ids.min, ids.max);
+  const res = await manager.findByUserAndIdsRange(userId, ids.min, ids.max, objectType);
   let result = [];
 
-  data.forEach((el) => {
+  res.forEach((el) => {
     result[el.object_id] = el;
   });
 
   return result;
+};
+
+const getUserStoriesVoteMapping = async(userId, stories) => {
+  return await getUserVoteMapping(userId, stories, Collections.Stories);
+};
+
+const getUserCommentsVoteMapping = async(userId, stories) => {
+  return await getUserVoteMapping(userId, stories, Collections.Comments);
 };
 
 const voteStory = async(userId, userKarma, storyId, direction) => {
@@ -72,5 +80,6 @@ const unvoteStory = async(userId, storyId) => {
 export {
   voteStory,
   unvoteStory,
-  getUserVoteMapping,
+  getUserStoriesVoteMapping,
+  getUserCommentsVoteMapping,
 };

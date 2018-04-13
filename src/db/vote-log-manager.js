@@ -22,8 +22,12 @@ const deleteOne = async(userId, objectId, objectType) => {
   return await voteLogCollection().deleteOne({ user_id: ObjectID(userId), object_id: ObjectID(objectId), object_type: objectType });
 };
 
-const findByUserAndIdsRange = async(userId, minId, maxId) => {
-  return await voteLogCollection().find({ user_id: ObjectID(userId), object_id: { $gte: ObjectID(minId), $lte: ObjectID(maxId) } }).toArray();
+const findByUserAndIdsRange = async(userId, minId, maxId, objectType) => {
+  return await voteLogCollection().find({
+    user_id: ObjectID(userId),
+    object_id: { $gte: ObjectID(minId), $lte: ObjectID(maxId) },
+    object_type: objectType,
+  }).toArray();
 };
 
 export {

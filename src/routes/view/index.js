@@ -4,11 +4,13 @@ import { NotFoundError } from '../../results/api-errors';
 import validation from 'express-validation';
 import usersRoutes from './users';
 import storiesRoutes from './stories';
+import commentsRoutes from './comments';
 
 const router = Router();
 
 router.use(usersRoutes);
 router.use(storiesRoutes);
+router.use(commentsRoutes);
 router
   .get('/404', (req, res) =>
     res.render('errors/404', {

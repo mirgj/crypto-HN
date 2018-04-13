@@ -11,7 +11,7 @@ const findOne = async(storyId) => {
     { $match: { _id: ObjectID(storyId) } },
     {
       $lookup: {
-        from: 'users',
+        from: Collections.Users,
         localField: 'user_id',
         foreignField: '_id',
         as: 'user',
@@ -19,7 +19,7 @@ const findOne = async(storyId) => {
     },
     {
       $lookup: {
-        from: 'comments',
+        from: Collections.Comments,
         localField: '_id',
         foreignField: 'story_id',
         as: 'comments_temp',
@@ -58,7 +58,7 @@ const getAllChrono = async(skip, take, show, ask) => {
   const aggregation = [
     {
       $lookup: {
-        from: 'users',
+        from: Collections.Users,
         localField: 'user_id',
         foreignField: '_id',
         as: 'user',
@@ -66,7 +66,7 @@ const getAllChrono = async(skip, take, show, ask) => {
     },
     {
       $lookup: {
-        from: 'comments',
+        from: Collections.Comments,
         localField: '_id',
         foreignField: 'story_id',
         as: 'comments',
@@ -115,7 +115,7 @@ const getAll = async(skip, take, show, ask) => {
   const aggregation = [
     {
       $lookup: {
-        from: 'users',
+        from: Collections.Users,
         localField: 'user_id',
         foreignField: '_id',
         as: 'user',
@@ -123,7 +123,7 @@ const getAll = async(skip, take, show, ask) => {
     },
     {
       $lookup: {
-        from: 'comments',
+        from: Collections.Comments,
         localField: '_id',
         foreignField: 'story_id',
         as: 'comments',

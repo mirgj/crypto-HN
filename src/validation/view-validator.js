@@ -38,6 +38,11 @@ export default {
       page: pageMatch,
     },
   },
+  getComments: {
+    query: {
+      page: pageMatch,
+    },
+  },
   getStory: {
     options: {
       allowUnknownParams: false,

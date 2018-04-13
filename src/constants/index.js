@@ -23,6 +23,7 @@ export const Errors = {
 export const Warnings = {
   NO_STORIES_WARNING: 'No stories found',
   NO_COMMENTS_WARNING: 'No comments found for this story',
+  NO_COMMENTS_WARNING_ALL: 'No comments found',
   ALREADY_VOTED_WARNING: 'You can\'t vote two times for the same story/comment',
   NOT_ENOUGH_KARMA: 'You don\'t have enough karma to downvote. You must have at least {0} points',
 };

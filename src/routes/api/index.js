@@ -5,11 +5,13 @@ import { logger } from '../../helpers/logger';
 import validation from 'express-validation';
 import storiesRoutes from './stories';
 import usersRoutes from './users';
+import commentsRoutes from './comments';
 
 const router = Router();
 
 router.use('/stories', storiesRoutes);
 router.use('/users', usersRoutes);
+router.use('/comments', commentsRoutes);
 router.use('/', (req, res, next) =>
   res.status(HttpStatus.NOT_FOUND).send(new NotFoundError(Errors.API_NOT_FOUND))
 );

@@ -25,6 +25,12 @@ export default {
       take: takeMatch,
     },
   },
+  getComments: {
+    query: {
+      skip: skipMatch,
+      take: takeMatch,
+    },
+  },
   createStory: {
     body: {
       title: titleMatch,
