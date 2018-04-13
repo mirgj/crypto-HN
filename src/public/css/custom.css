@@ -5,11 +5,11 @@
 .toast p { margin: 0; }
 p.no-margin { margin: 0; }
 .stories p.text { margin: 0; }
-.stories p.text .inc { display: inline-block; min-width: 1rem; text-align: right; }
+.stories p.text .inc { display: inline-block; min-width: 1.5rem; text-align: right; }
 .stories p.text .voter { display: inline-block; min-width: 0.975rem; position: relative; }
 .stories p.text .voter .up { position: absolute; top: -0.975rem; }
 .stories p.text .voter .down { position: absolute; top: -0.2rem; }
 .stories p.text .inc, .stories p.text .link { margin-right: 0.50rem; }
 .stories p.meta { margin-bottom: 0.25rem; margin-top: -0.325rem; margin-left: 0.975rem; }
-.stories p.meta.spacer { margin-left: 2.475rem; }
+.stories p.meta.spacer { margin-left: 2.975rem; }
 .stories p.meta small { margin-right: 0.25rem; }
