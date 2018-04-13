@@ -32,6 +32,7 @@ const getAllChrono = async(skipt, take) => {
         'story.title': 1,
         text: 1,
         karma: 1,
+        parent: 1,
         created_on: 1,
         updated_on: 1,
       },
@@ -53,7 +54,7 @@ const getAllChrono = async(skipt, take) => {
   ]).toArray();
   if (!result || result.length === 0) return null;
 
-  return result;
+  return result[0];
 };
 
 const getAllByStory = async(storyId) => {
@@ -84,7 +85,7 @@ const getAllByStory = async(storyId) => {
   ]).toArray();
   if (!result || result.length === 0) return null;
 
-  return result;
+  return result[0];
 };
 
 const create = async(userId, storyId, text) => {

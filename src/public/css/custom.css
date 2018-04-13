@@ -11,5 +11,9 @@ p.no-margin { margin: 0; }
 .stories p.text .voter .down { position: absolute; top: -0.2rem; }
 .stories p.text .inc, .stories p.text .link { margin-right: 0.50rem; }
 .stories p.meta { margin-bottom: 0.25rem; margin-top: -0.325rem; margin-left: 0.975rem; }
+.stories p.meta.comment { margin: 0; }
+.stories p.meta.comment .voter { margin-right: 0.25rem; }
 .stories p.meta.spacer { margin-left: 2.975rem; }
 .stories p.meta small { margin-right: 0.25rem; }
+.stories p.meta small.story-link a { margin-left: 0.25rem; }
+.stories p.comment-text { margin-left: 0.925rem; margin-bottom: 0rem; }

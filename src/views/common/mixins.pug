@@ -47,6 +47,32 @@ mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_
     small.comments
       a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}
 
+mixin commentRender(comment, user_vote_mapping, can_downvote)
+  p.meta.comment
+    span.voter
+      if !user_vote_mapping[comment._id]
+        a.up(href='/comments/' + comment._id + '/vote', title='Vote up')!='&#9650;'
+        if can_downvote
+          a.down(href='/comments/' + comment._id + '/downvote', title='Vote down')!='&#9660;'
+    small.author
+      a(href='/user/' + comment.user.username)=comment.user.username
+    small.date
+      a(href='/comments/' + comment._id)=moment(comment.created_on).fromNow()
+    if user_vote_mapping[comment._id]
+      small.sep='|'
+      small.unvote
+        a(href='/comments/' + comment._id + '/unvote', title='Unvote')!='unvote'
+    small.sep='|'
+    small.parent-link
+      if comment.parent
+        a(href='/comments/' + comment.parent)='parent'
+      else
+        a(href='/stories/' + comment.story._id)='parent'
+    small.sep='|'
+    small.story-link on:
+      a(href='/stories/' + comment.story._id) #{comment.story.title}
+  p.comment-text=comment.text
+
 mixin pager(baseUrl, nextPage)
   div.columns.spacer
     div.column.col-12

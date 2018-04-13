@@ -79,7 +79,7 @@ router
   .get('/stories/:storyId', validation(viewValidators.getStory), asyncMiddleware(async(req, res, next) => {
     const cres = await storiesController.getOneById(req.params.storyId);
     const story = !cres.error && cres.result.success ? cres.result.data : null;
-    const userVoteMapping = req.user ? await voltesController.getUserVoteMapping(req.user._id, [story]) : [];
+    const userVoteMapping = req.user ? await voltesController.getUserStoriesVoteMapping(req.user._id, [story]) : [];
     const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
 
     res.render('single', {

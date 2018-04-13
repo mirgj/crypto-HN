@@ -42,8 +42,8 @@ const getUserStoriesVoteMapping = async(userId, stories) => {
   return await getUserVoteMapping(userId, stories, Collections.Stories);
 };
 
-const getUserCommentsVoteMapping = async(userId, stories) => {
-  return await getUserVoteMapping(userId, stories, Collections.Comments);
+const getUserCommentsVoteMapping = async(userId, comments) => {
+  return await getUserVoteMapping(userId, comments, Collections.Comments);
 };
 
 const voteStory = async(userId, userKarma, storyId, direction) => {
