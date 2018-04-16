@@ -4,6 +4,7 @@ import { Errors } from '../../constants/index';
 import { Commons } from '../../constants/index';
 import sanitizeHtml from 'sanitize-html';
 import validation from 'express-validation';
+import mkdown from '../../helpers/markdown';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
 import * as storiesController from '../../controllers/stories-controller';
@@ -79,16 +80,20 @@ router
   }))
   .get('/stories/:storyId', validation(viewValidators.getStory), asyncMiddleware(async(req, res, next) => {
     const cres = await storiesController.getOneById(req.params.storyId);
+    const comm = await storiesController.getComments(req.params.storyId);
     const story = !cres.error && cres.result.success ? cres.result.data : null;
+    const comments = !comm.error && comm.result.success ? comm.result.data : null;
     const userVoteMapping = req.user ? await voltesController.getUserStoriesVoteMapping(req.user._id, [story]) : [];
     const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
 
     res.render('single', {
       title: story.title,
       story: story,
+      comments: comments,
       user: req.user,
       user_vote_mapping: userVoteMapping,
       can_downvote: canDownvote,
+      markdown: mkdown,
       errors: req.flash('error'),
     });
   }))
