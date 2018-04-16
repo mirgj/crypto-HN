@@ -4,6 +4,7 @@ import { Errors, Warnings, Infos, Commons, Collections } from '../constants/inde
 import config from '../../config';
 import * as manager from '../db/vote-log-manager';
 import * as storiesManager from '../db/stories-manager';
+import * as usersManager from '../db/users-manager';
 
 const calculateMinAndMaxIds = (data) => {
   const defaultValue = data.length > 0 ? data[0]._id : null;
@@ -60,6 +61,7 @@ const voteStory = async(userId, userKarma, storyId, direction) => {
 
   if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
 
+  await usersManager.incrementVote(userId, voteIncrement);
   await manager.create(userId, storyId, Collections.Stories, direction);
   return new OkResult(Infos.CREATE_VOTE_OK);
 };
@@ -73,6 +75,7 @@ const unvoteStory = async(userId, storyId) => {
 
   if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
 
+  await usersManager.incrementVote(userId, voteIncrementRestore);
   await manager.deleteOne(userId, storyId, Collections.Stories);
   return new OkResult(Infos.CREATE_UNVOTE_OK);
 };

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { asyncMiddleware, isAuthenticatedMiddleware } from '../../helpers/middlewares';
 import { Errors } from '../../constants/index';
 import { Commons } from '../../constants/index';
+import sanitizeHtml from 'sanitize-html';
 import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
@@ -88,6 +89,7 @@ router
       user: req.user,
       user_vote_mapping: userVoteMapping,
       can_downvote: canDownvote,
+      errors: req.flash('error'),
     });
   }))
   .get('/stories/:storyId/vote',
@@ -131,7 +133,12 @@ router
         return res.redirect('/submit');
       }
 
-      const cres = await storiesController.create(req.user._id, req.body);
+      const cres = await storiesController.create(req.user._id, {
+        title: sanitizeHtml(req.body.title),
+        text: sanitizeHtml(req.body.text),
+        url: req.body.url,
+      });
+
       if (cres.error || (cres.result && !cres.result.success)) {
         req.flash('error', [Errors.CREATE_STORY_ERROR]);
 

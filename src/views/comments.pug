@@ -6,6 +6,6 @@ block content
     div.column.col-12.stories
       if comments
         each comment in comments
-          +commentRender(comment, user_vote_mapping, can_downvote)
+          +commentRender(comment, user_vote_mapping, can_downvote, md)
   if has_next
     +pager('/comments', next_page)

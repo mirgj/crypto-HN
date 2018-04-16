@@ -5,7 +5,7 @@ import { Commons } from '../constants/index';
 const idMatch = Joi.string().regex(/^[0-9a-fA-F]{24}$/).required();
 const usernameMatch = Joi.string().alphanum().min(config.defaultValues.minUserLength).max(config.defaultValues.maxUserLength).required();
 const passwordMatch = Joi.string().required().min(config.defaultValues.minPassLength);
-const textMatch = Joi.string().required().allow('').max(config.defaultValues.maxTextLength);
+const textMatch = Joi.string().required().max(config.defaultValues.maxTextLength);
 const titleMatch = Joi.string().required().max(config.defaultValues.maxTitleLength);
 const emailMatch = Joi.string().email().required();
 const urlMatch = Joi.string().uri().trim().required().allow('');
@@ -32,9 +32,12 @@ export default {
     },
   },
   createStory: {
+    options: {
+      allowUnknownBody: false,
+    },
     body: {
       title: titleMatch,
-      text: textMatch,
+      text: textMatch.allow(''),
       url: urlMatch,
     },
   },
@@ -44,8 +47,11 @@ export default {
     },
   },
   updateUser: {
+    options: {
+      allowUnknownBody: false,
+    },
     body: {
-      about: textMatch,
+      about: textMatch.allow(''),
       email: emailMatch,
     },
     params: {
@@ -53,12 +59,18 @@ export default {
     },
   },
   createUserOrLogin: {
+    options: {
+      allowUnknownBody: false,
+    },
     body: {
       username: usernameMatch,
       password: passwordMatch,
     },
   },
   createComment: {
+    options: {
+      allowUnknownBody: false,
+    },
     params: {
       storyId: idMatch,
     },
@@ -67,6 +79,9 @@ export default {
     },
   },
   vote: {
+    options: {
+      allowUnknownBody: false,
+    },
     params: {
       storyId: idMatch,
     },

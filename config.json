@@ -22,7 +22,7 @@
     "minUserLength": 4,
     "maxUserLength": 16,
     "minPassLength": 5,
-    "maxTextLength": 400,
+    "maxTextLength": 2000,
     "maxTitleLength": 100,
     "maxCommentLength": 4096,
     "karmaIncrementMill": 180000,

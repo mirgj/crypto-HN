@@ -71,7 +71,7 @@ mixin commentRender(comment, user_vote_mapping, can_downvote)
     small.sep='|'
     small.story-link on:
       a(href='/stories/' + comment.story._id) #{comment.story.title}
-  p.comment-text=comment.text
+  p.comment-text!=markdown.renderInline(comment.text)
 
 mixin pager(baseUrl, nextPage)
   div.columns.spacer

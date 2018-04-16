@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { asyncMiddleware } from '../../helpers/middlewares';
 import { jwtAuthRequired } from '../../helpers/authenticator';
+import sanitizeHtml from 'sanitize-html';
 import validation from 'express-validation';
 import apiValidators from '../../validation/api-validator';
 import * as storiesController from '../../controllers/stories-controller';
@@ -30,8 +31,8 @@ router
   ))
   .post('/', jwtAuthRequired, validation(apiValidators.createStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.create(req.user._id, {
-      title: req.body.title,
-      text: req.body.text,
+      title: sanitizeHtml(req.body.title),
+      text: sanitizeHtml(req.body.text),
       url: req.body.url,
     }))
   ))
@@ -42,7 +43,7 @@ router
     res.json(await storiesController.getComments(req.params.storyId))
   ))
   .post('/:storyId/comments', jwtAuthRequired, validation(apiValidators.createComment), asyncMiddleware(async(req, res, next) =>
-    res.json(await commentsController.createForStory(req.user._id, req.params.storyId, req.body.text))
+    res.json(await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text)))
   ))
   .put('/:storyId/vote', jwtAuthRequired, validation(apiValidators.vote), asyncMiddleware(async(req, res, next) =>
     res.json(await votesController.voteStory(req.user._id, req.user.karma, req.params.storyId, req.body.direction))

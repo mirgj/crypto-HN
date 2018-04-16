@@ -34,9 +34,18 @@ const update = async(userId, email, about) => {
   );
 };
 
+const incrementVote = async(userId, voteDiff) => {
+  return await userCollection().updateOne(
+    { _id: ObjectID(userId) },
+    { $inc: { karma: voteDiff } },
+  );
+};
+
+
 export {
   findOneByUsername,
   findOne,
   create,
   update,
+  incrementVote,
 };

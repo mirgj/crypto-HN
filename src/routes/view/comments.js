@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { asyncMiddleware, isAuthenticatedMiddleware } from '../../helpers/middlewares';
 import validation from 'express-validation';
+import mkdown from '../../helpers/markdown';
+import sanitizeHtml from 'sanitize-html';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
 import * as commentsController from '../../controllers/comments-controller';
@@ -31,13 +33,16 @@ router
       current_element: 'comments',
       can_downvote: canDownvote,
       user_vote_mapping: userVoteMapping,
+      markdown: mkdown,
     });
   }))
-  .post('/comments',
+  .post('/comments/:storyId',
     isAuthenticatedMiddleware('/login'),
-    validation(viewValidators.getComments),
+    validation(viewValidators.createComment),
     asyncMiddleware(async(req, res, next) => {
-      res.redirect('/');
+      await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text));
+
+      res.redirect('/stories/' + req.params.storyId);
     }));
 
 export default router;

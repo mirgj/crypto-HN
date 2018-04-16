@@ -2,6 +2,16 @@ extends ./common/layout.pug
 include ./common/mixins.pug
 
 block content
+  +notificationBlock(errors, 'error')
   div.columns.spacer
     div.column.col-12.stories
       +storyRender(story, user_vote_mapping, can_downvote)
+  div.columns
+    div.column.col-12
+      form.form-horizontal(action='/comments/' + story._id, method='post')
+        div.form-group
+          div.column.col-12
+            textarea.form-input(name='text', id='text', placeholder='Write something amazing that you\'d like to share', rows=4)
+        div.form-group
+          div.column.col-12
+              button.btn(type='submit') Add comment
