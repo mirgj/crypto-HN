@@ -85,7 +85,7 @@ const getAllByStory = async(storyId) => {
   ]).toArray();
   if (!result || result.length === 0) return null;
 
-  return result[0];
+  return result;
 };
 
 const create = async(userId, storyId, text) => {

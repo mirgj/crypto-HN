@@ -4,7 +4,6 @@ import { Errors, Infos, Warnings } from '../constants/index';
 import * as manager from '../db/comments-manager';
 import * as storyManager from '../db/stories-manager';
 
-
 const getAllComments = async(skip, take) => {
   const result = await manager.getAllChrono(skip, take);
   if (!result) return new WarningResult(Warnings.NO_COMMENTS_WARNING_ALL);

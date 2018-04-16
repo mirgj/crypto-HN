@@ -3,6 +3,7 @@ import { logger } from '../helpers/logger';
 import { ApiResult, WarningResult, InsertResult } from '../results/api-data';
 import { ApiError, NotFoundError } from '../results/api-errors';
 import { Errors, Warnings, Infos } from '../constants/index';
+import * as helper from '../helpers/common';
 import * as manager from '../db/stories-manager';
 import * as commentManager from '../db/comments-manager';
 
@@ -31,7 +32,7 @@ const getComments = async(storyId) => {
   const comments = await commentManager.getAllByStory(storyId);
   if (!comments) return new WarningResult(Warnings.NO_COMMENTS_WARNING, []);
 
-  return new ApiResult(comments);
+  return new ApiResult(helper.treefy(comments));
 };
 
 const create = async(userId, story) => {
