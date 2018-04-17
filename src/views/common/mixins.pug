@@ -6,8 +6,7 @@ mixin loginRegisterForm(action)
     div.form-group
       label.form-label(for= action + '-password') Password
       input.form-input(type='password', name='password', id= action + '-password', placeholder='Type your password', required)
-    div.form-group
-      button.btn(type='submit') #{action}
+    div.form-group: button.btn(type='submit') #{action}
 
 mixin notificationBlock(elements, type)
   if elements && elements.length > 0
@@ -31,21 +30,17 @@ mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_
       else
         a(href='/stories/' + story._id)=story.title
     if story.base_url
-      small.base 
-        a.text-gray(href='/stories/from/' + story.base_url)=story.base_url
+      small.base: a.text-gray(href='/stories/from/' + story.base_url)=story.base_url
   p.meta(class= n ? 'spacer' : '')
     small.points #{story.karma} points
     small.author by 
       a(href='/user/' + story.user.username)=story.user.username
-    small.date
-      a(href='/stories/' + story._id)=moment(story.created_on).fromNow()
+    small.date: a(href='/stories/' + story._id)=moment(story.created_on).fromNow()
     if user_vote_mapping[story._id]
       small.sep='|'
-      small.unvote
-        a(href='/stories/' + story._id + '/unvote', title='Unvote')!='unvote'
+      small.unvote: a(href='/stories/' + story._id + '/unvote', title='Unvote')!='unvote'
     small.sep='|'
-    small.comments
-      a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}
+    small.comments: a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}
 
 mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
   - var base_url = '/stories/' + comment.story._id; 
@@ -56,14 +51,11 @@ mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
           a.up(href='/comments/' + comment._id + '/vote', title='Vote up')!='&#9650;'
           if can_downvote
             a.down(href='/comments/' + comment._id + '/downvote', title='Vote down')!='&#9660;'
-      small.author
-        a(href='/user/' + comment.user.username)=comment.user.username
-      small.date
-        a(href=base_url + '/comments/' + comment._id)=moment(comment.created_on).fromNow()
+      small.author: a(href='/user/' + comment.user.username)=comment.user.username
+      small.date: a(href=base_url + '/comments/' + comment._id)=moment(comment.created_on).fromNow()
       if user_vote_mapping[comment._id]
         small.sep='|'
-        small.unvote
-          a(href='/comments/' + comment._id + '/unvote', title='Unvote')!='unvote'
+        small.unvote: a(href='/comments/' + comment._id + '/unvote', title='Unvote')='unvote'
       if is_list
         small.sep='|'
         small.parent-link
@@ -76,13 +68,10 @@ mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
           a(href='/stories/' + comment.story._id) #{comment.story.title}
     p.comment-text!=markdown.renderInline(comment.text)
     if !is_list
-      p.reply
-        a(href=base_url + '/comments/' + comment._id, title='Unvote')!='unvote'
+      p.reply: small: a(href=base_url + '/comments/' + comment._id)='reply'
 
 mixin pager(baseUrl, nextPage)
-  div.columns.spacer
-    div.column.col-12
-      a(href=baseUrl + '?page=' + nextPage)='Load more'
+  div.columns.spacer: div.column.col-12: a(href=baseUrl + '?page=' + nextPage)='Load more'
 
 mixin commentTree(comments, can_downvote, level)
   each comment in comments
