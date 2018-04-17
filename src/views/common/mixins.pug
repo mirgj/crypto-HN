@@ -48,6 +48,7 @@ mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_
       a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}
 
 mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
+  - var base_url = '/stories/' + comment.story._id; 
   div.column.col-12(class='level-' + level)
     p.meta.comment
       span.voter
@@ -58,7 +59,7 @@ mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
       small.author
         a(href='/user/' + comment.user.username)=comment.user.username
       small.date
-        a(href='/comments/' + comment._id)=moment(comment.created_on).fromNow()
+        a(href=base_url + '/comments/' + comment._id)=moment(comment.created_on).fromNow()
       if user_vote_mapping[comment._id]
         small.sep='|'
         small.unvote
@@ -67,13 +68,16 @@ mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
         small.sep='|'
         small.parent-link
           if comment.parent
-            a(href='/comments/' + comment.parent)='parent'
+            a(href=base_url + '/comments/' + comment.parent)='parent'
           else
             a(href='/stories/' + comment.story._id)='parent'
         small.sep='|'
         small.story-link on:
           a(href='/stories/' + comment.story._id) #{comment.story.title}
     p.comment-text!=markdown.renderInline(comment.text)
+    if !is_list
+      p.reply
+        a(href=base_url + '/comments/' + comment._id, title='Unvote')!='unvote'
 
 mixin pager(baseUrl, nextPage)
   div.columns.spacer
@@ -83,4 +87,4 @@ mixin pager(baseUrl, nextPage)
 mixin commentTree(comments, can_downvote, level)
   each comment in comments
     +commentRender(comment, user_vote_mapping, can_downvote, false, level)
-    +commentTree(comment.children, can_downvote, ++level)
+    +commentTree(comment.children, can_downvote, level + 1)

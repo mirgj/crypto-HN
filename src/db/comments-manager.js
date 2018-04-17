@@ -68,11 +68,22 @@ const getAllByStory = async(storyId) => {
         as: 'user',
       },
     },
+    {
+      $lookup: {
+        from: Collections.Stories,
+        localField: 'story_id',
+        foreignField: '_id',
+        as: 'story',
+      },
+    },
     { $unwind: '$user' },
+    { $unwind: '$story' },
     {
       $project: {
         'user._id': 1,
         'user.username': 1,
+        'story._id': 1,
+        'story.title': 1,
         text: 1,
         karma: 1,
         parent: 1,
