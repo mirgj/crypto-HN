@@ -26,7 +26,23 @@ const treefy = (comments) => {
   return tree;
 };
 
+
+const subtree = (tree, id) => {
+  if (tree.length === 0) return null;
+
+  for (let i = 0; i < tree.length; i++) {
+    const element = tree[i];
+
+    if (element._id.toString() === id) {
+      return [ element ];
+    }
+    const result = subtree(element.children, id);
+    if (result) return result;
+  }
+};
+
 export {
   toBaseURL,
   treefy,
+  subtree,
 };
