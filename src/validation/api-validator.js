@@ -17,6 +17,7 @@ export default {
   getStory: {
     params: {
       storyId: idMatch,
+      commentId: idMatch.optional(),
     },
   },
   getStories: {
@@ -73,6 +74,7 @@ export default {
     },
     params: {
       storyId: idMatch,
+      commentId: idMatch.optional(),
     },
     body: {
       text: textMatch,

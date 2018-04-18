@@ -42,8 +42,14 @@ router
   .get('/:storyId/comments', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.getComments(req.params.storyId))
   ))
+  .get('/:storyId/comments/:commentId', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.getComments(req.params.storyId, req.params.commentId))
+  ))
   .post('/:storyId/comments', jwtAuthRequired, validation(apiValidators.createComment), asyncMiddleware(async(req, res, next) =>
     res.json(await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text)))
+  ))
+  .post('/:storyId/comments/:commentId', jwtAuthRequired, validation(apiValidators.createComment), asyncMiddleware(async(req, res, next) =>
+    res.json(await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text), req.params.commentId))
   ))
   .put('/:storyId/vote', jwtAuthRequired, validation(apiValidators.vote), asyncMiddleware(async(req, res, next) =>
     res.json(await votesController.voteStory(req.user._id, req.user.karma, req.params.storyId, req.body.direction))
