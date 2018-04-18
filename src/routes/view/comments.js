@@ -20,7 +20,7 @@ router
     const totalCount = !comments.error && comments.result.success ? comments.result.data.comments_count : 0;
     const hasNext = data ? totalCount > skip + data.length : false;
     const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
-    const userVoteMapping = req.user ? await voltesController.getUserCommentsVoteMapping(req.user._id, data) : [];
+    const commentsVoteMapping = req.user ? await voltesController.getUserCommentsVoteMapping(req.user._id, data) : [];
 
     res.render('comments', {
       title: 'Comments',
@@ -32,7 +32,7 @@ router
       next_page: currentPage + 1,
       current_element: 'comments',
       can_downvote: canDownvote,
-      user_vote_mapping: userVoteMapping,
+      comments_vote_mapping: commentsVoteMapping,
       markdown: mkdown,
     });
   }))
@@ -40,7 +40,8 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.createComment),
     asyncMiddleware(async(req, res, next) => {
-      await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text));
+      console.log(req.body.commendId);
+      await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text), req.body.commendId);
 
       res.redirect('/stories/' + req.params.storyId);
     }));

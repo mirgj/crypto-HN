@@ -15,7 +15,7 @@ const treefy = (comments) => {
     if (map.hasOwnProperty(_id)) {
       const element = map[_id];
 
-      if (element.parent) {
+      if (element.parent && map[element.parent]) {
         map[element.parent].children.push(element);
       } else {
         tree.push(element);

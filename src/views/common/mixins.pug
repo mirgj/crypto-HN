@@ -42,18 +42,18 @@ mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_
     small.sep='|'
     small.comments: a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}
 
-mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
+mixin commentRender(comment, comments_vote_mapping, can_downvote, is_list, level)
   - var base_url = '/stories/' + comment.story._id; 
   div.column.col-12(class='level-' + level)
     p.meta.comment
       span.voter
-        if !user_vote_mapping[comment._id]
+        if !comments_vote_mapping[comment._id]
           a.up(href='/comments/' + comment._id + '/vote', title='Vote up')!='&#9650;'
           if can_downvote
             a.down(href='/comments/' + comment._id + '/downvote', title='Vote down')!='&#9660;'
       small.author: a(href='/user/' + comment.user.username)=comment.user.username
       small.date: a(href=base_url + '/comments/' + comment._id)=moment(comment.created_on).fromNow()
-      if user_vote_mapping[comment._id]
+      if comments_vote_mapping[comment._id]
         small.sep='|'
         small.unvote: a(href='/comments/' + comment._id + '/unvote', title='Unvote')='unvote'
       if is_list
@@ -73,7 +73,18 @@ mixin commentRender(comment, user_vote_mapping, can_downvote, is_list, level)
 mixin pager(baseUrl, nextPage)
   div.columns.spacer: div.column.col-12: a(href=baseUrl + '?page=' + nextPage)='Load more'
 
-mixin commentTree(comments, can_downvote, level)
+mixin commentTree(comments, comments_vote_mapping, can_downvote, level)
   each comment in comments
-    +commentRender(comment, user_vote_mapping, can_downvote, false, level)
-    +commentTree(comment.children, can_downvote, level + 1)
+    +commentRender(comment, comments_vote_mapping, can_downvote, false, level)
+    +commentTree(comment.children, comments_vote_mapping, can_downvote, level + 1)
+
+mixin addCommentForm(storyId, parentId)
+  form.form-horizontal(action='/comments/' + storyId, method='post')
+    div.form-group
+      div.column.col-12
+        if parentId
+          input(type='hidden', value=parentId, name='commentId', id='commentId')
+        textarea.form-input(name='text', id='text', placeholder='Write something amazing that you\'d like to share', rows=4)
+    div.form-group
+      div.column.col-12
+          button.btn(type='submit') Add comment

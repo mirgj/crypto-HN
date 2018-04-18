@@ -5,9 +5,9 @@ block content
   +notificationBlock(errors, 'error')
   div.columns.spacer
     div.column.col-12.stories
-      +storyRender(story, user_vote_mapping, can_downvote)
+      +commentRender(comments[0], comments_vote_mapping, can_downvote, true, 0)
   div.columns
     div.column.col-12
-      +addCommentForm(story._id)
+      +addCommentForm(story._id, comments[0]._id)
   div.columns.spacer.stories
-    +commentTree(comments, comments_vote_mapping, can_downvote, 0)
+    +commentTree(comments[0].children, comments_vote_mapping, can_downvote, 0)

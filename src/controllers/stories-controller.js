@@ -28,8 +28,8 @@ const getStoriesChrono = async(skip, take, show, ask) => {
   return new ApiResult(result);
 };
 
-const getComments = async(storyId) => {
-  const comments = await commentManager.getAllByStory(storyId);
+const getComments = async(storyId, commentId) => {
+  const comments = await commentManager.getAllByStory(storyId, commentId);
   if (!comments) return new WarningResult(Warnings.NO_COMMENTS_WARNING, []);
 
   return new ApiResult(helper.treefy(comments));

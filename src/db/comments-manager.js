@@ -57,9 +57,17 @@ const getAllChrono = async(skipt, take) => {
   return result[0];
 };
 
-const getAllByStory = async(storyId) => {
+const getAllByStory = async(storyId, commentId) => {
+  let matchFilter = { story_id: ObjectID(storyId) };
+  if (commentId) {
+    matchFilter = { $and: [
+      { story_id: ObjectID(storyId) },
+      { $or: [ { _id: ObjectID(commentId) }, { parent: ObjectID(commentId) } ] },
+    ] };
+  }
+
   const result = await commentCollection().aggregate([
-    { $match: { story_id: ObjectID(storyId) } },
+    { $match: matchFilter },
     {
       $lookup: {
         from: Collections.Users,
@@ -99,14 +107,20 @@ const getAllByStory = async(storyId) => {
   return result;
 };
 
-const create = async(userId, storyId, text) => {
-  return await commentCollection().insertOne({
+const create = async(userId, storyId, text, parentCommentId) => {
+  let baseObj = {
     user_id: ObjectID(userId),
     story_id: ObjectID(storyId),
     text: text,
     karma: 1,
     created_on: new Date(),
-  });
+  };
+
+  if (parentCommentId) {
+    baseObj.parent = ObjectID(parentCommentId);
+  }
+
+  return await commentCollection().insertOne(baseObj);
 };
 
 const incrementVote = async(commentId, voteDiff) => {

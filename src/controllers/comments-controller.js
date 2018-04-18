@@ -11,11 +11,11 @@ const getAllComments = async(skip, take) => {
   return new ApiResult(result);
 };
 
-const createForStory = async(userId, storyId, text) => {
+const createForStory = async(userId, storyId, text, parentCommentId) => {
   const story = await storyManager.findOne(storyId);
   if (!story) throw new NotFoundError(Errors.STORY_NOT_FOUND);
 
-  const ncomment = await manager.create(userId, storyId, text);
+  const ncomment = await manager.create(userId, storyId, text, parentCommentId);
   if (!ncomment.result.ok || ncomment.insertedCount === 0) throw new ApiError(Errors.CREATE_COMMENT_ERROR);
 
   return new InsertResult(Infos.CREATE_COMMENT_INFO, ncomment.insertedId);
