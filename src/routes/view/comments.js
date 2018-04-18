@@ -40,8 +40,7 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.createComment),
     asyncMiddleware(async(req, res, next) => {
-      console.log(req.body.commendId);
-      await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text), req.body.commendId);
+      await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text), req.body.commentId);
 
       res.redirect('/stories/' + req.params.storyId);
     }));

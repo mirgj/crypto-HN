@@ -67,7 +67,7 @@ mixin commentRender(comment, comments_vote_mapping, can_downvote, is_list, level
         small.story-link on:
           a(href='/stories/' + comment.story._id) #{comment.story.title}
     p.comment-text!=markdown.renderInline(comment.text)
-    if !is_list
+    if !is_list && level < 12
       p.reply: small: a(href=base_url + '/comments/' + comment._id)='reply'
 
 mixin pager(baseUrl, nextPage)
@@ -78,7 +78,7 @@ mixin commentTree(comments, comments_vote_mapping, can_downvote, level)
     +commentRender(comment, comments_vote_mapping, can_downvote, false, level)
     +commentTree(comment.children, comments_vote_mapping, can_downvote, level + 1)
 
-mixin addCommentForm(storyId, parentId)
+mixin addCommentForm(storyId, parentId, label)
   form.form-horizontal(action='/comments/' + storyId, method='post')
     div.form-group
       div.column.col-12
@@ -87,4 +87,4 @@ mixin addCommentForm(storyId, parentId)
         textarea.form-input(name='text', id='text', placeholder='Write something amazing that you\'d like to share', rows=4)
     div.form-group
       div.column.col-12
-          button.btn(type='submit') Add comment
+          button.btn(type='submit')=label
