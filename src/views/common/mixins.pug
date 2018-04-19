@@ -19,11 +19,14 @@ mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_
   p.text
     if n
       span.inc #{inc}.
-    span.voter
-      if !user_vote_mapping[story._id]
-        a.up(href='/stories/' + story._id + '/vote', title='Vote up')!='&#9650;'
-        if can_downvote
-          a.down(href='/stories/' + story._id + '/downvote', title='Vote down')!='&#9660;'
+    if (user && user.username != story.user.username) || !user
+      span.voter
+        if !user_vote_mapping[story._id]
+          a.up(href='/stories/' + story._id + '/vote', title='Vote up')!='&#9650;'
+          if can_downvote
+            a.down(href='/stories/' + story._id + '/downvote', title='Vote down')!='&#9660;'
+    else if user
+      span.voter: span.me='*'
     span.link
       if story.url
         a(href=story.url, target='_blank')=story.title
@@ -46,11 +49,14 @@ mixin commentRender(comment, comments_vote_mapping, can_downvote, is_list, level
   - var base_url = '/stories/' + comment.story._id; 
   div.column.col-12(class='level-' + level)
     p.meta.comment
-      span.voter
-        if !comments_vote_mapping[comment._id]
-          a.up(href='/comments/' + comment._id + '/vote', title='Vote up')!='&#9650;'
-          if can_downvote
-            a.down(href='/comments/' + comment._id + '/downvote', title='Vote down')!='&#9660;'
+      if (user && user.username != comment.user.username) || !user
+        span.voter
+          if !comments_vote_mapping[comment._id]
+            a.up(href='/comments/' + comment._id + '/vote', title='Vote up')!='&#9650;'
+            if can_downvote
+              a.down(href='/comments/' + comment._id + '/downvote', title='Vote down')!='&#9660;'
+      else if user
+        span.voter: span.me='*'
       small.author: a(href='/user/' + comment.user.username)=comment.user.username
       small.date: a(href=base_url + '/comments/' + comment._id)=moment(comment.created_on).fromNow()
       if comments_vote_mapping[comment._id]

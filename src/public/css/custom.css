@@ -9,12 +9,14 @@ p.no-margin { margin: 0; }
 .stories p.text .voter { display: inline-block; min-width: 0.975rem; position: relative; }
 .stories p.text .voter .up { position: absolute; top: -0.975rem; }
 .stories p.text .voter .down { position: absolute; top: -0.2rem; }
+.stories p.text .voter .me { color: #ff6600; position: absolute; top: -0.75rem; }
 .stories p.text .inc, .stories p.text .link { margin-right: 0.50rem; }
 .stories p.meta { margin-bottom: 0.25rem; margin-top: -0.325rem; margin-left: 0.975rem; }
 .stories p.meta.comment { margin: 0; }
 .stories p.meta.comment .voter { display: inline-block; margin-right: 0.25rem; position: relative; min-width: 0.875rem; }
 .stories p.meta.comment .voter .up { position: absolute; top: -0.975rem; }
 .stories p.meta.comment .voter .down { position: absolute; top: -0.2rem; }
+.stories p.meta.comment .voter .me { color: #ff6600; position: absolute; top: -0.70rem; }
 .stories p.meta.spacer { margin-left: 2.975rem; }
 .stories p.meta small { margin-right: 0.25rem; }
 .stories p.meta small.story-link a { margin-left: 0.25rem; }
