@@ -20,6 +20,11 @@ export default {
       commentId: idMatch.optional(),
     },
   },
+  getComment: {
+    params: {
+      commentId: idMatch,
+    },
+  },
   getStories: {
     query: {
       skip: skipMatch,
@@ -80,12 +85,23 @@ export default {
       text: textMatch,
     },
   },
-  vote: {
+  voteStory: {
     options: {
       allowUnknownBody: false,
     },
     params: {
       storyId: idMatch,
+    },
+    body: {
+      direction: voteDirectionMatch,
+    },
+  },
+  voteComment: {
+    options: {
+      allowUnknownBody: false,
+    },
+    params: {
+      commentId: idMatch,
     },
     body: {
       direction: voteDirectionMatch,
