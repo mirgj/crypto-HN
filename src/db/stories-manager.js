@@ -6,6 +6,9 @@ import * as helper from '../helpers/common';
 
 const storyCollection = () => dbState.defaultDbInstance.collection(Collections.Stories);
 
+const findOneStrict = async(storyId) => {
+  return await storyCollection().findOne({ _id: ObjectID(storyId) });
+};
 const findOne = async(storyId) => {
   const aggregation = [
     { $match: { _id: ObjectID(storyId) } },
@@ -189,6 +192,7 @@ const incrementVote = async(storyId, voteDiff) => {
 };
 
 export {
+  findOneStrict,
   findOne,
   getAll,
   getAllChrono,

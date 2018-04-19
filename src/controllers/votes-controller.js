@@ -5,6 +5,7 @@ import config from '../../config';
 import * as manager from '../db/vote-log-manager';
 import * as storiesManager from '../db/stories-manager';
 import * as usersManager from '../db/users-manager';
+import * as commentsManager from '../db/comments-manager';
 
 const calculateMinAndMaxIds = (data) => {
   const defaultValue = data.length > 0 ? data[0]._id : null;
@@ -48,41 +49,92 @@ const getUserCommentsVoteMapping = async(userId, comments) => {
 };
 
 const voteStory = async(userId, userKarma, storyId, direction) => {
+  const story = await storiesManager.findOneStrict(storyId);
   const vote = await manager.findOneByUserIdObjectId(userId, storyId, Collections.Stories);
   const isUp = direction === Commons.Up;
   const voteIncrement = isUp ? 1 : -1;
+
+  if (!story) return new NotFoundError(Errors.STORY_NOT_FOUND);
+  if (story.user_id.toString() === userId.toString()) return new WarningResult(Warnings.CANT_VOTE_YOUR_STORY);
 
   if (vote)
     return new WarningResult(Warnings.ALREADY_VOTED_WARNING);
   if (userKarma < config.defaultValues.minKarmaForDownvote && !isUp)
     return new WarningResult(Warnings.NOT_ENOUGH_KARMA.split('{0}').join(config.defaultValues.minKarmaForDownvote));
 
-  const story = await storiesManager.incrementVote(storyId, voteIncrement);
+  const updated = await storiesManager.incrementVote(storyId, voteIncrement);
 
-  if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
+  if (!updated.result.ok || !updated.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
 
-  await usersManager.incrementVote(userId, voteIncrement);
+  await usersManager.incrementVote(story.user_id, voteIncrement);
   await manager.create(userId, storyId, Collections.Stories, direction);
   return new OkResult(Infos.CREATE_VOTE_OK);
 };
 
 const unvoteStory = async(userId, storyId) => {
+  const story = await storiesManager.findOneStrict(storyId);
   const vote = await manager.findOneByUserIdObjectId(userId, storyId, Collections.Stories);
+
   if (!vote) throw new NotFoundError(Errors.NOT_VOTE_FOUND_ERROR);
+  if (!story) return new NotFoundError(Errors.STORY_NOT_FOUND);
+  if (story.user_id.toString() === userId.toString()) return new WarningResult(Warnings.CANT_VOTE_YOUR_STORY);
 
   const voteIncrementRestore = vote.vote_direction === Commons.Up ? -1 : 1;
-  const story = await storiesManager.incrementVote(storyId, voteIncrementRestore);
+  const updated = await storiesManager.incrementVote(storyId, voteIncrementRestore);
 
-  if (!story.result.ok || !story.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
+  if (!updated.result.ok || !updated.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
 
-  await usersManager.incrementVote(userId, voteIncrementRestore);
+  await usersManager.incrementVote(story.user_id, voteIncrementRestore);
   await manager.deleteOne(userId, storyId, Collections.Stories);
+  return new OkResult(Infos.CREATE_UNVOTE_OK);
+};
+
+const voteComment = async(userId, userKarma, commentId, direction) => {
+  const comment = await commentsManager.findOne(commentId);
+  const vote = await manager.findOneByUserIdObjectId(userId, commentId, Collections.Comments);
+  const isUp = direction === Commons.Up;
+  const voteIncrement = isUp ? 1 : -1;
+
+  if (!comment) return new NotFoundError(Errors.COMMENT_NOT_FOUND);
+  if (comment.user_id.toString() === userId.toString()) return new WarningResult(Warnings.CANT_VOTE_YOURSELF);
+
+  if (vote)
+    return new WarningResult(Warnings.ALREADY_VOTED_WARNING);
+  if (userKarma < config.defaultValues.minKarmaForDownvote && !isUp)
+    return new WarningResult(Warnings.NOT_ENOUGH_KARMA.split('{0}').join(config.defaultValues.minKarmaForDownvote));
+
+  const updated = await commentsManager.incrementVote(commentId, voteIncrement);
+
+  if (!updated.result.ok || !updated.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
+
+  await usersManager.incrementVote(comment.user_id, voteIncrement);
+  await manager.create(userId, commentId, Collections.Comments, direction);
+  return new OkResult(Infos.CREATE_VOTE_OK);
+};
+
+const unvoteComment = async(userId, commentId) => {
+  const comment = await commentsManager.findOne(commentId);
+  const vote = await manager.findOneByUserIdObjectId(userId, commentId, Collections.Comments);
+
+  if (!vote) throw new NotFoundError(Errors.NOT_VOTE_FOUND_ERROR);
+  if (!comment) return new NotFoundError(Errors.COMMENT_NOT_FOUND);
+  if (comment.user_id.toString() === userId.toString()) return new WarningResult(Warnings.CANT_VOTE_YOURSELF);
+
+  const voteIncrementRestore = vote.vote_direction === Commons.Up ? -1 : 1;
+  const updated = await commentsManager.incrementVote(commentId, voteIncrementRestore);
+
+  if (!updated.result.ok || !updated.modifiedCount) throw new ApiError(Errors.VOTE_ERROR);
+
+  await usersManager.incrementVote(comment.user_id, voteIncrementRestore);
+  await manager.deleteOne(userId, commentId, Collections.Comments);
   return new OkResult(Infos.CREATE_UNVOTE_OK);
 };
 
 export {
   voteStory,
   unvoteStory,
+  voteComment,
+  unvoteComment,
   getUserStoriesVoteMapping,
   getUserCommentsVoteMapping,
 };

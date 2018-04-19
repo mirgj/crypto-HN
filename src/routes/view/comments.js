@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { asyncMiddleware, isAuthenticatedMiddleware } from '../../helpers/middlewares';
+import { Commons } from '../../constants/index';
 import validation from 'express-validation';
 import mkdown from '../../helpers/markdown';
 import sanitizeHtml from 'sanitize-html';
@@ -36,6 +37,30 @@ router
       markdown: mkdown,
     });
   }))
+  .get('/comments/:commentId/vote',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getComment),
+    asyncMiddleware(async(req, res, next) => {
+      await voltesController.voteComment(req.user._id, req.user.karma, req.params.commentId, Commons.Up);
+
+      res.redirect(req.header('Referer') || '/comments');
+    }))
+  .get('/comments/:commentId/downvote',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getComment),
+    asyncMiddleware(async(req, res, next) => {
+      await voltesController.voteComment(req.user._id, req.user.karma, req.params.commentId, Commons.Down);
+
+      res.redirect(req.header('Referer') || '/comments');
+    }))
+  .get('/comments/:commentId/unvote',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getComment),
+    asyncMiddleware(async(req, res, next) => {
+      await voltesController.unvoteComment(req.user._id, req.params.commentId);
+
+      res.redirect(req.header('Referer') || '/comments');
+    }))
   .post('/comments/:storyId',
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.createComment),

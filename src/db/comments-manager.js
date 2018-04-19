@@ -4,6 +4,10 @@ import { Collections } from '../constants/index';
 
 const commentCollection = () => dbState.defaultDbInstance.collection(Collections.Comments);
 
+const findOne = async(commentId) => {
+  return await commentCollection().findOne({ _id: ObjectID(commentId) });
+};
+
 const getAllChrono = async(skipt, take) => {
   const result = await commentCollection().aggregate([
     {
@@ -131,6 +135,7 @@ const incrementVote = async(commentId, voteDiff) => {
 };
 
 export {
+  findOne,
   getAllChrono,
   getAllByStory,
   create,

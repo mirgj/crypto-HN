@@ -44,6 +44,14 @@ export default {
       page: pageMatch,
     },
   },
+  getComment: {
+    options: {
+      allowUnknownParams: false,
+    },
+    params: {
+      commentId: idMatch,
+    },
+  },
   createComment: {
     options: {
       allowUnknownBody: false,

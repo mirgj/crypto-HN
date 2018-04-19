@@ -18,6 +18,7 @@ export const Errors = {
   NOT_VOTE_FOUND_ERROR: 'There is not a registered vote for this resource',
   VOTE_ERROR: 'Error voting the requested resource',
   UNVOTE_ERROR: 'Error unvoting the requested resource',
+  COMMENT_NOT_FOUND: 'Comment not found',
 };
 
 export const Warnings = {
@@ -26,6 +27,8 @@ export const Warnings = {
   NO_COMMENTS_WARNING_ALL: 'No comments found',
   ALREADY_VOTED_WARNING: 'You can\'t vote two times for the same story/comment',
   NOT_ENOUGH_KARMA: 'You don\'t have enough karma to downvote. You must have at least {0} points',
+  CANT_VOTE_YOURSELF: 'You can\'t vote your comment',
+  CANT_VOTE_YOUR_STORY: 'You can\'t vote your story',
 };
 
 export const Infos = {
