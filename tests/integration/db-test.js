@@ -1,8 +1,10 @@
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { logger } from '../../src/helpers/logger';
 import { Collections, Errors } from '../../src/constants/index';
 import config from '../../config';
 import * as db from '../../src/db/connector';
+chai.use(chaiAsPromised);
 
 describe('## DB', () => {
 
@@ -57,15 +59,9 @@ describe('## DB', () => {
     });
 
     it('it should fail to init the database if not connected', async() => {
-      try {
-        await db.initDefaultDb(config.database.defaultDbName);
-        throw new Error('should fail');
-      } catch (err) {
-        expect(err).to.not.be.null;
-        expect(err.message).to.not.be.null;
-        expect(err.message).to.be.a('string');
-        expect(err.message).to.be.equal(Errors.DB_ERROR);
-      }
+      const promise = db.initDefaultDb(config.database.defaultDbName);
+      expect(promise).to.be.rejected;
+      expect(promise).to.be.rejectedWith(Errors.DB_ERROR);
     });
 
     it('it should attempt to close the database connection and get false if not connected', async() => {
