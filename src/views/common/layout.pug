@@ -21,6 +21,12 @@ html(lang='en')
           a(class=current_element == "show" ? "active" : "", href='/show') show
           span.text-primary='|'
           a(class=current_element == "ask" ? "active" : "", href='/ask') ask
+          if current_element == 'shownew'
+            span.text-primary='|'
+            a.active(href='/shownew') shownew
+          if current_element == 'asknew'
+            span.text-primary='|'
+            a.active(href='/asknew') asknew
         section.navbar-center
           a(href='/' class='logo')
             img(src='/static/images/favicon.png')

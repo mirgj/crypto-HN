@@ -90,14 +90,14 @@ router
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, true);
 
-    await commonStoriesRoute(req, res, next, stories, 'New show', 'show');
+    await commonStoriesRoute(req, res, next, stories, 'New show', 'shownew');
   }))
   .get('/asknew', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, null, true);
 
-    await commonStoriesRoute(req, res, next, stories, 'New ask', 'ask');
+    await commonStoriesRoute(req, res, next, stories, 'New ask', 'asknew');
   }))
   .get('/stories/:storyId', validation(viewValidators.getStory), asyncMiddleware(async(req, res, next) => {
     const comm = await storiesController.getComments(req.params.storyId);

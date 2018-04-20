@@ -45,9 +45,10 @@ router
     const cres = await usersController.getLogin(req.params.username);
     const user = !cres.error && cres.result.success ? cres.result.data : null;
     const isMe = user && req.user && req.user.username === user.username;
+    const title = isMe ? 'Your profile' : 'Profile: ' + user.username;
 
     res.render('profile', {
-      title: 'Your profile',
+      title: title,
       user: req.user,
       profileUser: user,
       isMe: isMe,

@@ -2,6 +2,13 @@ extends ./common/layout.pug
 include ./common/mixins.pug
 
 block content
+  if current_element == 'show' || current_element == 'ask'
+    -var label1 = 'You might miss something, just look at the '
+    -var label2 = ' stories to be always updated.'
+    div.toast.toast-primary
+      span=label1
+      a(href= '/' + current_element + 'new')='newest'
+      span=label2
   div.columns.spacer
     div.column.col-12.stories
       -var n = 0;
