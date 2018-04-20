@@ -14,8 +14,8 @@ const getOneById = async(storyId) => {
   return new ApiResult(story);
 };
 
-const getStories = async(skip, take, show, ask) => {
-  const result = await manager.getAll(skip, take, show, ask);
+const getStories = async(skip, take, show, ask, userId) => {
+  const result = await manager.getAll(skip, take, show, ask, userId);
   if (!result) return new WarningResult(Warnings.NO_STORIES_WARNING);
 
   return new ApiResult(result);

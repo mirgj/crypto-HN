@@ -8,17 +8,19 @@ import * as usersManager from '../db/users-manager';
 import * as commentsManager from '../db/comments-manager';
 
 const calculateMinAndMaxIds = (data) => {
-  const defaultValue = data.length > 0 ? data[0]._id : null;
+  const defaultValue = data && data.length > 0 ? data[0]._id : null;
   let maxId = defaultValue;
   let minId = defaultValue;
 
-  data.forEach((el) => {
-    if (el._id.getTimestamp() < minId.getTimestamp())
-      minId = el._id;
+  if (data) {
+    data.forEach((el) => {
+      if (el._id.getTimestamp() < minId.getTimestamp())
+        minId = el._id;
 
-    if (el._id.getTimestamp() > maxId.getTimestamp())
-      maxId = el._id;
-  });
+      if (el._id.getTimestamp() > maxId.getTimestamp())
+        maxId = el._id;
+    });
+  }
 
   return {
     min: minId,

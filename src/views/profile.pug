@@ -45,3 +45,11 @@ block content
             div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
             div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
               button.btn(type='submit') Update
+  if profileUser
+    div.columns
+      div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+      div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+        p.no-margin: a(href='/user/' + profileUser.username + '/submissions')='submissions'
+      div.column.col-1.col-sm-3.col-md-2.col-lg-2.col-xs-12
+      div.column.col-11.col-sm-9.col-md-10.col-lg-10.col-xs-12
+        p.no-margin: a(href='/user/' + profileUser.username + '/comments')='comments'

@@ -34,6 +34,14 @@ export default {
       username: usernameMatch,
     },
   },
+  getUser: {
+    params: {
+      username: usernameMatch,
+    },
+    query: {
+      page: pageMatch,
+    },
+  },
   getStories: {
     query: {
       page: pageMatch,

@@ -4,7 +4,11 @@ import { isAuthenticatedMiddleware, notAuthenticatedMiddleware, asyncMiddleware 
 import { ApiError, NotFoundError } from '../../results/api-errors';
 import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
+import config from '../../../config.json';
+import * as commentsController from '../../controllers/comments-controller';
+import * as storiesController from '../../controllers/stories-controller';
 import * as usersController from '../../controllers/users-controller';
+import * as commonHelper from './common-helper';
 
 const router = Router();
 const auth = passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true });
@@ -41,7 +45,7 @@ router
       return next();
     }
   }))
-  .get('/user/:username', asyncMiddleware(async(req, res, next) => {
+  .get('/user/:username', validation(viewValidators.getUser), asyncMiddleware(async(req, res, next) => {
     const cres = await usersController.getLogin(req.params.username);
     const user = !cres.error && cres.result.success ? cres.result.data : null;
     const isMe = user && req.user && req.user.username === user.username;
@@ -56,6 +60,26 @@ router
       errors: req.flash('error'),
       info: req.flash('info'),
     });
+  }))
+  .get('/user/:username/submissions', validation(viewValidators.getUser), asyncMiddleware(async(req, res, next) => {
+    const cres = await usersController.getLogin(req.params.username);
+    const user = !cres.error && cres.result.success ? cres.result.data : null;
+    const userId = user ? user._id : null;
+    const currentPage = req.query.page;
+    const skip = (currentPage - 1) * config.defaultValues.take;
+    const stories = await storiesController.getStories(skip, config.defaultValues.take, null, null, userId);
+
+    await commonHelper.commonStoriesRoute(req, res, next, stories, user.username + '\'s submissions', 'submissions');
+  }))
+  .get('/user/:username/comments', validation(viewValidators.getUser), asyncMiddleware(async(req, res, next) => {
+    const cres = await usersController.getLogin(req.params.username);
+    const currentPage = req.query.page;
+    const user = !cres.error && cres.result.success ? cres.result.data : null;
+    const userId = user ? user._id : null;
+    const skip = (currentPage - 1) * config.defaultValues.take;
+    const comments = await commentsController.getAllComments(skip, config.defaultValues.take, userId);
+
+    await commonHelper.commonComments(req, res, next, comments);
   }))
   .post('/user/:username',
     isAuthenticatedMiddleware('/login'),

@@ -4,57 +4,13 @@ import { Errors } from '../../constants/index';
 import { Commons } from '../../constants/index';
 import sanitizeHtml from 'sanitize-html';
 import validation from 'express-validation';
-import mkdown from '../../helpers/markdown';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
 import * as storiesController from '../../controllers/stories-controller';
 import * as voltesController from '../../controllers/votes-controller';
+import * as commonHelper from './common-helper';
 
 const router = Router();
-const commonStoriesRoute = async(req, res, next, stories, title, currentElement) => {
-  const currentPage = req.query.page;
-  const skip = (currentPage - 1) * config.defaultValues.take;
-  const data = !stories.error && stories.result.success ? stories.result.data.stories : null;
-  const totalCount = !stories.error && stories.result.success ? stories.result.data.stories_count : 0;
-  const hasNext = data ? totalCount > skip + data.length : false;
-  const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
-  const userVoteMapping = req.user ? await voltesController.getUserStoriesVoteMapping(req.user._id, data) : [];
-
-  res.render('index', {
-    title: title,
-    user: req.user,
-    stories: data,
-    total_count: totalCount,
-    has_next: hasNext,
-    current_page: currentPage,
-    next_page: currentPage + 1,
-    page_size: config.defaultValues.take,
-    current_element: currentElement,
-    can_downvote: canDownvote,
-    user_vote_mapping: userVoteMapping,
-  });
-};
-
-const commonSingleRoute = async(req, res, next, comm, title, template) => {
-  const cres = await storiesController.getOneById(req.params.storyId);
-  const story = !cres.error && cres.result.success ? cres.result.data : null;
-  const comments = !comm.error && comm.result.success ? comm.result.data : null;
-  const userVoteMapping = req.user ? await voltesController.getUserStoriesVoteMapping(req.user._id, [story]) : [];
-  const commentsVoteMapping = req.user ? await voltesController.getUserCommentsVoteMapping(req.user._id, comments) : [];
-  const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;
-
-  res.render(template || 'single', {
-    title: title || story.title,
-    story: story,
-    comments: comments,
-    user: req.user,
-    user_vote_mapping: userVoteMapping,
-    comments_vote_mapping: commentsVoteMapping,
-    can_downvote: canDownvote,
-    markdown: mkdown,
-    errors: req.flash('error'),
-  });
-};
 
 router
   .get('/', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
@@ -62,54 +18,54 @@ router
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take);
 
-    await commonStoriesRoute(req, res, next, stories, 'Top News');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, 'Top News');
   }))
   .get('/show', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take, true);
 
-    await commonStoriesRoute(req, res, next, stories, 'Show', 'show');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, 'Show', 'show');
   }))
   .get('/ask', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take, null, true);
 
-    await commonStoriesRoute(req, res, next, stories, 'Ask', 'ask');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, 'Ask', 'ask');
   }))
   .get('/new', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take);
 
-    await commonStoriesRoute(req, res, next, stories, 'New news', 'new');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, 'New news', 'new');
   }))
   .get('/shownew', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, true);
 
-    await commonStoriesRoute(req, res, next, stories, 'New show', 'shownew');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, 'New show', 'shownew');
   }))
   .get('/asknew', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, null, true);
 
-    await commonStoriesRoute(req, res, next, stories, 'New ask', 'asknew');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, 'New ask', 'asknew');
   }))
   .get('/stories/:storyId', validation(viewValidators.getStory), asyncMiddleware(async(req, res, next) => {
     const comm = await storiesController.getComments(req.params.storyId);
 
-    await commonSingleRoute(req, res, next, comm);
+    await commonHelper.commonSingleRoute(req, res, next, comm);
   }))
   .get('/stories/:storyId/comments/:commentId',
     validation(viewValidators.getStoryComment),
     asyncMiddleware(async(req, res, next) => {
       const comm = await storiesController.getComments(req.params.storyId, req.params.commentId);
 
-      await commonSingleRoute(req, res, next, comm, 'Add comment', 'singleComment');
+      await commonHelper.commonSingleRoute(req, res, next, comm, 'Add comment', 'singleComment');
     }))
   .get('/stories/:storyId/vote',
     isAuthenticatedMiddleware('/login'),

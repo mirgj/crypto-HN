@@ -8,8 +8,8 @@ const findOne = async(commentId) => {
   return await commentCollection().findOne({ _id: ObjectID(commentId) });
 };
 
-const getAllChrono = async(skipt, take) => {
-  const result = await commentCollection().aggregate([
+const getAllChrono = async(skipt, take, userId) => {
+  const aggregation = [
     {
       $lookup: {
         from: Collections.Users,
@@ -55,7 +55,10 @@ const getAllChrono = async(skipt, take) => {
         comments: 1,
       },
     },
-  ]).toArray();
+  ];
+  if (userId) aggregation.splice(0, 0, { $match: { user_id: ObjectID(userId) } });
+  const result = await commentCollection().aggregate(aggregation).toArray();
+
   if (!result || result.length === 0) return null;
 
   return result[0];
