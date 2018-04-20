@@ -33,7 +33,7 @@ router
     res.json(await storiesController.create(req.user._id, {
       title: sanitizeHtml(req.body.title),
       text: sanitizeHtml(req.body.text),
-      url: req.body.url,
+      url: sanitizeHtml(req.body.url),
     }))
   ))
   .get('/:storyId', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>

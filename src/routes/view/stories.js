@@ -148,14 +148,14 @@ router
     validation(viewValidators.createStory),
     asyncMiddleware(async(req, res, next) => {
       if (!req.body.text && !req.body.url) {
-        req.flash('error', ['Either text or URL are required']);
+        req.flash('error', [Errors.CREATE_STORY_INPUT_ERROR]);
         return res.redirect('/submit');
       }
 
       const cres = await storiesController.create(req.user._id, {
         title: sanitizeHtml(req.body.title),
         text: sanitizeHtml(req.body.text),
-        url: req.body.url,
+        url: sanitizeHtml(req.body.url),
       });
 
       if (cres.error || (cres.result && !cres.result.success)) {

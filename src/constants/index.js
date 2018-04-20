@@ -5,6 +5,7 @@ export const Errors = {
   BAD_REQUEST_ERROR: 'Malformed data. Check your input',
   STORY_NOT_FOUND: 'Story not found. Check the storyId and try again',
   CREATE_STORY_ERROR: 'Error creating the story, check if all the required fields are provided',
+  CREATE_STORY_INPUT_ERROR: 'Either text or URL are required',
   USERNAME_NOT_FOUND: 'User not found. Check your username',
   USER_NOT_FOUND: 'User not found',
   USER_WRONG_PASSWORD: 'Error authenticating the user. Check if your credentials are valid',

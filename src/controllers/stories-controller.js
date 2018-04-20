@@ -1,7 +1,7 @@
 import { MongoError } from 'mongodb';
 import { logger } from '../helpers/logger';
 import { ApiResult, WarningResult, InsertResult } from '../results/api-data';
-import { ApiError, NotFoundError } from '../results/api-errors';
+import { ApiError, NotFoundError, BadRequestError } from '../results/api-errors';
 import { Errors, Warnings, Infos } from '../constants/index';
 import * as helper from '../helpers/common';
 import * as manager from '../db/stories-manager';
@@ -42,6 +42,8 @@ const getComments = async(storyId, commentId) => {
 
 const create = async(userId, story) => {
   try {
+    if (!story.text && !story.url) throw new BadRequestError(Errors.CREATE_STORY_INPUT_ERROR);
+
     const nstory = await manager.create(userId, story.title, story.text, story.url);
     if (!nstory.result.ok || nstory.insertedCount === 0) throw new ApiError(Errors.CREATE_STORY_ERROR);
 
