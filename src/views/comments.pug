@@ -2,6 +2,8 @@ extends ./common/layout.pug
 include ./common/mixins.pug
 
 block content
+  if current_element == 'usercomments' && (!comments || comments.length == 0)
+    +notificationBlock(['This user has never commented'], 'primary')
   div.columns.spacer.stories
     if comments
       each comment in comments

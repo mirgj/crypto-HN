@@ -27,6 +27,12 @@ html(lang='en')
           if current_element == 'asknew'
             span.text-primary='|'
             a.active(href='/asknew') asknew
+          if current_element == 'submissions'
+            span.text-primary='|'
+            a.active(href='#')=title
+          if current_element == 'usercomments'
+            span.text-primary='|'
+            a.active(href='#')=title
         section.navbar-center
           a(href='/' class='logo')
             img(src='/static/images/favicon.png')

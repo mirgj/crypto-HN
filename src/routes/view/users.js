@@ -79,7 +79,7 @@ router
     const skip = (currentPage - 1) * config.defaultValues.take;
     const comments = await commentsController.getAllComments(skip, config.defaultValues.take, userId);
 
-    await commonHelper.commonComments(req, res, next, comments);
+    await commonHelper.commonComments(req, res, next, comments, user.username + '\'s comments', 'usercomments');
   }))
   .post('/user/:username',
     isAuthenticatedMiddleware('/login'),

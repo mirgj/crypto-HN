@@ -9,6 +9,8 @@ block content
       span=label1
       a(href= '/' + current_element + 'new')='newest'
       span=label2
+  if current_element == 'submissions' && (!stories || stories.length == 0)
+    +notificationBlock(['This user has never posted something'], 'primary')
   div.columns.spacer
     div.column.col-12.stories
       -var n = 0;
