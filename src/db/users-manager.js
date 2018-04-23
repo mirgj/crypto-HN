@@ -22,15 +22,28 @@ const create = async(username, hashedPassword) => {
 };
 
 const update = async(userId, email, about) => {
-  var obj = {
+  const obj = {
     updated_on: new Date(),
     email: email,
     about: about,
   };
+  const unset = {};
+
+  if (!obj.email) {
+    unset.email = 1;
+    delete obj.email;
+  }
+  if (!obj.about) {
+    unset.about = 1;
+    delete obj.about;
+  }
+
+  let query = { $set: obj };
+  if (unset.email || unset.about) query.$unset = unset;
 
   return await userCollection().updateOne(
     { _id: ObjectID(userId) },
-    { $set: obj }
+    query,
   );
 };
 

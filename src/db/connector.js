@@ -63,7 +63,7 @@ const initDefaultDb = async(dbName) => {
     },
   });
   await dbo.createIndex(Collections.Users, { username: 1}, { unique: true });
-  await dbo.createIndex(Collections.Users, { email: 1}, { unique: true });
+  await dbo.createIndex(Collections.Users, { email: 1}, { unique: true, sparse: true });
 
   await dbo.createCollection(Collections.Stories, {
     validator: {
