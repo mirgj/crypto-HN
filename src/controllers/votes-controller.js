@@ -6,30 +6,10 @@ import * as manager from '../db/vote-log-manager';
 import * as storiesManager from '../db/stories-manager';
 import * as usersManager from '../db/users-manager';
 import * as commentsManager from '../db/comments-manager';
-
-const calculateMinAndMaxIds = (data) => {
-  const defaultValue = data && data.length > 0 ? data[0]._id : null;
-  let maxId = defaultValue;
-  let minId = defaultValue;
-
-  if (data) {
-    data.forEach((el) => {
-      if (el._id.getTimestamp() < minId.getTimestamp())
-        minId = el._id;
-
-      if (el._id.getTimestamp() > maxId.getTimestamp())
-        maxId = el._id;
-    });
-  }
-
-  return {
-    min: minId,
-    max: maxId,
-  };
-};
+import * as helper from '../helpers/common';
 
 const getUserVoteMapping = async(userId, data, objectType) => {
-  const ids = calculateMinAndMaxIds(data);
+  const ids = helper.calculateMinAndMaxIds(data);
   if (!ids.min || !ids.max) return [];
 
   const res = await manager.findByUserAndIdsRange(userId, ids.min, ids.max, objectType);

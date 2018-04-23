@@ -26,7 +26,6 @@ const treefy = (comments) => {
   return tree;
 };
 
-
 const subtree = (tree, id) => {
   if (tree.length === 0) return null;
 
@@ -41,8 +40,30 @@ const subtree = (tree, id) => {
   }
 };
 
+const calculateMinAndMaxIds = (data) => {
+  const defaultValue = data && data.length > 0 ? data[0]._id : null;
+  let maxId = defaultValue;
+  let minId = defaultValue;
+
+  if (data) {
+    data.forEach((el) => {
+      if (el._id.getTimestamp() < minId.getTimestamp())
+        minId = el._id;
+
+      if (el._id.getTimestamp() > maxId.getTimestamp())
+        maxId = el._id;
+    });
+  }
+
+  return {
+    min: minId,
+    max: maxId,
+  };
+};
+
 export {
   toBaseURL,
   treefy,
   subtree,
+  calculateMinAndMaxIds,
 };
