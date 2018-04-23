@@ -68,3 +68,30 @@ export const Collections = {
   Comments: 'comments',
   VoteLog: 'vote_log',
 };
+
+export const UI = {
+  Titles: {
+    LoginPage: 'Login or Register',
+    MyProfileTitle: 'Your profile',
+    ProfileTitle: '\'s profile',
+    UserSubmissions: '\'s submissions',
+    UserComments: '\'s comments',
+    TopNews: 'Top stories',
+    NewNews: 'New stories',
+    Show: 'Show',
+    NewShow: 'New show',
+    Ask: 'Ask',
+    NewAsk: 'New ask',
+    AddComent: 'Add comment',
+    Title404: 'Page not found',
+    Title500: 'Internal error',
+    Comments: 'Comments',
+  },
+  Messages: {
+    UserCreated: 'User has been created. Use your credentials to login',
+  },
+  Errors: {
+    UserCreationError: 'Error creating the user',
+    OperationNotAllowed: 'Operation not allowed',
+  },
+};

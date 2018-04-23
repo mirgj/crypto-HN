@@ -1,3 +1,4 @@
+import { UI } from '../../constants/index';
 import mkdown from '../../helpers/markdown';
 import config from '../../../config.json';
 import * as storiesController from '../../controllers/stories-controller';
@@ -58,7 +59,7 @@ const commonComments = async(req, res, next, comments, title, currentElement) =>
   const commentsVoteMapping = req.user ? await voltesController.getUserCommentsVoteMapping(req.user._id, data) : [];
 
   res.render('comments', {
-    title: title || 'Comments',
+    title: title || UI.Titles.Comments,
     user: req.user,
     comments: data,
     total_count: totalCount,

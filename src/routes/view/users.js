@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { passport } from '../../helpers/authenticator';
 import { isAuthenticatedMiddleware, notAuthenticatedMiddleware, asyncMiddleware } from '../../helpers/middlewares';
 import { ApiError, NotFoundError } from '../../results/api-errors';
+import { UI } from '../../constants/index';
 import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
@@ -16,7 +17,7 @@ const auth = passport.authenticate('local', { successRedirect: '/', failureRedir
 router
   .get('/login', notAuthenticatedMiddleware('/'), (req, res, next) => {
     res.render('login', {
-      title: 'Login or Register',
+      title: UI.Titles.LoginPage,
       current_element: 'login',
       errors: req.flash('error'),
       info: req.flash('info'),
@@ -32,8 +33,8 @@ router
       var user = await usersController.create(req.body.username, req.body.password);
 
       !user.error && user.result.success ?
-        req.flash('info', 'User has been created. Use your credentials to login')
-        : req.flash('error', 'Error creating the user');
+        req.flash('info', UI.Messages.UserCreated)
+        : req.flash('error', UI.Errors.UserCreationError);
 
       res.redirect('/login');
     } catch (err) {
@@ -49,7 +50,7 @@ router
     const cres = await usersController.getLogin(req.params.username);
     const user = !cres.error && cres.result.success ? cres.result.data : null;
     const isMe = user && req.user && req.user.username === user.username;
-    const title = isMe ? 'Your profile' : 'Profile: ' + user.username;
+    const title = isMe ? UI.Titles.MyProfileTitle : user.username + UI.Titles.ProfileTitle;
 
     res.render('profile', {
       title: title,
@@ -69,7 +70,7 @@ router
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take, null, null, userId);
 
-    await commonHelper.commonStoriesRoute(req, res, next, stories, user.username + '\'s submissions', 'submissions');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, user.username + UI.Titles.UserSubmissions, 'submissions');
   }))
   .get('/user/:username/comments', validation(viewValidators.getUser), asyncMiddleware(async(req, res, next) => {
     const cres = await usersController.getLogin(req.params.username);
@@ -79,14 +80,14 @@ router
     const skip = (currentPage - 1) * config.defaultValues.take;
     const comments = await commentsController.getAllComments(skip, config.defaultValues.take, userId);
 
-    await commonHelper.commonComments(req, res, next, comments, user.username + '\'s comments', 'usercomments');
+    await commonHelper.commonComments(req, res, next, comments, user.username + UI.Titles.UserComments, 'usercomments');
   }))
   .post('/user/:username',
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.updateUser),
     asyncMiddleware(async(req, res, next) => {
       if (req.user.username !== req.params.username) {
-        req.flash('error', ['Operation not allowed']);
+        req.flash('error', [UI.Errors.OperationNotAllowed]);
 
         return res.redirect(req.url);
       }

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { logger } from '../../helpers/logger';
 import { NotFoundError } from '../../results/api-errors';
+import { UI } from '../../constants/index';
 import validation from 'express-validation';
 import usersRoutes from './users';
 import storiesRoutes from './stories';
@@ -15,20 +16,20 @@ router
   .get('/404', (req, res) =>
     res.render('errors/404', {
       user: req.user,
-      title: 'Page not found',
+      title: UI.Titles.Title404,
     })
   )
   .get('/500', (req, res) =>
     res.render('errors/500', {
       user: req.user,
-      title: 'Internal error',
+      title: UI.Titles.Title500,
     })
   )
   .get('/*', (req, res) => {
     if (!res.headersSent)
       res.render('errors/404', {
         user: req.user,
-        title: 'Page not found',
+        title: UI.Titles.Title404,
       });
   });
 

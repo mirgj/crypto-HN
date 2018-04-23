@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { asyncMiddleware, isAuthenticatedMiddleware } from '../../helpers/middlewares';
-import { Errors } from '../../constants/index';
-import { Commons } from '../../constants/index';
+import { Commons, Errors, UI } from '../../constants/index';
 import sanitizeHtml from 'sanitize-html';
 import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
@@ -18,42 +17,42 @@ router
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take);
 
-    await commonHelper.commonStoriesRoute(req, res, next, stories, 'Top News');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, UI.Titles.TopNews);
   }))
   .get('/show', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take, true);
 
-    await commonHelper.commonStoriesRoute(req, res, next, stories, 'Show', 'show');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, UI.Titles.Show, 'show');
   }))
   .get('/ask', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStories(skip, config.defaultValues.take, null, true);
 
-    await commonHelper.commonStoriesRoute(req, res, next, stories, 'Ask', 'ask');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, UI.Titles.Ask, 'ask');
   }))
   .get('/new', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take);
 
-    await commonHelper.commonStoriesRoute(req, res, next, stories, 'New news', 'new');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, UI.Titles.NewNews, 'new');
   }))
   .get('/shownew', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, true);
 
-    await commonHelper.commonStoriesRoute(req, res, next, stories, 'New show', 'shownew');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, UI.Titles.NewShow, 'shownew');
   }))
   .get('/asknew', validation(viewValidators.getStories), asyncMiddleware(async(req, res, next) => {
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
     const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, null, true);
 
-    await commonHelper.commonStoriesRoute(req, res, next, stories, 'New ask', 'asknew');
+    await commonHelper.commonStoriesRoute(req, res, next, stories, UI.Titles.NewAsk, 'asknew');
   }))
   .get('/stories/:storyId', validation(viewValidators.getStory), asyncMiddleware(async(req, res, next) => {
     const comm = await storiesController.getComments(req.params.storyId);
@@ -65,7 +64,7 @@ router
     asyncMiddleware(async(req, res, next) => {
       const comm = await storiesController.getComments(req.params.storyId, req.params.commentId);
 
-      await commonHelper.commonSingleRoute(req, res, next, comm, 'Add comment', 'singleComment');
+      await commonHelper.commonSingleRoute(req, res, next, comm, UI.Titles.AddComent, 'singleComment');
     }))
   .get('/stories/:storyId/vote',
     isAuthenticatedMiddleware('/login'),
