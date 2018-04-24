@@ -26,18 +26,26 @@ describe('## Users manager unit tests', () => {
 
     __Rewire__('dbState', dbStateMock);
   });
+  let collectionSpy;
+
+  beforeEach(() => {
+    collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+  });
+
+  afterEach(() => {
+    collectionSpy.restore();
+  });
+
 
   describe('# findOneByUsername', () => {
 
     it('it should call findOneByUsername correctly', async() => {
       const userNameTest = 'test';
       const returnUser = { username: 'test' };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.resolve(returnUser));
 
       const result = await usersManager.findOneByUsername(userNameTest);
 
-      collectionSpy.restore();
       findOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -53,7 +61,6 @@ describe('## Users manager unit tests', () => {
     it('it should fail to call findOneByUsername', async() => {
       const userNameTest = 'test';
       const error = new Error('error');
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.reject(error));
 
       try {
@@ -63,7 +70,6 @@ describe('## Users manager unit tests', () => {
         expect(err).to.not.be.null;
         expect(err).to.be.equal(error);
       } finally {
-        collectionSpy.restore();
         findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -81,12 +87,10 @@ describe('## Users manager unit tests', () => {
     it('it should call findOne correctly', async() => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const returnUser = { username: 'test' };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.resolve(returnUser));
 
       const result = await usersManager.findOne(userIdTest);
 
-      collectionSpy.restore();
       findOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -102,7 +106,6 @@ describe('## Users manager unit tests', () => {
     it('it should fail to call findOne with a wrong ObjectID', async() => {
       const userIdTest = 'wrong ObjectID';
       const returnUser = { username: 'test' };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.resolve(returnUser));
 
       try {
@@ -114,7 +117,6 @@ describe('## Users manager unit tests', () => {
         expect(err.message).to.be.a('string');
         expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
       } finally {
-        collectionSpy.restore();
         findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -127,7 +129,6 @@ describe('## Users manager unit tests', () => {
     it('it should fail to call findOne', async() => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const error = new Error('error');
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const findOneSpy = sinon.stub(dbMock, 'findOne').returns(Promise.reject(error));
 
       try {
@@ -137,7 +138,6 @@ describe('## Users manager unit tests', () => {
         expect(err).to.not.be.null;
         expect(err).to.be.equal(error);
       } finally {
-        collectionSpy.restore();
         findOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -156,12 +156,10 @@ describe('## Users manager unit tests', () => {
       const usernameTest = 'username';
       const passwordTest = 'password';
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.resolve(returnValue));
 
       const result = await usersManager.create(usernameTest, passwordTest);
 
-      collectionSpy.restore();
       insertOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -183,7 +181,6 @@ describe('## Users manager unit tests', () => {
       const usernameTest = 'username';
       const passwordTest = 'password';
       const returnValue = new Error('err');
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const insertOneSpy = sinon.stub(dbMock, 'insertOne').returns(Promise.reject(returnValue));
 
       try {
@@ -193,7 +190,6 @@ describe('## Users manager unit tests', () => {
         expect(err).to.not.be.null;
         expect(err).to.be.equal(returnValue);
       } finally {
-        collectionSpy.restore();
         insertOneSpy.restore();
 
         sinon.assert.calledOnce(collectionSpy);
@@ -219,12 +215,10 @@ describe('## Users manager unit tests', () => {
       const email = 'test@test.com';
       const about = 'this is a test';
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
 
       const result = await usersManager.update(userIdTest, email, about);
 
-      collectionSpy.restore();
       updateOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -247,12 +241,10 @@ describe('## Users manager unit tests', () => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const email = 'test@test.com';
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
 
       const result = await usersManager.update(userIdTest, email, null);
 
-      collectionSpy.restore();
       updateOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -277,12 +269,10 @@ describe('## Users manager unit tests', () => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const about = 'this is a about field';
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
 
       const result = await usersManager.update(userIdTest, null, about);
 
-      collectionSpy.restore();
       updateOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -308,7 +298,6 @@ describe('## Users manager unit tests', () => {
       const email = 'test@test.com';
       const about = 'this is a test';
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
 
       try {
@@ -320,7 +309,6 @@ describe('## Users manager unit tests', () => {
         expect(err.message).to.be.a('string');
         expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
       } finally {
-        collectionSpy.restore();
         updateOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -333,7 +321,6 @@ describe('## Users manager unit tests', () => {
       const email = 'test@test.com';
       const about = 'this is a test';
       const returnValue = new Error('error');
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.reject(returnValue));
 
       try {
@@ -343,7 +330,6 @@ describe('## Users manager unit tests', () => {
         expect(err).to.not.be.null;
         expect(err).to.be.equal(returnValue);
       } finally {
-        collectionSpy.restore();
         updateOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -362,13 +348,12 @@ describe('## Users manager unit tests', () => {
 
   });
 
-  describe('# increment Vote', () => {
+  describe('# incrementVote', () => {
 
     it('it should fail to increment the vote with a wrong ObjectID', async() => {
       const userIdTest = 'wrong ObjectID';
       const voteDiff = -1;
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
 
       try {
@@ -380,7 +365,6 @@ describe('## Users manager unit tests', () => {
         expect(err.message).to.be.a('string');
         expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
       } finally {
-        collectionSpy.restore();
         updateOneSpy.restore();
         sinon.assert.calledOnce(collectionSpy);
         sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
@@ -392,12 +376,10 @@ describe('## Users manager unit tests', () => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const voteDiff = -1;
       const returnValue = { acknowledged: true };
-      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
       const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
 
       const result = await usersManager.incrementVote(userIdTest, voteDiff);
 
-      collectionSpy.restore();
       updateOneSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.Users);

@@ -10,8 +10,8 @@
     "exclude": [
       "tests/*"
     ],
-    "incluide": [
-      "src/*"
+    "include": [
+      "src/**/*.js"
     ],
     "sourceMap": false,
     "instrument": false

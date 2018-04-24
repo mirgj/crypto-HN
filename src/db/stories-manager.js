@@ -57,7 +57,7 @@ const findOne = async(storyId) => {
   return result[0];
 };
 
-const getAllChrono = async(skip, take, show, ask) => {
+const getAllChrono = async(skip, take, show, ask, userId) => {
   const aggregation = [
     {
       $lookup: {
@@ -107,6 +107,7 @@ const getAllChrono = async(skip, take, show, ask) => {
 
   if (show) aggregation.splice(0, 0, { $match: { title: { $regex: `^${config.defaultValues.showStartWith}`, $options: 'i' } } });
   if (ask) aggregation.splice(0, 0, { $match: { title: { $regex: `^${config.defaultValues.askStartWith}`, $options: 'i' } } });
+  if (userId) aggregation.splice(0, 0, { $match: { user_id: ObjectID(userId) } });
   const result = await storyCollection().aggregate(aggregation).toArray();
 
   if (!result || result.length === 0) return null;

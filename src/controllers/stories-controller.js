@@ -21,8 +21,8 @@ const getStories = async(skip, take, show, ask, userId) => {
   return new ApiResult(result);
 };
 
-const getStoriesChrono = async(skip, take, show, ask) => {
-  const result = await manager.getAllChrono(skip, take, show, ask);
+const getStoriesChrono = async(skip, take, show, ask, userId) => {
+  const result = await manager.getAllChrono(skip, take, show, ask, userId);
   if (!result) return new WarningResult(Warnings.NO_STORIES_WARNING);
 
   return new ApiResult(result);
