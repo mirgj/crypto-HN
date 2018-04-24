@@ -360,6 +360,10 @@ describe('## Users manager unit tests', () => {
       }
     });
 
+  });
+
+  describe('# increment Vote', () => {
+
     it('it should fail to increment the vote with a wrong ObjectID', async() => {
       const userIdTest = 'wrong ObjectID';
       const voteDiff = -1;

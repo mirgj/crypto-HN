@@ -10,6 +10,9 @@
     "exclude": [
       "tests/*"
     ],
+    "incluide": [
+      "src/*"
+    ],
     "sourceMap": false,
     "instrument": false
   },
