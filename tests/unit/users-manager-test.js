@@ -260,8 +260,10 @@ describe('## Users manager unit tests', () => {
       sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
         $set: {
           email: email,
-          about: null,
           updated_on: sinon.match.date,
+        },
+        $unset: {
+          about: 1,
         },
       });
 
@@ -287,9 +289,11 @@ describe('## Users manager unit tests', () => {
       sinon.assert.calledOnce(updateOneSpy);
       sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, {
         $set: {
-          email: null,
           about: about,
           updated_on: sinon.match.date,
+        },
+        $unset: {
+          email: 1,
         },
       });
 
