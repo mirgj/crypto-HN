@@ -360,6 +360,52 @@ describe('## Users manager unit tests', () => {
       }
     });
 
+    it('it should fail to increment the vote with a wrong ObjectID', async() => {
+      const userIdTest = 'wrong ObjectID';
+      const voteDiff = -1;
+      const returnValue = { acknowledged: true };
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
+
+      try {
+        await usersManager.incrementVote(userIdTest, voteDiff);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err.message).to.not.be.null;
+        expect(err.message).to.be.a('string');
+        expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
+      } finally {
+        collectionSpy.restore();
+        updateOneSpy.restore();
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+        sinon.assert.notCalled(updateOneSpy);
+      }
+    });
+
+    it('should increment the vote correctly', async() => {
+      const userIdTest = '507f1f77bcf86cd799439011';
+      const voteDiff = -1;
+      const returnValue = { acknowledged: true };
+      const collectionSpy = sinon.spy(dbStateMock.defaultDbInstance, 'collection');
+      const updateOneSpy = sinon.stub(dbMock, 'updateOne').returns(Promise.resolve(returnValue));
+
+      const result = await usersManager.incrementVote(userIdTest, voteDiff);
+
+      collectionSpy.restore();
+      updateOneSpy.restore();
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Users);
+      sinon.assert.calledOnce(updateOneSpy);
+      sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(userIdTest) }, { $inc: { karma: voteDiff } });
+
+      expect(collectionSpy.calledBefore(updateOneSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnValue);
+    });
+
   });
 
 });

@@ -8,7 +8,7 @@
       "babel-register"
     ],
     "exclude": [
-      "src/tests/**/*.js"
+      "tests/*"
     ],
     "sourceMap": false,
     "instrument": false
