@@ -68,7 +68,7 @@ router
     const userId = user ? user._id : null;
     const currentPage = req.query.page;
     const skip = (currentPage - 1) * config.defaultValues.take;
-    const stories = await storiesController.getStories(skip, config.defaultValues.take, null, null, userId);
+    const stories = await storiesController.getStoriesChrono(skip, config.defaultValues.take, null, null, userId);
 
     await commonHelper.commonStoriesRoute(req, res, next, stories, user.username + UI.Titles.UserSubmissions, 'submissions');
   }))

@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import config from '../../config';
-// import { Commons } from '../constants/index';
 
 const idMatchStrict = Joi.string().regex(/^[0-9a-fA-F]{24}$/);
 const idMatch = Joi.string().required();
