@@ -20,6 +20,10 @@ export const Errors = {
   VOTE_ERROR: 'Error voting the requested resource',
   UNVOTE_ERROR: 'Error unvoting the requested resource',
   COMMENT_NOT_FOUND: 'Comment not found',
+  FORBIDDEN_DELETE_COMMENT_ERROR: 'You can\'t delete another\'s user comment',
+  FORBIDDEN_UPDATE_COMMENT_ERROR: 'You can\'t update another\'s user comment',
+  DELETE_COMMENT_ERROR: 'Error deleting the comment',
+  UPDATE_COMMENT_ERROR: 'Error updated the comment',
 };
 
 export const Warnings = {
@@ -36,7 +40,9 @@ export const Infos = {
   CREATE_STORY_INFO: 'Story has been created',
   CREATE_USER_INFO: 'User has been created',
   UPDATE_USER_INFO: 'User has been updated',
+  UPDATE_COMMENT_INFO: 'Comment has been updated',
   CREATE_COMMENT_INFO: 'Comment has been created',
+  DELETE_COMMENT_INFO: 'Comment has been deleted',
   CREATE_VOTE_OK: 'The vote has been registered correctly',
   CREATE_UNVOTE_OK: 'The vote has been unregistered correctly',
 };
@@ -89,6 +95,7 @@ export const UI = {
   },
   Messages: {
     UserCreated: 'User has been created. Use your credentials to login',
+    DeletedComment: '[ deleted ]',
   },
   Errors: {
     UserCreationError: 'Error creating the user',

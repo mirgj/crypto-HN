@@ -137,10 +137,24 @@ const incrementVote = async(commentId, voteDiff) => {
   );
 };
 
+const update = async(commentId, text, deleted) => {
+  var obj = { text: text };
+
+  if (deleted) {
+    obj.deleted = true;
+  }
+
+  return await commentCollection().updateOne(
+    { _id: ObjectID(commentId) },
+    { $set: obj },
+  );
+};
+
 export {
   findOne,
   getAllChrono,
   getAllByStory,
   create,
   incrementVote,
+  update,
 };

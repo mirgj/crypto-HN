@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { asyncMiddleware } from '../../helpers/middlewares';
 import { jwtAuthRequired } from '../../helpers/authenticator';
+import { UI } from '../../constants/index';
 import validation from 'express-validation';
 import apiValidators from '../../validation/api-validator';
 import * as commentsController from '../../controllers/comments-controller';
@@ -11,6 +12,9 @@ const router = Router();
 router
   .get('/', validation(apiValidators.getComments), asyncMiddleware(async(req, res, next) =>
     res.json(await commentsController.getAllComments(req.query.skip, req.query.take))
+  ))
+  .delete('/:commentId', jwtAuthRequired, validation(apiValidators.getComment), asyncMiddleware(async(req, res, next) =>
+    res.json(await commentsController.update(req.user._id, req.params.id, UI.Messages.DeletedComment, true))
   ))
   .put('/:commentId/vote', jwtAuthRequired, validation(apiValidators.voteComment), asyncMiddleware(async(req, res, next) =>
     res.json(await votesController.voteComment(req.user._id, req.user.karma, req.params.id, req.body.direction))

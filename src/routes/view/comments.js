@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { asyncMiddleware, isAuthenticatedMiddleware } from '../../helpers/middlewares';
-import { Commons } from '../../constants/index';
+import { Commons, UI } from '../../constants/index';
 import validation from 'express-validation';
 import sanitizeHtml from 'sanitize-html';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
 import * as commentsController from '../../controllers/comments-controller';
-import * as voltesController from '../../controllers/votes-controller';
+import * as votesController from '../../controllers/votes-controller';
 import * as commonHelper from './common-helper';
 
 const router = Router();
@@ -24,7 +24,7 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getComment),
     asyncMiddleware(async(req, res, next) => {
-      await voltesController.voteComment(req.user._id, req.user.karma, req.params.commentId, Commons.Up);
+      await votesController.voteComment(req.user._id, req.user.karma, req.params.commentId, Commons.Up);
 
       res.redirect(req.header('Referer') || '/comments');
     }))
@@ -32,7 +32,7 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getComment),
     asyncMiddleware(async(req, res, next) => {
-      await voltesController.voteComment(req.user._id, req.user.karma, req.params.commentId, Commons.Down);
+      await votesController.voteComment(req.user._id, req.user.karma, req.params.commentId, Commons.Down);
 
       res.redirect(req.header('Referer') || '/comments');
     }))
@@ -40,7 +40,15 @@ router
     isAuthenticatedMiddleware('/login'),
     validation(viewValidators.getComment),
     asyncMiddleware(async(req, res, next) => {
-      await voltesController.unvoteComment(req.user._id, req.params.commentId);
+      await votesController.unvoteComment(req.user._id, req.params.commentId);
+
+      res.redirect(req.header('Referer') || '/comments');
+    }))
+  .get('/comments/:commentId/delete',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getComment),
+    asyncMiddleware(async(req, res, next) => {
+      await commentsController.update(req.user._id, req.params.commentId, UI.Messages.DeletedComment, true);
 
       res.redirect(req.header('Referer') || '/comments');
     }))

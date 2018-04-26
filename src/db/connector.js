@@ -83,6 +83,10 @@ const initDefaultDb = async(dbName) => {
             bsonType: 'string',
             description: 'text of the story',
           },
+          deleted: {
+            bsonType: 'bool',
+            description: 'flag for deleted comments',
+          },
           url: {
             bsonType: 'string',
             description: 'url of the story',
