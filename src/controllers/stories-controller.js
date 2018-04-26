@@ -3,9 +3,7 @@ import { logger } from '../helpers/logger';
 import { ApiResult, WarningResult, InsertResult } from '../results/api-data';
 import { ApiError, NotFoundError, BadRequestError } from '../results/api-errors';
 import { Errors, Warnings, Infos } from '../constants/index';
-import * as helper from '../helpers/common';
 import * as manager from '../db/stories-manager';
-import * as commentManager from '../db/comments-manager';
 
 const getOneById = async(storyId) => {
   const story = await manager.findOne(storyId);
@@ -26,18 +24,6 @@ const getStoriesChrono = async(skip, take, show, ask, userId) => {
   if (!result) return new WarningResult(Warnings.NO_STORIES_WARNING);
 
   return new ApiResult(result);
-};
-
-const getComments = async(storyId, commentId) => {
-  const comments = await commentManager.getAllByStory(storyId);
-  if (!comments) return new WarningResult(Warnings.NO_COMMENTS_WARNING, []);
-
-  let tree = helper.treefy(comments);
-  if (commentId) {
-    tree = helper.subtree(tree, commentId);
-  }
-
-  return new ApiResult(tree);
 };
 
 const create = async(userId, story) => {
@@ -63,6 +49,5 @@ export {
   getOneById,
   getStories,
   getStoriesChrono,
-  getComments,
   create,
 };

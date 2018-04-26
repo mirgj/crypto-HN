@@ -6,6 +6,7 @@ import validation from 'express-validation';
 import viewValidators from '../../validation/view-validator';
 import config from '../../../config.json';
 import * as storiesController from '../../controllers/stories-controller';
+import * as commentsController from '../../controllers/comments-controller';
 import * as voltesController from '../../controllers/votes-controller';
 import * as commonHelper from './common-helper';
 
@@ -55,14 +56,14 @@ router
     await commonHelper.commonStoriesRoute(req, res, next, stories, UI.Titles.NewAsk, 'asknew');
   }))
   .get('/stories/:storyId', validation(viewValidators.getStory), asyncMiddleware(async(req, res, next) => {
-    const comm = await storiesController.getComments(req.params.storyId);
+    const comm = await commentsController.getStoryComments(req.params.storyId);
 
     await commonHelper.commonSingleRoute(req, res, next, comm);
   }))
   .get('/stories/:storyId/comments/:commentId',
     validation(viewValidators.getStoryComment),
     asyncMiddleware(async(req, res, next) => {
-      const comm = await storiesController.getComments(req.params.storyId, req.params.commentId);
+      const comm = await commentsController.getStoryComments(req.params.storyId, req.params.commentId);
 
       await commonHelper.commonSingleRoute(req, res, next, comm, UI.Titles.AddComent, 'singleComment');
     }))

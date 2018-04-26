@@ -40,10 +40,10 @@ router
     res.json(await storiesController.getOneById(req.params.storyId))
   ))
   .get('/:storyId/comments', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
-    res.json(await storiesController.getComments(req.params.storyId))
+    res.json(await commentsController.getStoryComments(req.params.storyId))
   ))
   .get('/:storyId/comments/:commentId', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
-    res.json(await storiesController.getComments(req.params.storyId, req.params.commentId))
+    res.json(await commentsController.getStoryComments(req.params.storyId, req.params.commentId))
   ))
   .post('/:storyId/comments', jwtAuthRequired, validation(apiValidators.createComment), asyncMiddleware(async(req, res, next) =>
     res.json(await commentsController.createForStory(req.user._id, req.params.storyId, sanitizeHtml(req.body.text)))

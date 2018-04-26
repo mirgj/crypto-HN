@@ -1,6 +1,7 @@
 import { ApiResult, InsertResult, WarningResult, OkResult } from '../results/api-data';
 import { ApiError, NotFoundError, ForbiddenError } from '../results/api-errors';
 import { Errors, Infos, Warnings } from '../constants/index';
+import * as helper from '../helpers/common';
 import * as manager from '../db/comments-manager';
 import * as storyManager from '../db/stories-manager';
 
@@ -9,6 +10,18 @@ const getAllComments = async(skip, take, userId) => {
   if (!result) return new WarningResult(Warnings.NO_COMMENTS_WARNING_ALL);
 
   return new ApiResult(result);
+};
+
+const getStoryComments = async(storyId, commentId) => {
+  const comments = await manager.getAllByStory(storyId);
+  if (!comments) return new WarningResult(Warnings.NO_COMMENTS_WARNING, []);
+
+  let tree = helper.treefy(comments);
+  if (commentId) {
+    tree = helper.subtree(tree, commentId);
+  }
+
+  return new ApiResult(tree);
 };
 
 const createForStory = async(userId, storyId, text, parentCommentId) => {
@@ -35,6 +48,7 @@ const update = async(userId, commentId, text, deleted) => {
 
 export {
   getAllComments,
+  getStoryComments,
   createForStory,
   update,
 };
