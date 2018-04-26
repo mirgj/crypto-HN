@@ -37,6 +37,7 @@ const getAllChrono = async(skipt, take, userId) => {
         text: 1,
         karma: 1,
         parent: 1,
+        deleted: 1,
         created_on: 1,
         updated_on: 1,
       },
@@ -138,7 +139,7 @@ const incrementVote = async(commentId, voteDiff) => {
 };
 
 const update = async(commentId, text, deleted) => {
-  var obj = { text: text };
+  var obj = { text: text, updated_on: new Date() };
 
   if (deleted) {
     obj.deleted = true;

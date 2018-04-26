@@ -62,6 +62,10 @@ mixin commentRender(comment, comments_vote_mapping, can_downvote, is_list, level
       if comments_vote_mapping[comment._id]
         small.sep='|'
         small.unvote: a(href='/comments/' + comment._id + '/unvote', title='Unvote')='unvote'
+      if (user && user.username == comment.user.username)
+        if !comment.deleted
+          small.sep='|'
+          small.unvote: a(href='/comments/' + comment._id + '/delete')='delete'
       if is_list
         small.sep='|'
         small.parent-link
@@ -72,7 +76,7 @@ mixin commentRender(comment, comments_vote_mapping, can_downvote, is_list, level
         small.sep='|'
         small.story-link on:
           a(href='/stories/' + comment.story._id) #{comment.story.title}
-    p.comment-text!=markdown.renderInline(comment.text)
+    p.comment-text(class=comment.deleted ? 'deleted' : '')!=markdown.renderInline(comment.text)
     if !is_list && level < 12
       p.reply: small: a(href=base_url + '/comments/' + comment._id)='reply'
 

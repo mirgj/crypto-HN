@@ -21,6 +21,7 @@ p.no-margin { margin: 0; }
 .stories p.meta small { margin-right: 0.25rem; }
 .stories p.meta small.story-link a { margin-left: 0.25rem; }
 .stories p.comment-text { margin-left: 1.2rem; margin-bottom: 0rem; }
+.stories p.comment-text.deleted { color: #EDEDED; }
 .stories p.reply { margin-left: 1.2rem; margin-bottom: 0.15rem; }
 .stories .level-1 { margin-left: 1.25rem; }
 .stories .level-2 { margin-left: 2.5rem; }
