@@ -8,7 +8,7 @@ const findOne = async(commentId) => {
   return await commentCollection().findOne({ _id: ObjectID(commentId) });
 };
 
-const getAllChrono = async(skipt, take, userId) => {
+const getAllChrono = async(skip, take, userId) => {
   const aggregation = [
     {
       $lookup: {
@@ -46,7 +46,7 @@ const getAllChrono = async(skipt, take, userId) => {
     {
       $facet: {
         page_info: [ { $count: 'total_count' } ],
-        comments: [ { $skip: 0 }, { $limit: 100} ],
+        comments: [ { $skip: skip }, { $limit: take } ],
       },
     },
     { $unwind: '$page_info' },
@@ -108,7 +108,7 @@ const getAllByStory = async(storyId, commentId) => {
         updated_on: 1,
       },
     },
-    { $sort: { karma: -1 } },
+    { $sort: { karma: -1, created_on: -1, deleted: -1 } },
   ]).toArray();
   if (!result || result.length === 0) return null;
 
