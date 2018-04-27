@@ -106,9 +106,12 @@ const getAllByStory = async(storyId, commentId) => {
         deleted: 1,
         created_on: 1,
         updated_on: 1,
+        is_deleted: {
+          $ifNull: [ '$deleted', false ],
+        },
       },
     },
-    { $sort: { karma: -1, created_on: -1, deleted: -1 } },
+    { $sort: { is_deleted: 1, karma: -1, created_on: -1 } },
   ]).toArray();
   if (!result || result.length === 0) return null;
 
