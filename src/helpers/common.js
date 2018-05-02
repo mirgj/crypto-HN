@@ -2,13 +2,16 @@ const toBaseURL = (fullURL) => {
   return fullURL.replace(/(http(s)?:\/\/)|(\/.*){1}/g, '');
 };
 
-const treefy = (comments) => {
+const treefy = (comments, log) => {
   let map = {};
   let tree = [];
+  if (!comments || comments.length === 0) return tree;
 
   comments.forEach((element) => {
-    map[element._id] = element;
-    map[element._id].children = [];
+    if (element._id) {
+      map[element._id] = element;
+      map[element._id].children = [];
+    }
   });
 
   for (let _id in map) {
@@ -27,17 +30,19 @@ const treefy = (comments) => {
 };
 
 const subtree = (tree, id) => {
-  if (tree.length === 0) return null;
+  if (!tree || tree.length === 0) return null;
 
   for (let i = 0; i < tree.length; i++) {
     const element = tree[i];
 
-    if (element._id.toString() === id) {
+    if (element._id.toString() === id.toString()) {
       return [ element ];
     }
     const result = subtree(element.children, id);
     if (result) return result;
   }
+
+  return tree;
 };
 
 const calculateMinAndMaxIds = (data) => {
