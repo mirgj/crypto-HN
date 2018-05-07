@@ -42,6 +42,9 @@ mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_
     if user_vote_mapping[story._id]
       small.sep='|'
       small.unvote: a(href='/stories/' + story._id + '/unvote', title='Unvote')!='unvote'
+    if (user && user.username == story.user.username)
+      small.sep='|'
+      small.delete: a(href='/stories/' + story._id + '/delete')='delete'
     small.sep='|'
     small.comments: a(href='/stories/' + story._id) #{`${story.comment_count} comment${story.comment_count == 1 ? '' : 's'}`}
 

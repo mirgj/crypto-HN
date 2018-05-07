@@ -46,7 +46,7 @@ const create = async(userId, story) => {
 };
 
 const deleteStory = async(userId, storyId) => {
-  const story = await manager.findOne(storyId);
+  const story = await manager.findOneStrict(storyId);
   if (!story) throw new NotFoundError(Errors.STORY_NOT_FOUND);
   if (story.user_id.toString() !== userId.toString()) throw new ForbiddenError(Errors.FORBIDDEN_DELETE_STORY_ERROR);
 
