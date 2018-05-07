@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { logger } from '../../helpers/logger';
-import { NotFoundError } from '../../results/api-errors';
+import { NotFoundError, ForbiddenError } from '../../results/api-errors';
 import { UI } from '../../constants/index';
 import validation from 'express-validation';
 import usersRoutes from './users';
@@ -17,6 +17,12 @@ router
     res.render('errors/404', {
       user: req.user,
       title: UI.Titles.Title404,
+    })
+  )
+  .get('/403', (req, res) =>
+    res.render('errors/403', {
+      user: req.user,
+      title: UI.Titles.Title403,
     })
   )
   .get('/500', (req, res) =>
@@ -45,6 +51,8 @@ router.use((err, req, res, next) => {
   }
   if (err instanceof NotFoundError) {
     return res.redirect('/404');
+  } else if (err instanceof ForbiddenError) {
+    return res.redirect('/403');
   }
 
   return res.redirect('/500');

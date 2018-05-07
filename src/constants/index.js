@@ -93,6 +93,7 @@ export const UI = {
     NewAsk: 'New ask',
     AddComent: 'Add comment',
     Title404: 'Page not found',
+    Title403: 'Forbidden',
     Title500: 'Internal error',
     Comments: 'Comments',
   },
