@@ -39,6 +39,9 @@ router
   .get('/:storyId', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
     res.json(await storiesController.getOneById(req.params.storyId))
   ))
+  .delete('/:storyId', jwtAuthRequired, validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
+    res.json(await storiesController.deleteStory(req.user._id, req.params.storyId))
+  ))
   .get('/:storyId/comments', validation(apiValidators.getStory), asyncMiddleware(async(req, res, next) =>
     res.json(await commentsController.getStoryComments(req.params.storyId))
   ))

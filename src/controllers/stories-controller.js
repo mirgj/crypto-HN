@@ -1,7 +1,7 @@
 import { MongoError } from 'mongodb';
 import { logger } from '../helpers/logger';
-import { ApiResult, WarningResult, InsertResult } from '../results/api-data';
-import { ApiError, NotFoundError, BadRequestError } from '../results/api-errors';
+import { ApiResult, WarningResult, InsertResult, OkResult } from '../results/api-data';
+import { ApiError, NotFoundError, BadRequestError, ForbiddenError } from '../results/api-errors';
 import { Errors, Warnings, Infos } from '../constants/index';
 import * as manager from '../db/stories-manager';
 
@@ -45,9 +45,21 @@ const create = async(userId, story) => {
   }
 };
 
+const deleteStory = async(userId, storyId) => {
+  const story = await manager.findOne(storyId);
+  if (!story) throw new NotFoundError(Errors.STORY_NOT_FOUND);
+  if (story.user_id.toString() !== userId.toString()) throw new ForbiddenError(Errors.FORBIDDEN_DELETE_STORY_ERROR);
+
+  const nstory = await manager.deleteOne(storyId);
+  if (!nstory.result.ok || nstory.deletedCount === 0) throw new ApiError(Errors.DELETE_STORY_ERROR);
+
+  return new OkResult(Infos.DELETE_STORY_INFO);
+};
+
 export {
   getOneById,
   getStories,
   getStoriesChrono,
   create,
+  deleteStory,
 };

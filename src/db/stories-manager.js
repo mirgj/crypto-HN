@@ -9,6 +9,7 @@ const storyCollection = () => dbState.defaultDbInstance.collection(Collections.S
 const findOneStrict = async(storyId) => {
   return await storyCollection().findOne({ _id: ObjectID(storyId) });
 };
+
 const findOne = async(storyId) => {
   const aggregation = [
     { $match: { _id: ObjectID(storyId) } },
@@ -193,6 +194,10 @@ const incrementVote = async(storyId, voteDiff) => {
   );
 };
 
+const deleteOne = async(storyId) => {
+  return await storyCollection().deleteOne({ _id: ObjectID(storyId) });
+};
+
 export {
   findOneStrict,
   findOne,
@@ -200,4 +205,5 @@ export {
   getAllChrono,
   create,
   incrementVote,
+  deleteOne,
 };

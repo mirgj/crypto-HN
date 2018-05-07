@@ -60,6 +60,14 @@ router
 
     await commonHelper.commonSingleRoute(req, res, next, comm);
   }))
+  .get('/stories/:storyId/delete',
+    isAuthenticatedMiddleware('/login'),
+    validation(viewValidators.getStory),
+    asyncMiddleware(async(req, res, next) => {
+      await storiesController.deleteStory(req.user._id, req.params.storyId);
+
+      res.redirect(req.header('Referer') || '/stories');
+    }))
   .get('/stories/:storyId/comments/:commentId',
     validation(viewValidators.getStoryComment),
     asyncMiddleware(async(req, res, next) => {

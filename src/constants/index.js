@@ -24,6 +24,8 @@ export const Errors = {
   FORBIDDEN_UPDATE_COMMENT_ERROR: 'You can\'t update another\'s user comment',
   DELETE_COMMENT_ERROR: 'Error deleting the comment',
   UPDATE_COMMENT_ERROR: 'Error updated the comment',
+  DELETE_STORY_ERROR: 'Error removing the story',
+  FORBIDDEN_DELETE_STORY_ERROR: 'You can\'t remove another\'s user story',
 };
 
 export const Warnings = {
@@ -45,6 +47,7 @@ export const Infos = {
   DELETE_COMMENT_INFO: 'Comment has been deleted',
   CREATE_VOTE_OK: 'The vote has been registered correctly',
   CREATE_UNVOTE_OK: 'The vote has been unregistered correctly',
+  DELETE_STORY_INFO: 'The story has been deleted',
 };
 
 export const ErrorsCode = {
