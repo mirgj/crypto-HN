@@ -1,11 +1,11 @@
 import { ObjectID } from 'mongodb';
 import { expect } from 'chai';
-import { logger } from '../../src/helpers/logger';
-import { Collections } from '../../src/constants/index';
-import { __Rewire__ } from '../../src/db/stories-manager';
+import { logger } from '../../../src/helpers/logger';
+import { Collections } from '../../../src/constants/index';
+import { __Rewire__ } from '../../../src/db/stories-manager';
 import sinon from 'sinon';
-import config from '../../config';
-import * as storiesManager from '../../src/db/stories-manager';
+import config from '../../../config';
+import * as storiesManager from '../../../src/db/stories-manager';
 
 const dbMock = {
   findOne: (find, project) => { },
@@ -27,7 +27,7 @@ const helperMock = {
   toBaseURL: (value) => { },
 };
 
-describe('## Stories manager unit tests', () => {
+describe('## manager/stories-manager.js unit tests', () => {
 
   before(() => {
     logger.transports[0].level = 'error';
