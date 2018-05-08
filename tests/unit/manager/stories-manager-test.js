@@ -12,6 +12,7 @@ const dbMock = {
   aggregate: (pipeline) => { },
   insertOne: (data) => { },
   updateOne: (find, set) => { },
+  deleteOne: (find) => { },
 };
 const dbStateMock = {
   defaultDbInstance: {
@@ -575,6 +576,49 @@ describe('## manager/stories-manager.js unit tests', () => {
       sinon.assert.calledWithExactly(updateOneSpy, { _id: ObjectID(storyIdTest) }, { $inc: { karma: voteDiff } });
 
       expect(collectionSpy.calledBefore(updateOneSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnValue);
+    });
+
+  });
+
+  describe('# deleteOne', () => {
+
+    it('it should fail with a wrong ID', async() => {
+      const storyId = 'wrong id';
+      const returnValue = { };
+      const deleteOneSpy = sinon.stub(dbMock, 'deleteOne').returns(Promise.resolve(returnValue));
+
+      try {
+        await storiesManager.deleteOne(storyId);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err.message).to.not.be.null;
+        expect(err.message).to.be.a('string');
+        expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
+      } finally {
+        deleteOneSpy.restore();
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.notCalled(deleteOneSpy);
+      }
+    });
+
+    it('it should find the record correctly', async() => {
+      const storyId = '507f1f77bcf86cd799439011';
+      const returnValue = { };
+      const deleteOneSpy = sinon.stub(dbMock, 'deleteOne').returns(Promise.resolve(returnValue));
+
+      const result = await storiesManager.deleteOne(storyId);
+
+      deleteOneSpy.restore();
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Stories);
+      sinon.assert.calledOnce(deleteOneSpy);
+      sinon.assert.calledWithExactly(deleteOneSpy, { _id: ObjectID(storyId) });
+
+      expect(collectionSpy.calledBefore(deleteOneSpy)).to.be.true;
       expect(result).to.be.not.null;
       expect(result).to.be.an('object');
       expect(result).to.be.equal(returnValue);
