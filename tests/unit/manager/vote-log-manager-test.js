@@ -262,7 +262,7 @@ describe('## manager/vote-log-manager.js unit tests', () => {
     it('it should call the function correctly', async() => {
       const userIdTest = '507f1f77bcf86cd799439011';
       const minIdTest = '507f1f77bcf86cd799439012';
-      const maxIdTest = '507f1f77bcf86cd799439012';
+      const maxIdTest = '507f1f77bcf86cd799439013';
       const objectTypeTest = 'mock';
       const returnMock = { };
       const findSpy = sinon.stub(dbMock, 'find').returns(findReturnMock);
@@ -270,6 +270,7 @@ describe('## manager/vote-log-manager.js unit tests', () => {
 
       const result = await voteLogManager.findByUserAndIdsRange(userIdTest, minIdTest, maxIdTest, objectTypeTest);
 
+      findSpy.restore();
       sinon.assert.calledOnce(collectionSpy);
       sinon.assert.calledWithExactly(collectionSpy, Collections.VoteLog);
       sinon.assert.calledOnce(findSpy);
@@ -284,6 +285,90 @@ describe('## manager/vote-log-manager.js unit tests', () => {
       expect(result).to.be.not.null;
       expect(result).to.be.an('array');
       expect(result).to.be.deep.equal([returnMock]);
+    });
+
+    it('it should fail to call with a wrong ObjectID', async() => {
+      const userIdTest = 'wrong ID';
+      const minIdTest = '507f1f77bcf86cd799439012';
+      const maxIdTest = '507f1f77bcf86cd799439012';
+      const objectTypeTest = 'mock';
+      const returnMock = { };
+      const findSpy = sinon.stub(dbMock, 'find').returns(findReturnMock);
+      toArraySpy.returns(Promise.resolve([returnMock]));
+
+      try {
+        await voteLogManager.findByUserAndIdsRange(userIdTest, minIdTest, maxIdTest, objectTypeTest);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err.message).to.not.be.null;
+        expect(err.message).to.be.a('string');
+        expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
+      } finally {
+        findSpy.restore();
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.VoteLog);
+        sinon.assert.notCalled(findSpy);
+        sinon.assert.notCalled(toArraySpy);
+
+        expect(collectionSpy.calledBefore(toArraySpy)).to.be.true;
+      }
+    });
+
+    it('it should fail to call with a wrong ObjectID', async() => {
+      const userIdTest = '507f1f77bcf86cd799439011';
+      const minIdTest = 'wrong ID';
+      const maxIdTest = '507f1f77bcf86cd799439012';
+      const objectTypeTest = 'mock';
+      const returnMock = { };
+      const findSpy = sinon.stub(dbMock, 'find').returns(findReturnMock);
+      toArraySpy.returns(Promise.resolve([returnMock]));
+
+      try {
+        await voteLogManager.findByUserAndIdsRange(userIdTest, minIdTest, maxIdTest, objectTypeTest);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err.message).to.not.be.null;
+        expect(err.message).to.be.a('string');
+        expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
+      } finally {
+        findSpy.restore();
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.VoteLog);
+        sinon.assert.notCalled(findSpy);
+        sinon.assert.notCalled(toArraySpy);
+
+        expect(collectionSpy.calledBefore(toArraySpy)).to.be.true;
+      }
+    });
+
+    it('it should fail to call with a wrong ObjectID', async() => {
+      const userIdTest = '507f1f77bcf86cd799439011';
+      const minIdTest = '507f1f77bcf86cd799439012';
+      const maxIdTest = 'wrong ID';
+      const objectTypeTest = 'mock';
+      const returnMock = { };
+      const findSpy = sinon.stub(dbMock, 'find').returns(findReturnMock);
+      toArraySpy.returns(Promise.resolve([returnMock]));
+
+      try {
+        await voteLogManager.findByUserAndIdsRange(userIdTest, minIdTest, maxIdTest, objectTypeTest);
+        throw new Error('should fail');
+      } catch (err) {
+        expect(err).to.not.be.null;
+        expect(err.message).to.not.be.null;
+        expect(err.message).to.be.a('string');
+        expect(err.message).to.be.equal('Argument passed in must be a single String of 12 bytes or a string of 24 hex characters');
+      } finally {
+        findSpy.restore();
+        sinon.assert.calledOnce(collectionSpy);
+        sinon.assert.calledWithExactly(collectionSpy, Collections.VoteLog);
+        sinon.assert.notCalled(findSpy);
+        sinon.assert.notCalled(toArraySpy);
+
+        expect(collectionSpy.calledBefore(toArraySpy)).to.be.true;
+      }
     });
 
   });
