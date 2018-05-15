@@ -9,9 +9,12 @@ import * as commentsManager from '../../../src/db/comments-manager';
 const dbMock = {
   findOne: (find, project) => { },
   insertOne: (data) => { },
-  deleteOne: (find, set) => { },
   find: (find) => { },
   updateOne: (find, set) => { },
+  aggregate: (pipeline) => { },
+};
+const aggregateReturnMock = {
+  toArray: () => { },
 };
 const dbStateMock = {
   defaultDbInstance: {
@@ -316,6 +319,198 @@ describe('## manager/comments-manager.js unit tests', () => {
 
         expect(collectionSpy.calledBefore(insertOneSpy)).to.be.true;
       }
+    });
+
+  });
+
+  describe('# getAllByStory', () => {
+    let aggregateSpy;
+    let toArraySpy;
+
+    beforeEach(() => {
+      aggregateSpy = sinon.stub(dbMock, 'aggregate');
+      toArraySpy = sinon.stub(aggregateReturnMock, 'toArray');
+    });
+
+    afterEach(() => {
+      aggregateSpy.restore();
+      toArraySpy.restore();
+    });
+
+    it('it should call getAllByStory correctly', async() => {
+      const storyIdTest = '507f1f77bcf86cd799439011';
+      const returnValue = { };
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve([returnValue]));
+
+      const result = await commentsManager.getAllByStory(storyIdTest);
+
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Comments);
+      sinon.assert.calledOnce(aggregateSpy);
+      sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+      sinon.assert.calledOnce(toArraySpy);
+      const args = aggregateSpy.getCall(0).args[0];
+
+      expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('array');
+      expect(result).to.be.deep.equal([returnValue]);
+      expect(args[0]).to.be.an('object');
+      expect(args[0]).to.be.deep.equal({ $match: { story_id: ObjectID(storyIdTest) } });
+      expect(args[6]).to.be.an('object');
+      expect(args[6]).to.be.deep.equal({ $sort: { is_deleted: 1, karma: -1, created_on: -1 } });
+    });
+
+    it('it should call getAllByStory correctly for a specific parent comment', async() => {
+      const storyIdTest = '507f1f77bcf86cd799439011';
+      const commentIdTest = '507f1f77bcf86cd799439012';
+      const returnValue = { };
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve([returnValue]));
+
+      const result = await commentsManager.getAllByStory(storyIdTest, commentIdTest);
+
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Comments);
+      sinon.assert.calledOnce(aggregateSpy);
+      sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+      sinon.assert.calledOnce(toArraySpy);
+      const args = aggregateSpy.getCall(0).args[0];
+
+      expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('array');
+      expect(result).to.be.deep.equal([returnValue]);
+      expect(args[0]).to.be.an('object');
+      expect(args[0]).to.be.deep.equal({ $match:
+        {
+          $and: [
+            { story_id: ObjectID(storyIdTest) },
+            { $or: [ { _id: ObjectID(commentIdTest) }, { parent: ObjectID(commentIdTest) } ] },
+          ],
+        },
+      });
+      expect(args[6]).to.be.an('object');
+      expect(args[6]).to.be.deep.equal({ $sort: { is_deleted: 1, karma: -1, created_on: -1 } });
+    });
+
+    it('it should call getAll correctly and get an empty result', async() => {
+      const storyIdTest = '507f1f77bcf86cd799439011';
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve([]));
+
+      const result = await commentsManager.getAllByStory(storyIdTest);
+
+      expect(result).to.be.null;
+    });
+
+    it('it should call getAll correctly and get a null result', async() => {
+      const storyIdTest = '507f1f77bcf86cd799439011';
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve(null));
+
+      const result = await commentsManager.getAllByStory(storyIdTest);
+
+      expect(result).to.be.null;
+    });
+
+  });
+
+  describe('# getAllChrono', () => {
+    let aggregateSpy;
+    let toArraySpy;
+
+    beforeEach(() => {
+      aggregateSpy = sinon.stub(dbMock, 'aggregate');
+      toArraySpy = sinon.stub(aggregateReturnMock, 'toArray');
+    });
+
+    afterEach(() => {
+      aggregateSpy.restore();
+      toArraySpy.restore();
+    });
+
+    it('it should call getAllChrono correctly', async() => {
+      const returnStory = { };
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve([returnStory]));
+
+      const result = await commentsManager.getAllChrono(0, 100);
+
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Comments);
+      sinon.assert.calledOnce(aggregateSpy);
+      sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+      sinon.assert.calledOnce(toArraySpy);
+      const args = aggregateSpy.getCall(0).args[0];
+
+      expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnStory);
+      expect(args[5]).to.be.an('object');
+      expect(args[5]).to.be.deep.equal({ $sort: { created_on: -1 } });
+      expect(args[6]).to.be.an('object');
+      expect(args[6]).to.be.deep.equal(
+        {
+          $facet: {
+            page_info: [ { $count: 'total_count' } ],
+            comments: [ { $skip: 0 }, { $limit: 100 } ],
+          },
+        }
+      );
+    });
+
+    it('it should call getAllChrono correctly and get an empty result', async() => {
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve([]));
+
+      const result = await commentsManager.getAllChrono(0, 100);
+      expect(result).to.be.null;
+    });
+
+    it('it should call getAllChrono correctly and get a null result', async() => {
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve(null));
+
+      const result = await commentsManager.getAllChrono(0, 100);
+
+      expect(result).to.be.null;
+    });
+
+    it('it should call getAllChrono correctly with a specific userId', async() => {
+      const userId = '507f1f77bcf86cd799439011';
+      const returnStory = { };
+      aggregateSpy.returns(aggregateReturnMock);
+      toArraySpy.returns(Promise.resolve([returnStory]));
+
+      const result = await commentsManager.getAllChrono(0, 100, userId);
+
+      sinon.assert.calledOnce(collectionSpy);
+      sinon.assert.calledWithExactly(collectionSpy, Collections.Comments);
+      sinon.assert.calledOnce(aggregateSpy);
+      sinon.assert.calledWithExactly(aggregateSpy, sinon.match.array);
+      sinon.assert.calledOnce(toArraySpy);
+      const args = aggregateSpy.getCall(0).args[0];
+
+      expect(collectionSpy.calledBefore(aggregateSpy)).to.be.true;
+      expect(result).to.be.not.null;
+      expect(result).to.be.an('object');
+      expect(result).to.be.equal(returnStory);
+      expect(args[0]).to.be.an('object');
+      expect(args[0]).to.be.deep.equal({ $match: { user_id: ObjectID(userId) } });
+      expect(args[6]).to.be.an('object');
+      expect(args[6]).to.be.deep.equal({ $sort: { created_on: -1 } });
+      expect(args[7]).to.be.an('object');
+      expect(args[7]).to.be.deep.equal(
+        {
+          $facet: {
+            page_info: [ { $count: 'total_count' } ],
+            comments: [ { $skip: 0 }, { $limit: 100 } ],
+          },
+        }
+      );
     });
 
   });
