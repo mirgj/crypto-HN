@@ -43,7 +43,7 @@ describe('## controllers/comments-controller.js unit tests', () => {
       getAllChronoSpy.restore();
     });
 
-    it('it should return an APIResult correctly', async() => {
+    it('it should return an ApiResult correctly', async() => {
       const returnValue = [{ }];
       getAllChronoSpy.returns(Promise.resolve(returnValue));
 
@@ -55,7 +55,7 @@ describe('## controllers/comments-controller.js unit tests', () => {
       expect(result).to.be.deep.equal(new ApiResult(returnValue));
     });
 
-    it('it should return an APIResult correctly', async() => {
+    it('it should return an ApiResult correctly', async() => {
       const returnValue = [{ }];
       getAllChronoSpy.returns(Promise.resolve(returnValue));
 
@@ -98,7 +98,7 @@ describe('## controllers/comments-controller.js unit tests', () => {
       subtreeSpy.restore();
     });
 
-    it('it should return an APIResult correctly', async() => {
+    it('it should return an ApiResult correctly', async() => {
       const returnValue = [{ }];
       const treefyReturn = [{ a: 'b' }];
       getAllByStorySpy.returns(Promise.resolve(returnValue));
@@ -115,7 +115,7 @@ describe('## controllers/comments-controller.js unit tests', () => {
       expect(result).to.be.deep.equal(new ApiResult(treefyReturn));
     });
 
-    it('it should return an APIResult correctly (calling subtree)', async() => {
+    it('it should return an ApiResult correctly (calling subtree)', async() => {
       const returnValue = [{ }];
       const treefyReturn = [{ a: 'b' }];
       const subtreeReturn = [{ a: 'b', q: 't' }];
