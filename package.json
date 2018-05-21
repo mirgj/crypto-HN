@@ -19,9 +19,11 @@
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore .",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-register --require babel-polyfill tests --recursive",
-    "test:uni": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-register --require babel-polyfill tests/unit --recursive",
-    "test:int": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-register --require babel-polyfill tests/integration --recursive",
     "test:cov": "./node_modules/.bin/nyc npm test",
+    "test:uni": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-register --require babel-polyfill tests/unit --recursive",
+    "test:uni:cov": "./node_modules/.bin/nyc npm run test:uni",
+    "test:int": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-register --require babel-polyfill tests/integration --recursive",
+    "test:int:cov": "./node_modules/.bin/nyc npm run test:int",   
     "start": "./node_modules/.bin/babel-node src/app.js"
   },
   "author": "mirgj <mirgj@outlook.com>",

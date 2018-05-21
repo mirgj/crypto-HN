@@ -43,7 +43,7 @@ const update = async(userId, commentId, text, deleted) => {
   if (!res.result.ok)
     throw new ApiError(deleted ? Errors.DELETE_COMMENT_ERROR : Errors.UPDATE_COMMENT_ERROR);
 
-  return new OkResult(deleted ? Infos.UPDATE_COMMENT_INFO : Infos.DELETE_COMMENT_INFO);
+  return new OkResult(deleted ? Infos.DELETE_COMMENT_INFO : Infos.UPDATE_COMMENT_INFO);
 };
 
 export {
