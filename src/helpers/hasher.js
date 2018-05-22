@@ -13,7 +13,7 @@ const compareHash = (inputPassword, dbPassword) => {
 
 const generateHash = (plainPassword) => {
   return new Promise((resolve, reject) => {
-    bcrypt.hash(plainPassword, config.keys.hashSalt, function(err, hash) {
+    bcrypt.hash(plainPassword, config.keys.hashSalt, (err, hash) => {
       if (err) return reject(err);
 
       return resolve(hash);
