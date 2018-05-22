@@ -30,7 +30,7 @@ const create = async(username, password) => {
     return new InsertResult(Infos.CREATE_USER_INFO, nuser.insertedId);
   } catch (err) {
     if (err instanceof MongoError) {
-      logger.error(`Error creating a user: ${err}`);
+      logger.warn(`Error creating a user: ${err}`);
 
       throw new ApiError(Errors.CREATE_USER_USERNAME_ERROR);
     }
