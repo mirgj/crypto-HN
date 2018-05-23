@@ -36,7 +36,7 @@ const create = async(userId, story) => {
     return new InsertResult(Infos.CREATE_STORY_INFO, nstory.insertedId);
   } catch (err) {
     if (err instanceof MongoError) {
-      logger.error(`Error creating story: ${err}`);
+      logger.warn(`Error creating story: ${err}`);
 
       throw new ApiError(Errors.CREATE_STORY_ERROR);
     }
