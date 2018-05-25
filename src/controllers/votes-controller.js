@@ -77,7 +77,7 @@ const voteComment = async(userId, userKarma, commentId, direction) => {
   const isUp = direction === Commons.Up;
   const voteIncrement = isUp ? 1 : -1;
 
-  if (!comment) return new NotFoundError(Errors.COMMENT_NOT_FOUND);
+  if (!comment) throw new NotFoundError(Errors.COMMENT_NOT_FOUND);
   if (comment.user_id.toString() === userId.toString()) return new WarningResult(Warnings.CANT_VOTE_YOURSELF);
 
   if (vote)
