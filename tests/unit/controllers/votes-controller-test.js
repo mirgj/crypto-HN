@@ -131,7 +131,7 @@ describe('## controllers/votes-controller.js unit tests', () => {
       expect(result).to.be.deep.equal(new OkResult(Infos.CREATE_VOTE_OK));
     });
 
-    it('it should return a NotFoundError because of missed story', async() => {
+    it('it should throw a NotFoundError because of missed story', async() => {
       const userId = 'mockuserid';
       const userkarma = 11;
       const storyId = 'mockstoryid';
@@ -139,19 +139,22 @@ describe('## controllers/votes-controller.js unit tests', () => {
       findOneStrictSpy.returns(Promise.resolve(null));
       findOneByUserIdObjectIdSpy.returns(Promise.resolve(null));
 
-      const result = await votesController.voteStory(userId, userkarma, storyId, direction);
-
-      sinon.assert.calledOnce(findOneStrictSpy);
-      sinon.assert.calledOnce(findOneByUserIdObjectIdSpy);
-      sinon.assert.notCalled(incrementVoteSpy);
-      sinon.assert.notCalled(usersIncrementVoteSpy);
-      sinon.assert.notCalled(createSpy);
-      sinon.assert.calledWithExactly(findOneStrictSpy, storyId);
-      sinon.assert.calledWithExactly(findOneByUserIdObjectIdSpy, userId, storyId, Collections.Stories);
-      expect(findOneStrictSpy.calledBefore(findOneByUserIdObjectIdSpy)).to.be.true;
-      expect(findOneByUserIdObjectIdSpy.calledBefore(incrementVoteSpy)).to.be.true;
-      expect(result).to.be.an('object');
-      expect(result).to.be.deep.equal(new NotFoundError(Errors.STORY_NOT_FOUND));
+      try {
+        await votesController.voteStory(userId, userkarma, storyId, direction);
+      } catch (err) {
+        expect(err).to.be.an('object');
+        expect(err).to.be.deep.equal(new NotFoundError(Errors.STORY_NOT_FOUND));
+      } finally {
+        sinon.assert.calledOnce(findOneStrictSpy);
+        sinon.assert.calledOnce(findOneByUserIdObjectIdSpy);
+        sinon.assert.notCalled(incrementVoteSpy);
+        sinon.assert.notCalled(usersIncrementVoteSpy);
+        sinon.assert.notCalled(createSpy);
+        sinon.assert.calledWithExactly(findOneStrictSpy, storyId);
+        sinon.assert.calledWithExactly(findOneByUserIdObjectIdSpy, userId, storyId, Collections.Stories);
+        expect(findOneStrictSpy.calledBefore(findOneByUserIdObjectIdSpy)).to.be.true;
+        expect(findOneByUserIdObjectIdSpy.calledBefore(incrementVoteSpy)).to.be.true;
+      }
     });
 
     it('it should return a WarningResult (user can\'t vote his story)', async() => {

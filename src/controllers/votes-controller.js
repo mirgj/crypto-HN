@@ -36,7 +36,7 @@ const voteStory = async(userId, userKarma, storyId, direction) => {
   const isUp = direction === Commons.Up;
   const voteIncrement = isUp ? 1 : -1;
 
-  if (!story) return new NotFoundError(Errors.STORY_NOT_FOUND);
+  if (!story) throw new NotFoundError(Errors.STORY_NOT_FOUND);
   if (story.user_id.toString() === userId.toString()) return new WarningResult(Warnings.CANT_VOTE_YOUR_STORY);
 
   if (vote)
@@ -58,7 +58,7 @@ const unvoteStory = async(userId, storyId) => {
   const vote = await manager.findOneByUserIdObjectId(userId, storyId, Collections.Stories);
 
   if (!vote) throw new NotFoundError(Errors.NOT_VOTE_FOUND_ERROR);
-  if (!story) return new NotFoundError(Errors.STORY_NOT_FOUND);
+  if (!story) throw new NotFoundError(Errors.STORY_NOT_FOUND);
   if (story.user_id.toString() === userId.toString()) return new WarningResult(Warnings.CANT_VOTE_YOUR_STORY);
 
   const voteIncrementRestore = vote.vote_direction === Commons.Up ? -1 : 1;
