@@ -12,6 +12,7 @@ const managerMock = {
   create: () => { },
   deleteOne: () => { },
   findOneByUserIdObjectId: () => { },
+  findByUserAndIdsRange: () => { },
 };
 
 const storiesManagerMock = {
@@ -28,7 +29,7 @@ const commentsManagerMock = {
 };
 
 const helperMock = {
-
+  calculateMinAndMaxIds: () => { },
 };
 
 describe('## controllers/votes-controller.js unit tests', () => {
@@ -510,4 +511,127 @@ describe('## controllers/votes-controller.js unit tests', () => {
 
   });
 
+  describe('# getUserVoteMapping', () => {
+    let findByUserAndIdsRangeSpy;
+    let calculateMinAndMaxIdsSpy;
+
+    beforeEach(() => {
+      findByUserAndIdsRangeSpy = sinon.stub(managerMock, 'findByUserAndIdsRange');
+      calculateMinAndMaxIdsSpy = sinon.stub(helperMock, 'calculateMinAndMaxIds');
+    });
+
+    afterEach(() => {
+      findByUserAndIdsRangeSpy.restore();
+      calculateMinAndMaxIdsSpy.restore();
+    });
+
+    it('should return an array correctly', async() => {
+      const userId = 'mockuserid';
+      const obj = {object_id: 'objectId'};
+      var expected = [];
+      var minMax = { min: 1, max: 2 };
+      calculateMinAndMaxIdsSpy.returns(minMax);
+      findByUserAndIdsRangeSpy.returns(Promise.resolve([ obj ]));
+
+      const result = await votesController.getUserVoteMapping(userId, [], Collections.Comments);
+
+      expected[obj.object_id] = obj;
+      sinon.assert.calledOnce(calculateMinAndMaxIdsSpy);
+      sinon.assert.calledWithExactly(calculateMinAndMaxIdsSpy, []);
+      sinon.assert.calledOnce(findByUserAndIdsRangeSpy);
+      sinon.assert.calledWithExactly(findByUserAndIdsRangeSpy, userId, minMax.min, minMax.max, Collections.Comments);
+      expect(calculateMinAndMaxIdsSpy.calledBefore(findByUserAndIdsRangeSpy)).to.be.true;
+      expect(result).to.be.an('array');
+      expect(result).to.be.deep.equal(expected);
+    });
+
+    it('should return an empty array (no min)', async() => {
+      const userId = 'mockuserid';
+      var minMax = { max: 2 };
+      calculateMinAndMaxIdsSpy.returns(minMax);
+
+      const result = await votesController.getUserVoteMapping(userId, [], Collections.Comments);
+
+      sinon.assert.calledOnce(calculateMinAndMaxIdsSpy);
+      sinon.assert.calledWithExactly(calculateMinAndMaxIdsSpy, []);
+      sinon.assert.notCalled(findByUserAndIdsRangeSpy);
+      expect(calculateMinAndMaxIdsSpy.calledBefore(findByUserAndIdsRangeSpy)).to.be.true;
+      expect(result).to.be.an('array');
+      expect(result).to.be.deep.equal([]);
+    });
+
+    it('should return an empty array (no max)', async() => {
+      const userId = 'mockuserid';
+      var minMax = { min: 1 };
+      calculateMinAndMaxIdsSpy.returns(minMax);
+
+      const result = await votesController.getUserVoteMapping(userId, [], Collections.Comments);
+
+      sinon.assert.calledOnce(calculateMinAndMaxIdsSpy);
+      sinon.assert.calledWithExactly(calculateMinAndMaxIdsSpy, []);
+      sinon.assert.notCalled(findByUserAndIdsRangeSpy);
+      expect(calculateMinAndMaxIdsSpy.calledBefore(findByUserAndIdsRangeSpy)).to.be.true;
+      expect(result).to.be.an('array');
+      expect(result).to.be.deep.equal([]);
+    });
+
+  });
+
+  describe('# getUserStoriesVoteMapping', () => {
+    let getUserVoteMappingSpy;
+    let calculateMinAndMaxIdsSpy;
+
+    beforeEach(() => {
+      getUserVoteMappingSpy = sinon.spy(votesController, 'getUserVoteMapping');
+      calculateMinAndMaxIdsSpy = sinon.stub(helperMock, 'calculateMinAndMaxIds');
+    });
+
+    afterEach(() => {
+      getUserVoteMappingSpy.restore();
+      calculateMinAndMaxIdsSpy.restore();
+    });
+
+    it('should return an array correctly', async() => {
+      const arr = [];
+      const userId = 'mockuserid';
+      calculateMinAndMaxIdsSpy.returns({});
+
+      const result = await votesController.getUserStoriesVoteMapping(userId, arr);
+
+      // sinon.assert.calledOnce(getUserVoteMappingSpy);
+      // sinon.assert.calledWithExactly(getUserVoteMappingSpy, userId, arr, Collections.Stories);
+      expect(result).to.be.an('array');
+      expect(result).to.be.deep.equal(arr);
+    });
+
+  });
+
+  describe('# getUserCommentsVoteMapping', () => {
+    let getUserVoteMappingSpy;
+    let calculateMinAndMaxIdsSpy;
+
+    beforeEach(() => {
+      getUserVoteMappingSpy = sinon.spy(votesController, 'getUserVoteMapping');
+      calculateMinAndMaxIdsSpy = sinon.stub(helperMock, 'calculateMinAndMaxIds');
+    });
+
+    afterEach(() => {
+      getUserVoteMappingSpy.restore();
+      calculateMinAndMaxIdsSpy.restore();
+    });
+
+    it('should return an array correctly', async() => {
+      const arr = [];
+      const userId = 'mockuserid';
+      calculateMinAndMaxIdsSpy.returns({});
+
+      const result = await votesController.getUserCommentsVoteMapping(userId, arr);
+
+      // sinon.assert.calledOnce(getUserVoteMappingSpy);
+      // sinon.assert.calledWithExactly(getUserVoteMappingSpy, userId, arr, Collections.Comments);
+      expect(result).to.be.an('array');
+      expect(result).to.be.deep.equal(arr);
+    });
+
+  });
 });

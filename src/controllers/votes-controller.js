@@ -117,6 +117,7 @@ export {
   unvoteStory,
   voteComment,
   unvoteComment,
+  getUserVoteMapping,
   getUserStoriesVoteMapping,
   getUserCommentsVoteMapping,
 };
