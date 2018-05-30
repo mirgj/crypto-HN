@@ -98,6 +98,12 @@ describe('## DB', () => {
       done();
     });
 
+    it('it should be connected to the database with a valid instance', async() => {
+      const instance = await db.connect();
+
+      expect(instance).to.not.be.null;
+    });
+
     it('it should get the default database', (done) => {
       const result = db.get(config.database.defaultDbName);
 
@@ -128,7 +134,8 @@ describe('## DB', () => {
         expect(names).to.be.an('array');
         expect(names).to.have.lengthOf(Object.keys(Collections).length);
         names.forEach((element) => {
-          expect([Collections.Stories, Collections.Users, Collections.Comments]).to.include(element.s.name);
+          expect([Collections.Stories, Collections.Users, Collections.Comments, Collections.VoteLog])
+          .to.include(element.s.name);
         });
 
       } catch (err) {

@@ -23,7 +23,7 @@
     "test:uni": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-register --require babel-polyfill tests/unit --recursive",
     "test:uni:cov": "./node_modules/.bin/nyc npm run test:uni",
     "test:int": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --require babel-register --require babel-polyfill tests/integration --recursive",
-    "test:int:cov": "./node_modules/.bin/nyc npm run test:int",   
+    "test:int:cov": "./node_modules/.bin/nyc npm run test:int",
     "start": "./node_modules/.bin/babel-node src/app.js"
   },
   "author": "mirgj <mirgj@outlook.com>",
@@ -66,7 +66,7 @@
     "nyc": "^11.6.0",
     "rimraf": "^2.6.2",
     "sinon": "^4.4.8",
-    "supertest": "^3.0.0",
+    "supertest": "^3.1.0",
     "supertest-as-promised": "^4.0.2"
   },
   "repository": {
