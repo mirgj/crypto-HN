@@ -1,10 +1,9 @@
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import { NotFoundError } from '../../../src/results/api-errors';
 import request from 'supertest-as-promised';
 const serverURL = 'http://localhost:8080';
 
-
-describe('## API test /', () => {
+describe('## API index test /api/', () => {
 
   describe('# (GET|POST|PUT|DELETE) /api/notExist', () => {
     let currentUrl = '/api/notExist';
