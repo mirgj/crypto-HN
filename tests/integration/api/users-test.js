@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import { logger } from '../../../src/helpers/logger';
 import { Collections, Infos, ErrorsCode, HttpStatus, Errors } from '../../../src/constants/index';
 import { ApiError, UnauthorizedError, ForbiddenError } from '../../../src/results/api-errors';
+import { OkResult } from '../../../src/results/api-data';
 import request from 'supertest-as-promised';
 import config from '../../../config';
 import * as db from '../../../src/db/connector';
-import { OkResult } from '../../../src/results/api-data';
 
 const serverURL = 'http://localhost:8080';
 const empty = { };
