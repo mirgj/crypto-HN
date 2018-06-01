@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { logger } from '../../../src/helpers/logger';
 import { Collections, Errors } from '../../../src/constants/index';
+import chaiAsPromised from 'chai-as-promised';
 import config from '../../../config';
 import * as db from '../../../src/db/connector';
 chai.use(chaiAsPromised);
@@ -134,8 +134,7 @@ describe('## DB', () => {
         expect(names).to.be.an('array');
         expect(names).to.have.lengthOf(Object.keys(Collections).length);
         names.forEach((element) => {
-          expect([Collections.Stories, Collections.Users, Collections.Comments, Collections.VoteLog])
-          .to.include(element.s.name);
+          expect([Collections.Stories, Collections.Users, Collections.Comments, Collections.VoteLog]).to.include(element.s.name);
         });
 
       } catch (err) {

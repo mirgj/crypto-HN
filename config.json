@@ -10,7 +10,7 @@
   "keys": {
     "sessionSecret": "mysessionsecret",
     "jwtSecret": "myjwtsecret",
-    "hashSalt": 15
+    "hashSalt": 8
   },
   "session": {
     "jwtDuration": 3600,
