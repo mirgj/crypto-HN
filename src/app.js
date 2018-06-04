@@ -35,7 +35,7 @@ const app = express();
     app.use(cookieParser());
     app.use(compress());
     app.use(helmet());
-    app.use(cors());
+    app.use(cors({origin: config.application.allowedOrigin}));
     app.use(session({
       secret: config.keys.sessionSecret,
       resave: false,
