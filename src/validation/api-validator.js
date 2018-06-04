@@ -11,7 +11,7 @@ const emailMatch = Joi.string().email().required();
 const urlMatch = Joi.string().uri().trim().required().allow('');
 const skipMatch = Joi.number().default(0).min(0);
 const takeMatch = Joi.number().default(config.defaultValues.take).min(config.defaultValues.minTake);
-const voteDirectionMatch = Joi.any().valid([Commons.Up, Commons.Down]);
+const voteDirectionMatch = Joi.any().valid([Commons.Up, Commons.Down]).required();
 
 export default {
   getStory: {
