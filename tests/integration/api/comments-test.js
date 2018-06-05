@@ -1,7 +1,9 @@
+import { ObjectID } from 'mongodb';
 import { expect } from 'chai';
 import { logger } from '../../../src/helpers/logger';
-import { Collections, ErrorsCode, HttpStatus, Errors } from '../../../src/constants/index';
-import { UnauthorizedError } from '../../../src/results/api-errors';
+import { Collections, ErrorsCode, HttpStatus, Errors, Warnings, Infos } from '../../../src/constants/index';
+import { UnauthorizedError, NotFoundError, ForbiddenError } from '../../../src/results/api-errors';
+import { WarningResult, OkResult } from '../../../src/results/api-data';
 import request from 'supertest-as-promised';
 import config from '../../../config';
 import * as db from '../../../src/db/connector';
@@ -10,6 +12,7 @@ const serverURL = 'http://localhost:8080';
 let user;
 let story;
 let comment;
+let comment2;
 
 const badRequestBaseCheck = (data, status, statusCode) => {
   expect(data).to.be.not.empty;
@@ -60,6 +63,15 @@ describe('## API users test /api/users', () => {
       karma: 1,
     });
     comment = comment.ops[0];
+
+    comment2 = await instance.collection(Collections.Comments).insertOne({
+      text: 'test commnet',
+      story_id: story._id,
+      user_id: new ObjectID(),
+      created_on: new Date(),
+      karma: 1,
+    });
+    comment2 = comment2.ops[0];
   });
 
   after(async() => {
@@ -67,6 +79,7 @@ describe('## API users test /api/users', () => {
     await instance.collection(Collections.Users).deleteOne({ _id: user._id });
     await instance.collection(Collections.Stories).deleteOne({ _id: story._id });
     await instance.collection(Collections.Comments).deleteOne({ _id: comment._id });
+    await instance.collection(Collections.Comments).deleteOne({ _id: comment2._id });
 
     await db.close();
   });
@@ -133,11 +146,13 @@ describe('## API users test /api/users', () => {
 
   describe('# PUT /api/comments/[comment_id]/vote', () => {
     let commentUrl;
+    let comment2Url;
     let wrongCommentUrl = '/api/comments/wrong_id/vote';
     let authToken;
 
     before((done) => {
       commentUrl = '/api/comments/' + comment._id + '/vote';
+      comment2Url = '/api/comments/' + comment2._id + '/vote';
 
       request(serverURL)
         .post('/api/users/login')
@@ -154,7 +169,7 @@ describe('## API users test /api/users', () => {
         }).catch(done);
     });
 
-    it('should fail get the user if the token is empty', (done) => {
+    it('should fail to vote if the token is empty', (done) => {
       request(serverURL)
         .put(commentUrl)
         .expect(401)
@@ -165,7 +180,7 @@ describe('## API users test /api/users', () => {
         }).catch(done);
     });
 
-    it('should fail get the user if the token is wrong', (done) => {
+    it('should fail to vote if the token is wrong', (done) => {
       request(serverURL)
         .put(commentUrl)
         .set({'x-access-token': 'wrongtoken'})
@@ -177,14 +192,14 @@ describe('## API users test /api/users', () => {
         }).catch(done);
     });
 
-    it('should fail get the user if wrong comment ID is provided', (done) => {
+    it('should fail to vote if wrong comment ID is provided', (done) => {
       request(serverURL)
         .put(wrongCommentUrl)
         .set({'x-access-token': authToken})
         .expect(400)
         .then((res) => {
           badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
-          expect(res.body.result.details).to.have.length(1);
+          expect(res.body.result.details).to.have.length(2);
 
           done();
         }).catch(done);
@@ -199,6 +214,426 @@ describe('## API users test /api/users', () => {
         .then((res) => {
           badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
           expect(res.body.result.details).to.have.length(1);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to vote the comment if empty information are provided', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': authToken})
+        .send({})
+        .expect(400)
+        .then((res) => {
+          badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+          expect(res.body.result.details).to.have.length(1);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to vote the comment if not expected field is provided', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': authToken})
+        .send({ direction: 'up', not_expected: true })
+        .expect(400)
+        .then((res) => {
+          badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+          expect(res.body.result.details).to.have.length(1);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to vote the user\'s comment', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': authToken})
+        .send({ direction: 'up' })
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new WarningResult(Warnings.CANT_VOTE_YOURSELF, {}));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should vote the comment correctly', (done) => {
+      request(serverURL)
+        .put(comment2Url)
+        .set({'x-access-token': authToken})
+        .send({ direction: 'up' })
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new OkResult(Infos.CREATE_VOTE_OK));
+
+          done();
+        }).catch(done);
+    });
+
+  });
+
+  describe('# DELETE /api/comments/[comment_id]/vote', () => {
+    let commentUrl;
+    let comment2Url;
+    let wrongCommentUrl = '/api/comments/wrong_id/vote';
+    let authToken;
+
+    before((done) => {
+      commentUrl = '/api/comments/' + comment._id + '/vote';
+      comment2Url = '/api/comments/' + comment2._id + '/vote';
+
+      request(serverURL)
+        .post('/api/users/login')
+        .send({ username: user.username, password: 'password.123' })
+        .expect(200)
+        .then((res) => {
+          baseSuccessResult(res.body);
+          expect(res.body.result.data.auth).to.be.true;
+          expect(res.body.result.data.token).to.be.not.null;
+
+          authToken = res.body.result.data.token;
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to unvote if the token is empty', (done) => {
+      request(serverURL)
+        .delete(commentUrl)
+        .expect(401)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new UnauthorizedError(Errors.AUTH_TOKEN_REQUIRED_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to unvote if the token is wrong', (done) => {
+      request(serverURL)
+        .delete(commentUrl)
+        .set({'x-access-token': 'wrongtoken'})
+        .expect(401)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new UnauthorizedError(Errors.AUTH_TOKEN_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to unvote if wrong comment ID is provided', (done) => {
+      request(serverURL)
+        .delete(wrongCommentUrl)
+        .set({'x-access-token': authToken})
+        .expect(400)
+        .then((res) => {
+          badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+          expect(res.body.result.details).to.have.length(1);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to unvote if the comment has not been voted before', (done) => {
+      request(serverURL)
+        .delete(commentUrl)
+        .set({'x-access-token': authToken})
+        .expect(404)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new NotFoundError(Errors.NOT_VOTE_FOUND_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should unvote the comment correctly', (done) => {
+      request(serverURL)
+        .delete(comment2Url)
+        .set({'x-access-token': authToken})
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new OkResult(Infos.CREATE_UNVOTE_OK));
+
+          done();
+        }).catch(done);
+    });
+
+  });
+
+  describe('# PUT /api/comments/[comment_id]/vote (downvote)', () => {
+    let commentUrl;
+    let comment2Url;
+    let authToken;
+
+    before((done) => {
+      commentUrl = '/api/comments/' + comment._id + '/vote';
+      comment2Url = '/api/comments/' + comment2._id + '/vote';
+
+      request(serverURL)
+        .post('/api/users/login')
+        .send({ username: user.username, password: 'password.123' })
+        .expect(200)
+        .then((res) => {
+          baseSuccessResult(res.body);
+          expect(res.body.result.data.auth).to.be.true;
+          expect(res.body.result.data.token).to.be.not.null;
+
+          authToken = res.body.result.data.token;
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to downvote the comment (not enough karma)', (done) => {
+      request(serverURL)
+        .put(comment2Url)
+        .set({'x-access-token': authToken})
+        .send({ direction: 'down' })
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new WarningResult(Warnings.NOT_ENOUGH_KARMA.split('{0}').join(config.defaultValues.minKarmaForDownvote), {}));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to downvote the comment (can\'t downvote yourself commment)', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': authToken})
+        .send({ direction: 'down' })
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new WarningResult(Warnings.CANT_VOTE_YOURSELF, {}));
+
+          done();
+        }).catch(done);
+    });
+
+    it('increasing user\`s karma for test', async() => {
+      const instance = db.get(config.database.defaultDbName);
+      await instance.collection(Collections.Users).updateOne(
+        { _id: user._id },
+        { $set: { karma: config.defaultValues.minKarmaForDownvote + 1 } },
+      );
+    });
+
+    it('should downvote the comment correctly', (done) => {
+      request(serverURL)
+        .put(comment2Url)
+        .set({'x-access-token': authToken})
+        .send({ direction: 'down' })
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new OkResult(Infos.CREATE_VOTE_OK));
+
+          done();
+        }).catch(done);
+    });
+
+  });
+
+  describe('# PUT /api/comments/[comment_id] (update comment)', () => {
+    let commentUrl;
+    let comment2Url;
+    let wrongCommentUrl = '/api/comments/wrong_id';
+    let authToken;
+
+    before((done) => {
+      commentUrl = '/api/comments/' + comment._id;
+      comment2Url = '/api/comments/' + comment2._id;
+
+      request(serverURL)
+        .post('/api/users/login')
+        .send({ username: user.username, password: 'password.123' })
+        .expect(200)
+        .then((res) => {
+          baseSuccessResult(res.body);
+          expect(res.body.result.data.auth).to.be.true;
+          expect(res.body.result.data.token).to.be.not.null;
+
+          authToken = res.body.result.data.token;
+
+          done();
+        }).catch(done);
+    });
+
+
+    it('should fail to update the comment if the token is empty', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .expect(401)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new UnauthorizedError(Errors.AUTH_TOKEN_REQUIRED_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to update the comment if the token is wrong', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': 'wrongtoken'})
+        .expect(401)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new UnauthorizedError(Errors.AUTH_TOKEN_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to update the comment if wrong comment ID is provided', (done) => {
+      request(serverURL)
+        .put(wrongCommentUrl)
+        .set({'x-access-token': authToken})
+        .expect(400)
+        .then((res) => {
+          badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+          expect(res.body.result.details).to.have.length(2);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to update the comment if another user\`s is trying to update it', (done) => {
+      request(serverURL)
+        .put(comment2Url)
+        .set({'x-access-token': authToken })
+        .send({ text: 'updated' })
+        .expect(403)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new ForbiddenError(Errors.FORBIDDEN_UPDATE_COMMENT_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to update the comment if empty information are provided', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': authToken})
+        .send({})
+        .expect(400)
+        .then((res) => {
+          badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+          expect(res.body.result.details).to.have.length(1);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to update the comment if not expected field is provided', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': authToken})
+        .send({ text: 'updated', not_expected: true })
+        .expect(400)
+        .then((res) => {
+          badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+          expect(res.body.result.details).to.have.length(1);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should update the comment correctly', (done) => {
+      request(serverURL)
+        .put(commentUrl)
+        .set({'x-access-token': authToken })
+        .send({ text: 'updated' })
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new OkResult(Infos.UPDATE_COMMENT_INFO));
+
+          done();
+        }).catch(done);
+    });
+
+  });
+
+  describe('# DELETE /api/comments/[comment_id]', () => {
+    let commentUrl;
+    let comment2Url;
+    let wrongCommentUrl = '/api/comments/wrong_id';
+    let authToken;
+
+    before((done) => {
+      commentUrl = '/api/comments/' + comment._id;
+      comment2Url = '/api/comments/' + comment2._id;
+
+      request(serverURL)
+        .post('/api/users/login')
+        .send({ username: user.username, password: 'password.123' })
+        .expect(200)
+        .then((res) => {
+          baseSuccessResult(res.body);
+          expect(res.body.result.data.auth).to.be.true;
+          expect(res.body.result.data.token).to.be.not.null;
+
+          authToken = res.body.result.data.token;
+
+          done();
+        }).catch(done);
+
+    });
+
+    it('should fail to delete the comment if the token is empty', (done) => {
+      request(serverURL)
+        .delete(commentUrl)
+        .expect(401)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new UnauthorizedError(Errors.AUTH_TOKEN_REQUIRED_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to delete the comment if the token is wrong', (done) => {
+      request(serverURL)
+        .delete(commentUrl)
+        .set({'x-access-token': 'wrongtoken'})
+        .expect(401)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new UnauthorizedError(Errors.AUTH_TOKEN_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to delete the comment if wrong comment ID is provided', (done) => {
+      request(serverURL)
+        .delete(wrongCommentUrl)
+        .set({'x-access-token': authToken})
+        .expect(400)
+        .then((res) => {
+          badRequestBaseCheck(res.body, ErrorsCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+          expect(res.body.result.details).to.have.length(1);
+
+          done();
+        }).catch(done);
+    });
+
+    it('should fail to delete the comment if another user\`s is trying to delete it', (done) => {
+      request(serverURL)
+        .delete(comment2Url)
+        .set({'x-access-token': authToken })
+        .expect(403)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new ForbiddenError(Errors.FORBIDDEN_DELETE_COMMENT_ERROR));
+
+          done();
+        }).catch(done);
+    });
+
+    it('should delete the comment correctly', (done) => {
+      request(serverURL)
+        .delete(commentUrl)
+        .set({'x-access-token': authToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new OkResult(Infos.DELETE_COMMENT_INFO));
 
           done();
         }).catch(done);

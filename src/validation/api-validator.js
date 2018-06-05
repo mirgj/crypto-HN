@@ -25,6 +25,17 @@ export default {
       commentId: idMatch,
     },
   },
+  updateComment: {
+    options: {
+      allowUnknownBody: false,
+    },
+    params: {
+      commentId: idMatch,
+    },
+    body: {
+      text: textMatch,
+    },
+  },
   getStories: {
     query: {
       skip: skipMatch,
