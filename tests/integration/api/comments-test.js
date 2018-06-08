@@ -31,7 +31,7 @@ const baseSuccessResult = (data) => {
   expect(data.result.data).to.be.an('object');
 };
 
-describe('## API users test /api/users', () => {
+describe('## API users test /api/comments', () => {
   before(async() => {
     logger.transports[0].level = 'error';
 
@@ -459,7 +459,6 @@ describe('## API users test /api/users', () => {
           done();
         }).catch(done);
     });
-
 
     it('should fail to update the comment if the token is empty', (done) => {
       request(serverURL)
