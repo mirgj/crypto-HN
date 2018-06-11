@@ -29,6 +29,7 @@ const getStoriesChrono = async(skip, take, show, ask, userId) => {
 const create = async(userId, story) => {
   try {
     if (!story.text && !story.url) throw new BadRequestError(Errors.CREATE_STORY_INPUT_ERROR);
+    if (story.text && story.url) throw new BadRequestError(Errors.CREATE_STORY_TOO_MANY_INFO_ERROR);
 
     const nstory = await manager.create(userId, story.title, story.text, story.url);
     if (!nstory.result.ok || nstory.insertedCount === 0) throw new ApiError(Errors.CREATE_STORY_ERROR);

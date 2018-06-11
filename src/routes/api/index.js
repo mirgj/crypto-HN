@@ -24,6 +24,8 @@ router.use((err, req, res, next) => {
   }
   if (err instanceof SyntaxError)
     return res.status(HttpStatus.BAD_REQUEST).send(new BadRequestError(Errors.BAD_REQUEST_ERROR));
+  if (err instanceof BadRequestError)
+    return res.status(HttpStatus.BAD_REQUEST).send(err);
   if (err instanceof UnauthorizedError)
     return res.status(HttpStatus.UNAUTHORIZED).send(err);
   if (err instanceof NotFoundError)
