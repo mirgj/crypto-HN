@@ -293,7 +293,7 @@ describe('## controllers/stories-controller.js unit tests', () => {
 
     it('it should return an InsertResult correctly', async() => {
       const userId = 'userIdMock';
-      const story = { title: 'titlemock', text: 'textmock', url: 'urlmock' };
+      const story = { title: 'titlemock', text: 'textmock', url: '' };
       const returnValue = { result: { ok: true }, insertedCount: 1, insertedId: 111 };
       createSpy.returns(Promise.resolve(returnValue));
 
@@ -303,6 +303,22 @@ describe('## controllers/stories-controller.js unit tests', () => {
       sinon.assert.calledWithExactly(createSpy, userId, story.title, story.text, story.url);
       expect(result).to.be.an('object');
       expect(result).to.be.deep.equal(new InsertResult(Infos.CREATE_STORY_INFO, returnValue.insertedId));
+    });
+
+    it('it should throw a BadRequestError if both text and URL are provided', async() => {
+      const userId = 'userIdMock';
+      const story = { title: 'titlemock', text: 'textmock', url: 'mockulr' };
+      const returnValue = { result: { ok: true }, insertedCount: 1, insertedId: 111 };
+      createSpy.returns(Promise.resolve(returnValue));
+
+      try {
+        await storiesController.create(userId, story);
+      } catch (err) {
+        expect(err).to.be.an('object');
+        expect(err).to.be.deep.equal(new BadRequestError(Errors.CREATE_STORY_TOO_MANY_INFO_ERROR));
+      } finally {
+        sinon.assert.notCalled(createSpy);
+      }
     });
 
     it('it should throw a BadRequestError correctly (missing param)', async() => {
@@ -323,7 +339,7 @@ describe('## controllers/stories-controller.js unit tests', () => {
 
     it('it should throw an ApiError correctly (not created)', async() => {
       const userId = 'userIdMock';
-      const story = { title: 'titlemock', text: 'textmock', url: 'urlmock' };
+      const story = { title: 'titlemock', text: 'textmock', url: '' };
       const returnValue = { result: { ok: false }, insertedCount: 1, insertedId: 111 };
       createSpy.returns(Promise.resolve(returnValue));
 
@@ -340,7 +356,7 @@ describe('## controllers/stories-controller.js unit tests', () => {
 
     it('it should throw an ApiError correctly (not created - insertedCount)', async() => {
       const userId = 'userIdMock';
-      const story = { title: 'titlemock', text: 'textmock', url: 'urlmock' };
+      const story = { title: 'titlemock', text: 'textmock', url: '' };
       const returnValue = { result: { ok: true }, insertedCount: 0, insertedId: 111 };
       createSpy.returns(Promise.resolve(returnValue));
 
@@ -357,7 +373,7 @@ describe('## controllers/stories-controller.js unit tests', () => {
 
     it('it should throw an ApiError correctly (not created - insertedCount)', async() => {
       const userId = 'userIdMock';
-      const story = { title: 'titlemock', text: 'textmock', url: 'urlmock' };
+      const story = { title: 'titlemock', text: 'textmock', url: '' };
       createSpy.returns(Promise.reject(new MongoError('mockMessage')));
 
       try {
