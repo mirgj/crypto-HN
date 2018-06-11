@@ -31,7 +31,7 @@ const commonStoriesRoute = async(req, res, next, stories, title, currentElement)
 const commonSingleRoute = async(req, res, next, comm, title, template) => {
   const cres = await storiesController.getOneById(req.params.storyId);
   const story = !cres.error && cres.result.success ? cres.result.data : null;
-  const comments = !comm.error && comm.result.success ? comm.result.data : null;
+  const comments = !comm.error && comm.result.success ? comm.result.data : [];
   const userVoteMapping = req.user ? await voltesController.getUserStoriesVoteMapping(req.user._id, [story]) : [];
   const commentsVoteMapping = req.user ? await voltesController.getUserCommentsVoteMapping(req.user._id, comments) : [];
   const canDownvote = req.user ? req.user.karma >= config.defaultValues.minKarmaForDownvote : false;

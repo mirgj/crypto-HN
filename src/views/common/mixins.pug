@@ -15,9 +15,9 @@ mixin notificationBlock(elements, type)
         p=val
 
 mixin storyRender(story, user_vote_mapping, can_downvote, n, current_page, page_size)
-  -var inc = n + ((current_page - 1) * page_size);
   p.text
     if n
+      -var inc = n + ((current_page - 1) * page_size);
       span.inc #{inc}.
     if (user && user.username != story.user.username) || !user
       span.voter
