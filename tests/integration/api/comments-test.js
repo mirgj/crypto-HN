@@ -433,6 +433,19 @@ describe('## API users test /api/comments', () => {
         }).catch(done);
     });
 
+    it('should unvote the comment correctly (restore the state)', (done) => {
+      request(serverURL)
+        .delete(comment2Url)
+        .set({'x-access-token': authToken})
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.deep.equal(new OkResult(Infos.CREATE_UNVOTE_OK));
+
+          done();
+        }).catch(done);
+    });
+
+
   });
 
   describe('# PUT /api/comments/[comment_id] (update comment)', () => {
