@@ -80,10 +80,6 @@ describe('## DB', () => {
     before(async() => {
       try {
         await db.connect(config.database.connectionString);
-        const names = await db.state.instance.db(config.database.defaultDbName).collections();
-
-        expect(names).to.be.an('array');
-        expect(names, 'The database should not exist to run the test properly. Please drop it and execute again').to.have.lengthOf(0);
       } catch (err) {
         await db.close();
 
@@ -113,17 +109,6 @@ describe('## DB', () => {
       expect(db.state.defaultDbInstance).to.be.an('object');
 
       done();
-    });
-
-    it('it should fail to get the default database collections (db not initialized yet)', async() => {
-      try {
-        const names = await db.state.defaultDbInstance.collections();
-
-        expect(names).to.be.an('array');
-        expect(names).to.have.lengthOf(0);
-      } catch (err) {
-        throw err;
-      }
     });
 
     it('it should init the default database', async() => {
