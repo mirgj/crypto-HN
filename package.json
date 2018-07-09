@@ -1,7 +1,7 @@
 {
-  "name": "crypto-hn",
+  "name": "pico-news",
   "version": "0.0.1",
-  "description": "crypto-hn",
+  "description": "pico-news",
   "main": "src/app.js",
   "nyc": {
     "require": [
@@ -71,10 +71,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mirgj/crypto-HN.git"
+    "url": "git+https://github.com/mirgj/pico-news.git"
   },
   "bugs": {
-    "url": "https://github.com/mirgj/crypto-HN/issues"
+    "url": "https://github.com/mirgj/pico-news/issues"
   },
-  "homepage": "https://github.com/mirgj/crypto-HN#readme"
+  "homepage": "https://github.com/mirgj/pico-news#readme"
 }

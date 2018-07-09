@@ -1,7 +1,7 @@
 {
   "database": {
     "connectionString": "mongodb://localhost:27017/",
-    "defaultDbName": "crypto-hn"
+    "defaultDbName": "pico-news"
   },
   "application": {
     "hostname": "0.0.0.0",

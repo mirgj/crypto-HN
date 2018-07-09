@@ -1,2 +1,2 @@
-# crypto-HN
+# pico-news
 TBD
