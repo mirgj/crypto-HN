@@ -18,6 +18,7 @@ import viewRoutes from './routes/view/index';
 import config from '../config';
 import { connect, initDefaultDb } from './db/connector';
 import { logger, expressLogger } from './helpers/logger';
+import { forceHttpsRedirect } from './helpers/middlewares';
 
 const app = express();
 
@@ -67,7 +68,8 @@ const app = express();
     app.use(flash());
     app.use(passport.initialize());
     app.use(passport.session());
-
+    // force https redirec
+    app.use(forceHttpsRedirect(config.application.env));
     app.use('/api', apiRoutes);
     app.use('/', viewRoutes);
 

@@ -30,9 +30,19 @@ const notAuthenticatedMiddleware = redirectUrl =>
     return res.redirect(redirectUrl);
   };
 
+const forceHttpsRedirect = env => (req, res, next) => {
+  if(env === "prod" && !req.secure){
+    res.redirect("https://" + req.headers.host + req.url);
+    return;
+  }
+
+  next();
+}
+
 export {
   asyncMiddleware,
   sameUserMiddleware,
   isAuthenticatedMiddleware,
   notAuthenticatedMiddleware,
+  forceHttpsRedirect,
 };
