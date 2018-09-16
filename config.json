@@ -4,9 +4,14 @@
     "defaultDbName": "pico-news"
   },
   "application": {
+    "env": "dev",
     "hostname": "0.0.0.0",
     "port": 8080,
-    "allowedOrigin": "*"
+    "sslPort": 443,
+    "allowedOrigin": "*",
+    "privateKeyPath": "/a/path/to/file.pem",
+    "certificatePath": "/a/path/to/file.pem",
+    "caPath": "/a/path/to/file.pem"
   },
   "keys": {
     "sessionSecret": "mysessionsecret",
