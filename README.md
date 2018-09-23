@@ -1,6 +1,6 @@
 # pico-news
 
-News-feed website, small clone of [reddit](https://old.reddit.com/) or [hacker-news](https://news.ycombinator.com/) build in javascript (Node). 
+News-feed website, small clone of [reddit](https://old.reddit.com/) or [hacker-news](https://news.ycombinator.com/) build in javascript (Node.js). 
 
 ## Screenshot
 
