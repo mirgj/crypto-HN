@@ -31,14 +31,14 @@ const app = express();
     let ca;
     let httpsServer;
 
-    if (config.application.env === "prod" && config.application.enableSSL) {
+    if (config.application.env === 'prod' && config.application.enableSSL) {
       privateKey = fs.readFileSync(config.application.privateKeyPath, 'utf8');
       certificate = fs.readFileSync(config.application.certificatePath, 'utf8');
       ca = fs.readFileSync(config.application.caPath, 'utf8');
       httpsServer = https.createServer({
         key: privateKey,
         cert: certificate,
-        ca: ca
+        ca: ca,
       }, app);
     }
 
@@ -73,7 +73,7 @@ const app = express();
     app.use('/api', apiRoutes);
     app.use('/', viewRoutes);
 
-    if(httpsServer) {
+    if (httpsServer) {
       httpsServer.listen(config.application.sslPort, config.application.hostname, () => {
         logger.log('verbose', `Application (https) started on port ${httpsServer.address().address}:${httpsServer.address().port}`);
       });

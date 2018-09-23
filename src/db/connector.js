@@ -9,7 +9,7 @@ const state = {
 
 const connect = async(url) => {
   if (state.instance) return state.instance;
-  state.instance = await MongoClient.connect(url);
+  state.instance = await MongoClient.connect(url, { useNewUrlParser: true });
   logger.log('verbose', 'Connected to the database');
 };
 
