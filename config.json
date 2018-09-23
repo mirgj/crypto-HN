@@ -7,6 +7,7 @@
     "env": "dev",
     "hostname": "0.0.0.0",
     "port": 8080,
+    "enableSSL": false,
     "sslPort": 443,
     "allowedOrigin": "*",
     "privateKeyPath": "/a/path/to/file.pem",

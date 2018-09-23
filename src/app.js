@@ -31,7 +31,7 @@ const app = express();
     let ca;
     let httpsServer;
 
-    if (config.application.env === "prod") {
+    if (config.application.env === "prod" && config.application.enableSSL) {
       privateKey = fs.readFileSync(config.application.privateKeyPath, 'utf8');
       certificate = fs.readFileSync(config.application.certificatePath, 'utf8');
       ca = fs.readFileSync(config.application.caPath, 'utf8');
