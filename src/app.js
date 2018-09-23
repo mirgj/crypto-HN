@@ -47,8 +47,6 @@ const app = express();
     app.locals.moment = moment;
     app.set('view engine', 'pug');
     app.set('views', path.join(__dirname, '/views'));
-    app.use('/static', express.static(path.join(__dirname, 'public'), { maxAge: config.session.staticMaxAge, dotfiles: 'allow' }));
-    app.use('/.well-known', express.static(path.join(__dirname, 'public/.well-known'), { dotfiles: 'allow' }));
     app.use(morgan('combined', { stream: expressLogger.stream }));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -70,6 +68,8 @@ const app = express();
     app.use(passport.session());
     // force https redirec
     app.use(forceHttpsRedirect(config.application.env));
+    app.use('/static', express.static(path.join(__dirname, 'public'), { maxAge: config.session.staticMaxAge, dotfiles: 'allow' }));
+    app.use('/.well-known', express.static(path.join(__dirname, 'public/.well-known'), { dotfiles: 'allow' }));
     app.use('/api', apiRoutes);
     app.use('/', viewRoutes);
 
